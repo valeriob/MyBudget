@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="projection_should.cs" />
     <Compile Include="budget_should.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

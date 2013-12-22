@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Budgets\User.cs" />
     <Compile Include="Budgets\Account.cs" />
     <Compile Include="Budgets\Budget.cs" />
     <Compile Include="Budgets\Line.cs" />
@@ -56,8 +57,11 @@
     <Compile Include="CommonDomainExtensions.cs" />
     <Compile Include="Infrastructure\GetEventStoreRepository.cs" />
     <Compile Include="Infrastructure\InMemoryRepository.cs" />
+    <Compile Include="Infrastructure\ISerialize.cs" />
     <Compile Include="Messages.cs" />
-    <Compile Include="Projections\BudgetProjection.cs" />
+    <Compile Include="Projections\BudgetLinesProjection.cs" />
+    <Compile Include="Projections\BudgetsListProjection.cs" />
+    <Compile Include="Projections\InMemoryProjection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonDomain", "CommonDomai
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBudget.Web", "MyBudget.Web\MyBudget.Web.csproj", "{A3D00250-8171-4DBB-9F98-BB1935A490E1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBudget.Web.AspNet", "MyBudget.Web.AspNet\MyBudget.Web.AspNet.csproj", "{3881CB63-8F91-4291-AD4C-4E3BB9AF8022}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,10 @@ Global
 		{A3D00250-8171-4DBB-9F98-BB1935A490E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3D00250-8171-4DBB-9F98-BB1935A490E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3D00250-8171-4DBB-9F98-BB1935A490E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3881CB63-8F91-4291-AD4C-4E3BB9AF8022}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3881CB63-8F91-4291-AD4C-4E3BB9AF8022}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3881CB63-8F91-4291-AD4C-4E3BB9AF8022}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3881CB63-8F91-4291-AD4C-4E3BB9AF8022}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

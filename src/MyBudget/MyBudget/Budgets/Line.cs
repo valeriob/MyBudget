@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MyBudget.Budgets
 {
-    class LineState : IMemento
+    public class LineState : IMemento
     {
         public string Id { get; set; }
         public int Version { get; set; }
@@ -111,6 +111,10 @@ namespace MyBudget.Budgets
         public Line(LineState state)
         {
             _state = state;
+        }
+
+        public Line() : this(new LineState())
+        {
         }
 
         public void Create(LineId id, BudgetId budgetId, Expense expense)
