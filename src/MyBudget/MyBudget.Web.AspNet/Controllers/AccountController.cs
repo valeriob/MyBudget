@@ -185,7 +185,7 @@ namespace MyBudget.Web.AspNet.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
-                var uid = new MyBudget.Budgets.UserId().ToString();
+                var uid = MyBudget.Budgets.UserId.CreateNew().ToString();
 
                 var user = new ApplicationUser() { Id = uid, UserName = model.UserName };
                 UserManager.Create(user, info.Login);

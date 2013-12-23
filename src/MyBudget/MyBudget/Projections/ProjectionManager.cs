@@ -1,4 +1,5 @@
 ﻿using EventStore.ClientAPI;
+using EventStore.ClientAPI.SystemData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +12,16 @@ namespace MyBudget.Projections
     {
         IEventStoreConnection _connection;
         UsersListProjection _users;
+        UserCredentials _credentials;
 
-        public ProjectionManager(IEventStoreConnection connection)
+
+        public ProjectionManager(IEventStoreConnection connection, UserCredentials credentials)
         {
             _connection = connection;
-
-            _users = new UsersListProjection(connection);
+            _credentials = credentials;
+            _users = new UsersListProjection(connection, credentials);
         }
+
 
         public void Run()
         {

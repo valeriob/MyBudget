@@ -23,9 +23,11 @@ namespace MyBudget.Web.AspNet
             var cs = ConnectionSettings.Create();
             
             var con = EventStoreConnection.Create(new IPEndPoint(IPAddress.Loopback, 1113));
-   
             con.Connect();
-            ProjectionManager = new ProjectionManager(con);
+
+            var userCredentials = new EventStore.ClientAPI.SystemData.UserCredentials("admin", "changeit");
+
+            ProjectionManager = new ProjectionManager(con, userCredentials);
             ProjectionManager.Run();
 
             CommandManager = new CommandManager(con);

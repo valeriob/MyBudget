@@ -1,4 +1,5 @@
 ﻿using EventStore.ClientAPI;
+using EventStore.ClientAPI.SystemData;
 using MyBudget.Budgets;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace MyBudget.Projections
     {
         Dictionary<string, UserState> _users = new Dictionary<string, UserState>();
 
-        public UsersListProjection(IEventStoreConnection connection):base(connection)
+        public UsersListProjection(IEventStoreConnection connection, UserCredentials credentials):base(connection, credentials)
         {
         }
 

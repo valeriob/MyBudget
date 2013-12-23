@@ -1,4 +1,5 @@
 ﻿using EventStore.ClientAPI;
+using EventStore.ClientAPI.SystemData;
 using MyBudget.Infrastructure;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -16,22 +17,23 @@ namespace MyBudget.Projections
         Position? _checkPoint;
         IEventStoreConnection _connection;
         EventStoreAllCatchUpSubscription _subscription;
-
+        UserCredentials _credentials;
 
         public InMemoryProjection()
         {
 
         }
-        public InMemoryProjection(IEventStoreConnection connection)
+        public InMemoryProjection(IEventStoreConnection connection, UserCredentials credentials)
         {
             _connection = connection;
+            _credentials = credentials;
         }
 
 
         public void Start()
         {
-            var userCredentials = new EventStore.ClientAPI.SystemData.UserCredentials("admin","password");
-            _subscription = _connection.SubscribeToAllFrom(_checkPoint, true, EventAppeared, null, SubscriptionDropped, userCredentials);
+            //var userCredentials = new EventStore.ClientAPI.SystemData.UserCredentials("admin","changeit");
+            _subscription = _connection.SubscribeToAllFrom(_checkPoint, true, EventAppeared, null, SubscriptionDropped, _credentials);
             _subscription.Start();
         }
 

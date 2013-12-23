@@ -31,25 +31,49 @@ namespace MyBudget.Budgets
     public class UserId
     {
         string _id;
-        public UserId(string id)
+        //[Obsolete("Serialization",true)]
+        //public UserId() 
+        //{ 
+        //}
+        public UserId(string _id)
         {
-            _id = id;
+            this._id = _id;
         }
-        public UserId()
-        {
-            _id = "User_" + Guid.NewGuid();
-        }
+
         public override string ToString()
         {
             return _id;
+        }
+        public override bool Equals(object obj)
+        {
+            var other = obj as UserId;
+            return other != null && other._id == _id;
+        }
+
+        public static UserId CreateNew()
+        {
+            var id = "User_" + Guid.NewGuid();
+            return new UserId(id);
         }
     }
 
     public class UserCreated :  Event
     {
         public UserId UserId { get; set; }
-
         public UserLoginInfo LoginInfo { get; set; }
+
+
+        public UserCreated(UserId userId, UserLoginInfo loginInfo)
+        {
+            UserId = userId;
+            LoginInfo = loginInfo;
+        }
+
+        public UserCreated(Guid id, DateTime timestamp, UserId userId, UserLoginInfo loginInfo) : base(id, timestamp)
+        {
+            UserId = userId;
+            LoginInfo = loginInfo;
+        }
     }
 
     public class User : AggregateBase
@@ -69,7 +93,7 @@ namespace MyBudget.Budgets
             if (string.IsNullOrEmpty(Id) == false)
                 throw new Exception("User already exists");
 
-            RaiseEvent(new UserCreated { UserId = userId, LoginInfo = loginInfo });
+            RaiseEvent(new UserCreated(userId, loginInfo));
         }
 
         protected override IMemento GetSnapshot()

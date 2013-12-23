@@ -161,9 +161,9 @@ namespace CommonDomain.Persistence.GetEventStore
         private static byte[] AddEventClrTypeHeaderAndSerializeMetadata(object evnt, IDictionary<string, object> headers)
         {
             var eventHeaders = new Dictionary<string, object>(headers)
-                    {
-                        {EventClrTypeHeader, evnt.GetType().AssemblyQualifiedName}
-                    };
+            {
+                {EventClrTypeHeader, evnt.GetType().AssemblyQualifiedName}
+            };
 
             return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(eventHeaders, SerializerSettings));
         }
