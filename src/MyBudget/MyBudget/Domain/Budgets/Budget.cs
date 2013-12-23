@@ -1,12 +1,14 @@
 ﻿using CommonDomain;
 using CommonDomain.Core;
+using MyBudget.Domain.Accounts;
+using MyBudget.Domain.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyBudget.Budgets
+namespace MyBudget.Domain.Budgets
 {
     public class BudgetState : IMemento
     {
@@ -15,56 +17,70 @@ namespace MyBudget.Budgets
 
         BudgetId _id;
         string _name;
-        AccountId _owner;
+        UserId _owner;
+
         public void Apply(BudgetCreated evnt)
         {
             _id = evnt.BudgetId;
             _name = evnt.Name;
             _owner = evnt.Owner;
         }
+
+        public bool CanRead(UserId userId)
+        {
+            return _owner.Equals(userId);
+        }
+
     }
 
     public class BudgetCreated : Event
     {
-        public BudgetCreated(BudgetId id, string name, AccountId owner)
+        public BudgetId BudgetId { get; private set; }
+        public string Name { get; private set; }
+        public UserId Owner { get; private set; }
+
+        public BudgetCreated(BudgetId id, string name, UserId owner)
         {
             BudgetId = id;
             Name = name;
             Owner = owner;
         }
 
-        public BudgetId BudgetId { get; private set; }
-        public string Name { get; private set; }
-        public AccountId Owner { get; private set; }
     }
 
     public class BudgetId
     {
         string _id;
+
         public BudgetId(string id)
         {
             _id = id;
         }
-        public BudgetId()
+
+
+        public static BudgetId Create()
         {
-            _id = "Budget_" + Guid.NewGuid();
+            var id = "Budget-" + Guid.NewGuid();
+            return new BudgetId(id);
         }
     }
 
     public class Budget : AggregateBase
     {
         BudgetState _state;
+
         public Budget(BudgetState state)
         {
             _state = state;
         }
+
 
         public Budget() : this(new BudgetState())
         {
 
         }
 
-        public void Create(BudgetId id, string name, AccountId owner)
+        public void Create(BudgetId id, string name, UserId owner)
         {
             RaiseEvent(new BudgetCreated(id, name, owner));
         }

@@ -6,20 +6,21 @@ using System.Text;
 using EventStore.ClientAPI;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Reflection;
 
 namespace CommonDomain.Persistence.GetEventStore
 {
     public class GetEventStoreRepository : IRepository
     {
-        private static string CommandHeader = "Command";
-        private const string EventClrTypeHeader = "EventClrTypeName";
-        private const string AggregateClrTypeHeader = "AggregateClrTypeName";
-        private const string CommitIdHeader = "CommitId";
-        private const int WritePageSize = 500;
-        private const int ReadPageSize = 500;
+        static string CommandHeader = "Command";
+        const string EventClrTypeHeader = "EventClrTypeName";
+        const string AggregateClrTypeHeader = "AggregateClrTypeName";
+        const string CommitIdHeader = "CommitId";
+        const int WritePageSize = 500;
+        const int ReadPageSize = 500;
 
-        private readonly IEventStoreConnection _eventStoreConnection;
-        private readonly IPEndPoint _tcpEndpoint;
+        readonly IEventStoreConnection _eventStoreConnection;
+        readonly IPEndPoint _tcpEndpoint;
 
 
         public GetEventStoreRepository(IEventStoreConnection eventStoreConnection, IPEndPoint eventStoreTcpEndpoint)
@@ -27,6 +28,7 @@ namespace CommonDomain.Persistence.GetEventStore
             _eventStoreConnection = eventStoreConnection;
             _tcpEndpoint = eventStoreTcpEndpoint;
         }
+
 
         public TAggregate GetById<TAggregate>(string streamName) where TAggregate : class, IAggregate
         {
@@ -83,10 +85,10 @@ namespace CommonDomain.Persistence.GetEventStore
             EnsureConnected();
 
             var commitHeaders = new Dictionary<string, object>
-                {
-                    {CommitIdHeader, commitId},
-                    {AggregateClrTypeHeader, aggregate.GetType().AssemblyQualifiedName}
-                };
+            {
+                {CommitIdHeader, commitId},
+                {AggregateClrTypeHeader, aggregate.GetType().AssemblyQualifiedName}
+            };
             updateHeaders(commitHeaders);
 
             var streamName = aggregate.Id;
@@ -116,7 +118,7 @@ namespace CommonDomain.Persistence.GetEventStore
         }
 
 
-        private static IEnumerable<EventData> PrepareEvents(IEnumerable<object> events, IDictionary<string, object> commitHeaders)
+        static IEnumerable<EventData> PrepareEvents(IEnumerable<object> events, IDictionary<string, object> commitHeaders)
         {
             foreach (var evnt in events)
             {
@@ -127,14 +129,14 @@ namespace CommonDomain.Persistence.GetEventStore
             //return events.Select(e => new JsonAggregateEvent(Guid.NewGuid(), e, commitHeaders));
         }
 
-        private static TAggregate ConstructAggregate<TAggregate>()
+        static TAggregate ConstructAggregate<TAggregate>()
         {
             return (TAggregate)Activator.CreateInstance(typeof(TAggregate), true);
         }
 
-        private bool _isConnected;
+        bool _isConnected;
 
-        private void EnsureConnected()
+        void EnsureConnected()
         {
             if (_isConnected)
                 return;
@@ -151,14 +153,22 @@ namespace CommonDomain.Persistence.GetEventStore
                 {
 
                 }
-                else throw;
+                else 
+                    throw;
             }
             _isConnected = true;
         }
 
-        private static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None };
+        static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings 
+        { 
+            TypeNameHandling = TypeNameHandling.None,
+            ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
+            {
+                DefaultMembersSearchFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
+            },
+        };
 
-        private static byte[] AddEventClrTypeHeaderAndSerializeMetadata(object evnt, IDictionary<string, object> headers)
+        static byte[] AddEventClrTypeHeaderAndSerializeMetadata(object evnt, IDictionary<string, object> headers)
         {
             var eventHeaders = new Dictionary<string, object>(headers)
             {

@@ -18,6 +18,8 @@ namespace MyBudget.Projections
         IEventStoreConnection _connection;
         EventStoreAllCatchUpSubscription _subscription;
         UserCredentials _credentials;
+        int _totalCount;
+        int _succeded;
 
         public InMemoryProjection()
         {
@@ -50,6 +52,7 @@ namespace MyBudget.Projections
 
         void EventAppeared(EventStoreCatchUpSubscription sub, ResolvedEvent evnt)
         {
+            _totalCount++;
             dynamic ev = null;
             try
             {
@@ -63,6 +66,7 @@ namespace MyBudget.Projections
                 return;
             }
             Dispatch(ev);
+            _succeded++;
             _checkPoint = evnt.OriginalPosition.Value;
         }
 
@@ -79,7 +83,7 @@ namespace MyBudget.Projections
             {
                 p.When(evnt);
             }
-            catch { }
+            catch(Microsoft.CSharp.RuntimeBinder.RuntimeBinderException) { }
         }
 
     }

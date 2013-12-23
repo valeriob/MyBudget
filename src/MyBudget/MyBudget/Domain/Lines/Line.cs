@@ -1,13 +1,14 @@
 ﻿using CommonDomain;
 using CommonDomain.Core;
-using MyBudget.Budgets.ValueObjects;
+using MyBudget.Domain.Budgets;
+using MyBudget.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyBudget.Budgets
+namespace MyBudget.Domain.Lines
 {
     public class LineState : IMemento
     {
@@ -102,7 +103,7 @@ namespace MyBudget.Budgets
         }
         public LineId()
         {
-            _id = "Line_" + Guid.NewGuid();
+            _id = "Line-" + Guid.NewGuid();
         }
     }
 

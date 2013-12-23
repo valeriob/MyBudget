@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin.Security;
 using MyBudget.Web.AspNet.Models;
+using MyBudget.Domain.Users;
 
 namespace MyBudget.Web.AspNet.Controllers
 {
@@ -72,7 +73,7 @@ namespace MyBudget.Web.AspNet.Controllers
             h.Handle(new MyBudget.Commands.AddUser 
             {
                 UserId = user.Id,
-                UserLoginInfo = new Budgets.ValueObjects.UserLoginInfo(userLoginInfo.LoginProvider, userLoginInfo.ProviderKey)
+                UserLoginInfo = new MyBudget.Domain.ValueObjects.UserLoginInfo(userLoginInfo.LoginProvider, userLoginInfo.ProviderKey)
             });
         }
     }
@@ -185,7 +186,7 @@ namespace MyBudget.Web.AspNet.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
-                var uid = MyBudget.Budgets.UserId.CreateNew().ToString();
+                var uid = UserId.CreateNew().ToString();
 
                 var user = new ApplicationUser() { Id = uid, UserName = model.UserName };
                 UserManager.Create(user, info.Login);

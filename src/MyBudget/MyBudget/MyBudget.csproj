@@ -47,15 +47,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Budgets\User.cs" />
-    <Compile Include="Budgets\Account.cs" />
-    <Compile Include="Budgets\Budget.cs" />
-    <Compile Include="Budgets\Line.cs" />
-    <Compile Include="Budgets\ValueObjects\Amount.cs" />
-    <Compile Include="Budgets\ValueObjects\Currency.cs" />
-    <Compile Include="Budgets\ValueObjects\Expense.cs" />
-    <Compile Include="Budgets\ValueObjects\UserLoginInfo.cs" />
+    <Compile Include="Domain\Users\User.cs" />
+    <Compile Include="Domain\Accounts\Account.cs" />
+    <Compile Include="Domain\Budgets\Budget.cs" />
+    <Compile Include="Domain\Lines\Line.cs" />
+    <Compile Include="Domain\ValueObjects\Amount.cs" />
+    <Compile Include="Domain\ValueObjects\Currency.cs" />
+    <Compile Include="Domain\ValueObjects\Expense.cs" />
+    <Compile Include="Domain\ValueObjects\UserLoginInfo.cs" />
     <Compile Include="CommandManager.cs" />
+    <Compile Include="Commands\BudgetHandlers.cs" />
     <Compile Include="Commands\UserHandlers.cs" />
     <Compile Include="CommonDomainExtensions.cs" />
     <Compile Include="Infrastructure\GetEventStoreRepository.cs" />

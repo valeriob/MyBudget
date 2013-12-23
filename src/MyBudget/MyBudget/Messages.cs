@@ -14,36 +14,36 @@ namespace MyBudget
 
     public abstract class Event : Message
     {
-        public Guid Id { get; private set; }
-        public DateTime Timestamp { get; private set; }
+        public Guid Id { get; set; }
+        public DateTime Timestamp { get; set; }
 
-        public Event()
-        {
-            Id = Guid.NewGuid();
-            Timestamp = DateTime.UtcNow;
-        }
+        //public Event()
+        //{
+        //    Id = Guid.NewGuid();
+        //    Timestamp = DateTime.UtcNow;
+        //}
 
-        public Event(Guid id, DateTime timestamp)
-        {
-            Id = id;
-            Timestamp = timestamp;
-        }
+        //public Event(Guid id, DateTime timestamp)
+        //{
+        //    Id = id;
+        //    Timestamp = timestamp;
+        //}
     }
 
     public abstract class Command : Message
     {
-        public Guid Id { get; private set; }
-        public DateTime Timestamp { get; private set; }
+        public Guid Id { get; set; }
+        public DateTime Timestamp { get; set; }
 
-        public Command()
-        {
-            Id = Guid.NewGuid();
-            Timestamp = DateTime.UtcNow;
-        }
-        public Command(Guid id, DateTime timestamp)
-        {
-            Id = id;
-            Timestamp = timestamp;
-        }
+        //public Command()
+        //{
+        //    Id = Guid.NewGuid();
+        //    Timestamp = DateTime.UtcNow;
+        //}
+        //public Command(Guid id, DateTime timestamp)
+        //{
+        //    Id = id;
+        //    Timestamp = timestamp;
+        //}
     }
 }

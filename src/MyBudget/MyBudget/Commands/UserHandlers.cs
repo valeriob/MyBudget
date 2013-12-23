@@ -1,6 +1,6 @@
 ﻿using CommonDomain.Persistence;
-using MyBudget.Budgets;
-using MyBudget.Budgets.ValueObjects;
+using MyBudget.Domain.Users;
+using MyBudget.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;

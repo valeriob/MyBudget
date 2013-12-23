@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyBudget.Budgets.ValueObjects
+namespace MyBudget.Domain.ValueObjects
 {
     public class Expense
     {

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyBudget.Budgets
+namespace MyBudget.Domain.Accounts
 {
     public class AccountState : IMemento
     {
@@ -23,7 +23,7 @@ namespace MyBudget.Budgets
         }
         public AccountId()
         {
-            _id = "Account_" + Guid.NewGuid();
+            _id = "Account-" + Guid.NewGuid();
         }
     }
 

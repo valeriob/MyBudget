@@ -5,10 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MyBudget.Infrastructure;
-using MyBudget.Budgets;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Reflection;
+using MyBudget.Domain.Users;
+using MyBudget.Domain.ValueObjects;
 
 namespace MyBudget.Tests
 {
@@ -18,7 +19,7 @@ namespace MyBudget.Tests
         [Test]
         public void serialize_userAdded()
         {
-            var evnt = new UserCreated(UserId.CreateNew(), new Budgets.ValueObjects.UserLoginInfo("prov", "key"));
+            var evnt = new UserCreated(Guid.NewGuid(), DateTime.Now, UserId.CreateNew(), new UserLoginInfo("prov", "key"));
 
 
             var settings = new JsonSerializerSettings 
@@ -27,7 +28,7 @@ namespace MyBudget.Tests
                 DefaultValueHandling = DefaultValueHandling.Ignore,
                 NullValueHandling = NullValueHandling.Ignore,
                 ConstructorHandling = Newtonsoft.Json.ConstructorHandling.Default,
-                Formatting = Newtonsoft.Json.Formatting.Indented,
+                //Formatting = Newtonsoft.Json.Formatting.Indented,
                 ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
                 {
                     DefaultMembersSearchFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,

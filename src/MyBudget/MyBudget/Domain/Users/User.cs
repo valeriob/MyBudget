@@ -1,13 +1,13 @@
 ﻿using CommonDomain;
 using CommonDomain.Core;
-using MyBudget.Budgets.ValueObjects;
+using MyBudget.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyBudget.Budgets
+namespace MyBudget.Domain.Users
 {
     public class UserState : IMemento
     {
@@ -26,15 +26,17 @@ namespace MyBudget.Budgets
         {
             return _loginInfo;
         }
+
+        public bool Is(string userId)
+        {
+            return Id == userId;
+        }
     }
 
     public class UserId
     {
         string _id;
-        //[Obsolete("Serialization",true)]
-        //public UserId() 
-        //{ 
-        //}
+
         public UserId(string _id)
         {
             this._id = _id;
@@ -52,28 +54,30 @@ namespace MyBudget.Budgets
 
         public static UserId CreateNew()
         {
-            var id = "User_" + Guid.NewGuid();
+            var id = "User-" + Guid.NewGuid();
             return new UserId(id);
         }
     }
 
-    public class UserCreated :  Event
+    public class UserCreated : Event
     {
         public UserId UserId { get; set; }
         public UserLoginInfo LoginInfo { get; set; }
 
 
-        public UserCreated(UserId userId, UserLoginInfo loginInfo)
+        public UserCreated(Guid id, DateTime timestamp, UserId userId, UserLoginInfo loginInfo)
         {
+            Id = id;
+            Timestamp = timestamp;
             UserId = userId;
             LoginInfo = loginInfo;
         }
 
-        public UserCreated(Guid id, DateTime timestamp, UserId userId, UserLoginInfo loginInfo) : base(id, timestamp)
-        {
-            UserId = userId;
-            LoginInfo = loginInfo;
-        }
+        //UserCreated(Guid id, DateTime timestamp, UserId userId, UserLoginInfo loginInfo) : base(id, timestamp)
+        //{
+        //    UserId = userId;
+        //    LoginInfo = loginInfo;
+        //}
     }
 
     public class User : AggregateBase
@@ -85,7 +89,7 @@ namespace MyBudget.Budgets
             Register<UserCreated>(e => Id = e.UserId.ToString());
         }
 
-        public User(): this(new UserState()) { }
+        public User() : this(new UserState()) { }
 
 
         public void Create(UserId userId, UserLoginInfo loginInfo)
@@ -93,7 +97,7 @@ namespace MyBudget.Budgets
             if (string.IsNullOrEmpty(Id) == false)
                 throw new Exception("User already exists");
 
-            RaiseEvent(new UserCreated(userId, loginInfo));
+            RaiseEvent(new UserCreated(Guid.NewGuid(), DateTime.Now, userId, loginInfo));
         }
 
         protected override IMemento GetSnapshot()

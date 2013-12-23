@@ -11,21 +11,24 @@ namespace MyBudget.Projections
     public class ProjectionManager
     {
         IEventStoreConnection _connection;
-        UsersListProjection _users;
         UserCredentials _credentials;
-
+        UsersListProjection _users;
+        BudgetsListProjection _budgets;
+        
 
         public ProjectionManager(IEventStoreConnection connection, UserCredentials credentials)
         {
             _connection = connection;
             _credentials = credentials;
             _users = new UsersListProjection(connection, credentials);
+            _budgets = new BudgetsListProjection(connection, credentials);
         }
 
 
         public void Run()
         {
             _users.Start();
+            _budgets.Start();
         }
 
         public UsersListProjection GetUsersList()
@@ -33,5 +36,20 @@ namespace MyBudget.Projections
             return _users;
         }
 
+        public BudgetsListProjection GetBudgetsList()
+        {
+            return _budgets;
+        }
+
     }
+
+    public class CountAllEventsProjection : InMemoryProjection
+    {
+        int count;
+        public override void Dispatch(dynamic evnt)
+        {
+            count++;
+        }
+    }
+
 }

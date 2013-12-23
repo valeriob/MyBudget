@@ -1,6 +1,6 @@
 ﻿using EventStore.ClientAPI;
 using EventStore.ClientAPI.SystemData;
-using MyBudget.Budgets;
+using MyBudget.Domain.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +24,7 @@ namespace MyBudget.Projections
             {
                 p.When(evnt);
             }
-            catch { }
+            catch(Microsoft.CSharp.RuntimeBinder.RuntimeBinderException) { }
         }
         public void When(UserCreated evnt)
         {
@@ -37,6 +37,11 @@ namespace MyBudget.Projections
         {
             var users = _users.Values.Where(r=> r.GetUserLoginInfo().LoginProvider == provider && r.GetUserLoginInfo().ProviderKey == key);
             return users.FirstOrDefault();
+        }
+
+        public UserState FindById(string userId)
+        {
+            return _users.Values.SingleOrDefault(r => r.Is(userId));
         }
     }
 }

@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MyBudget.Infrastructure;
-using MyBudget.Budgets;
+using MyBudget.Domain.Budgets;
+using MyBudget.Domain.Accounts;
+using MyBudget.Domain.Users;
 
 namespace MyBudget.Tests
 {
@@ -15,9 +17,9 @@ namespace MyBudget.Tests
         [Test]
         public void be_created()
         {
-            var budgetId = new BudgetId();
-            var ownerId = new AccountId();
-            var budget = new Budgets.Budget();
+            var budgetId = BudgetId.Create();
+            var ownerId = UserId.CreateNew();
+            var budget = new Budget();
 
             budget.Create(budgetId, "name", ownerId);
 

@@ -1,5 +1,7 @@
 ﻿using EventStore.ClientAPI;
-using MyBudget.Budgets;
+using EventStore.ClientAPI.SystemData;
+using MyBudget.Domain.Budgets;
+using MyBudget.Domain.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,13 +12,14 @@ namespace MyBudget.Projections
 {
     public class BudgetsListProjection : InMemoryProjection
     {
-        IEventStoreConnection _connection;
-        List<Budget> _budgets = new List<Budget>();
+        Dictionary<string, BudgetState> _budgets = new Dictionary<string, BudgetState>();
 
-        public BudgetsListProjection(IEventStoreConnection connection)
+
+        public BudgetsListProjection(IEventStoreConnection connection, UserCredentials credentials)
+            : base(connection, credentials)
         {
-            _connection = connection;
         }
+
 
         public override void Dispatch(dynamic evnt)
         {
@@ -25,11 +28,26 @@ namespace MyBudget.Projections
             {
                 p.When(evnt);
             }
-            catch { }
+            catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException) { }
         }
+
         public void When(BudgetCreated evnt)
         {
-            _budgets.Add(new Budget());
+            var s = new BudgetState();
+            s.Apply(evnt);
+            _budgets.Add(evnt.BudgetId.ToString(), s);
         }
+
+        public IEnumerable<BudgetState> GetBudgetsUserCanView(UserId userId)
+        {
+            return _budgets.Values.Where(b => b.CanRead(userId));
+        }
+
+        public BudgetState GetBudgetById(BudgetId budgetId)
+        {
+            return _budgets[budgetId.ToString()];
+        }
+
     }
+
 }
