@@ -1,5 +1,6 @@
 ﻿using CommonDomain;
 using CommonDomain.Core;
+using MyBudget.Budgets.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,19 @@ namespace MyBudget.Budgets
     {
         public string Id { get; set; }
         public int Version { get; set; }
+
+        UserLoginInfo _loginInfo;
+
+        public void Apply(UserCreated evnt)
+        {
+            Id = evnt.UserId.ToString();
+            _loginInfo = evnt.LoginInfo;
+        }
+
+        public UserLoginInfo GetUserLoginInfo()
+        {
+            return _loginInfo;
+        }
     }
 
     public class UserId
@@ -25,11 +39,17 @@ namespace MyBudget.Budgets
         {
             _id = "User_" + Guid.NewGuid();
         }
+        public override string ToString()
+        {
+            return _id;
+        }
     }
 
     public class UserCreated :  Event
     {
+        public UserId UserId { get; set; }
 
+        public UserLoginInfo LoginInfo { get; set; }
     }
 
     public class User : AggregateBase
@@ -38,27 +58,25 @@ namespace MyBudget.Budgets
         public User(UserState state)
         {
             _state = state;
+            Register<UserCreated>(e => Id = e.UserId.ToString());
         }
 
-        public User()
-            : this(new UserState())
+        public User(): this(new UserState()) { }
+
+
+        public void Create(UserId userId, UserLoginInfo loginInfo)
         {
+            if (string.IsNullOrEmpty(Id) == false)
+                throw new Exception("User already exists");
 
+            RaiseEvent(new UserCreated { UserId = userId, LoginInfo = loginInfo });
         }
 
-        public void Create(UserId id)
+        protected override IMemento GetSnapshot()
         {
-
+            return _state;
         }
 
-        public void Disable()
-        {
-
-        }
-        public void Enable()
-        {
-
-        }
     }
 
 }

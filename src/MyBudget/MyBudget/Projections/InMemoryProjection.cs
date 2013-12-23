@@ -30,7 +30,8 @@ namespace MyBudget.Projections
 
         public void Start()
         {
-            _subscription = _connection.SubscribeToAllFrom(_checkPoint, true, EventAppeared, null, SubscriptionDropped);
+            var userCredentials = new EventStore.ClientAPI.SystemData.UserCredentials("admin","password");
+            _subscription = _connection.SubscribeToAllFrom(_checkPoint, true, EventAppeared, null, SubscriptionDropped, userCredentials);
             _subscription.Start();
         }
 
@@ -47,11 +48,18 @@ namespace MyBudget.Projections
 
         void EventAppeared(EventStoreCatchUpSubscription sub, ResolvedEvent evnt)
         {
-            var metadata = evnt.Event.Metadata;
-            var data = evnt.Event.Data;
-            var eventClrTypeName = JObject.Parse(Encoding.UTF8.GetString(metadata)).Property(EventClrTypeHeader).Value;
-            dynamic ev = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(data), Type.GetType((string)eventClrTypeName));
-
+            dynamic ev = null;
+            try
+            {
+                var metadata = evnt.Event.Metadata;
+                var data = evnt.Event.Data;
+                var eventClrTypeName = JObject.Parse(Encoding.UTF8.GetString(metadata)).Property(EventClrTypeHeader).Value;
+                ev = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(data), Type.GetType((string)eventClrTypeName));
+            }
+            catch
+            {
+                return;
+            }
             Dispatch(ev);
             _checkPoint = evnt.OriginalPosition.Value;
         }
@@ -59,6 +67,7 @@ namespace MyBudget.Projections
 
         void SubscriptionDropped(EventStoreCatchUpSubscription sub, SubscriptionDropReason reason, Exception ex)
         {
+            
         }
 
         public virtual void Dispatch(dynamic evnt)

@@ -24,19 +24,30 @@ namespace MyBudget.Web.AspNet.Controllers
 
         public async Task<ApplicationUser> FindAsync(UserLoginInfo userLoginInfo)
         {
-            var map = _users.SingleOrDefault(r => r.ExternalId == userLoginInfo);
+            var users = MvcApplication.ProjectionManager.GetUsersList();
+            var map = users.FindByLogin(userLoginInfo.LoginProvider, userLoginInfo.ProviderKey);
+
+            //var map = _users.SingleOrDefault(r => r.ExternalId == userLoginInfo);
             if (map == null)
                 return null;
-            return new ApplicationUser 
-            { 
-                 Id = map.UserId,
-                 UserName = map.UserId,
+            return new ApplicationUser
+            {
+                Id = map.Id,
+                UserName = map.Id,
             };
+            //return new ApplicationUser 
+            //{ 
+            //     Id = map.UserId,
+            //     UserName = map.UserId,
+            //};
         }
 
         public async Task<IdentityResult> AddLoginAsync(string userId, UserLoginInfo userLoginInfo)
         {
-            _users.Add(new UserMapping { UserId = userId, ExternalId = userLoginInfo });
+            var h = MvcApplication.CommandManager.Create<MyBudget.Commands.AddUser>();
+            h.Handle(new MyBudget.Commands.AddUser());
+
+            //_users.Add(new UserMapping { UserId = userId, ExternalId = userLoginInfo });
             return IdentityResult.Success;
         }
 
@@ -53,6 +64,16 @@ namespace MyBudget.Web.AspNet.Controllers
             var c1 = new Claim("http://schemas.microsoft.com/accesscontrolservice/2010/07/claims/identityprovider", "ASP.NET Identity");
 
             return new ClaimsIdentity(t, new []{c1, c2});
+        }
+
+        internal void Create(ApplicationUser user, UserLoginInfo userLoginInfo)
+        {
+            var h = MvcApplication.CommandManager.Create<MyBudget.Commands.AddUser>();
+            h.Handle(new MyBudget.Commands.AddUser 
+            {
+                UserId = user.Id,
+                UserLoginInfo = new Budgets.ValueObjects.UserLoginInfo(userLoginInfo.LoginProvider, userLoginInfo.ProviderKey)
+            });
         }
     }
 
@@ -92,7 +113,10 @@ namespace MyBudget.Web.AspNet.Controllers
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
-            var t = await AuthenticationManager.GetExternalIdentityAsync(DefaultAuthenticationTypes.ExternalCookie);
+            var externalIdentity = await AuthenticationManager.GetExternalIdentityAsync(DefaultAuthenticationTypes.ExternalCookie);
+            var displayName = externalIdentity.Name;
+            var email = externalIdentity.FindFirstValue(ClaimTypes.Email);
+
             if (loginInfo == null)
             {
                 return RedirectToAction("Login");
@@ -161,18 +185,25 @@ namespace MyBudget.Web.AspNet.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
-                var user = new ApplicationUser() { UserName = model.UserName };
-                IdentityResult result = await UserManager.CreateAsync(user);
-                if (result.Succeeded)
-                {
-                    result = await UserManager.AddLoginAsync(user.Id, info.Login);
-                    if (result.Succeeded)
-                    {
-                        await SignInAsync(user, isPersistent: false);
-                        return RedirectToLocal(returnUrl);
-                    }
-                }
-                AddErrors(result);
+                var uid = new MyBudget.Budgets.UserId().ToString();
+
+                var user = new ApplicationUser() { Id = uid, UserName = model.UserName };
+                UserManager.Create(user, info.Login);
+                await SignInAsync(user, isPersistent: false);
+                return RedirectToLocal(returnUrl);
+
+                //var user = new ApplicationUser() { UserName = model.UserName };
+                //IdentityResult result = await UserManager.CreateAsync(user);
+                //if (result.Succeeded)
+                //{
+                //    result = await UserManager.AddLoginAsync(user.Id, info.Login);
+                //    if (result.Succeeded)
+                //    {
+                //        await SignInAsync(user, isPersistent: false);
+                //        return RedirectToLocal(returnUrl);
+                //    }
+                //}
+                //AddErrors(result);
             }
 
             ViewBag.ReturnUrl = returnUrl;

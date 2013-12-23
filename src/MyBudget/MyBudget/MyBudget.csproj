@@ -54,12 +54,17 @@
     <Compile Include="Budgets\ValueObjects\Amount.cs" />
     <Compile Include="Budgets\ValueObjects\Currency.cs" />
     <Compile Include="Budgets\ValueObjects\Expense.cs" />
+    <Compile Include="Budgets\ValueObjects\UserLoginInfo.cs" />
+    <Compile Include="CommandManager.cs" />
+    <Compile Include="Commands\UserHandlers.cs" />
     <Compile Include="CommonDomainExtensions.cs" />
     <Compile Include="Infrastructure\GetEventStoreRepository.cs" />
     <Compile Include="Infrastructure\InMemoryRepository.cs" />
     <Compile Include="Infrastructure\ISerialize.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="Projections\BudgetLinesProjection.cs" />
+    <Compile Include="Projections\ProjectionManager.cs" />
+    <Compile Include="Projections\UsersListProjection.cs" />
     <Compile Include="Projections\BudgetsListProjection.cs" />
     <Compile Include="Projections\InMemoryProjection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -16,6 +16,7 @@ namespace MyBudget.Budgets
 
         LineCreated _creation;
         Amount _amount;
+
         public void Apply(LineCreated evnt)
         {
             _creation = evnt;
