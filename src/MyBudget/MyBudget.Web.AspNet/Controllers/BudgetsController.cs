@@ -1,4 +1,5 @@
-﻿using MyBudget.Domain.Budgets;
+﻿using MyBudget.Commands;
+using MyBudget.Domain.Budgets;
 using MyBudget.Web.AspNet.Models;
 using System;
 using System.Collections.Generic;
@@ -10,9 +11,6 @@ namespace MyBudget.Web.AspNet.Controllers
 {
     public class BudgetsController : MyBudgetController
     {
-
-        //
-        // GET: /Budgets/
         public ActionResult Index()
         {
             var readModel = MvcApplication.ProjectionManager.GetBudgetsList();
@@ -23,8 +21,6 @@ namespace MyBudget.Web.AspNet.Controllers
             return View(model);
         }
 
-        //
-        // GET: /Budgets/Details/5
         public ActionResult Details(string id)
         {
             var readModel = MvcApplication.ProjectionManager.GetBudgetsList();
@@ -33,20 +29,34 @@ namespace MyBudget.Web.AspNet.Controllers
             return View(budget);
         }
 
-        //
-        // GET: /Budgets/Create
+
         public ActionResult Create()
         {
-            return View();
+            var model = new BudgetViewModel
+            {
+                Id = BudgetId.Create().ToString(),
+                Name = "New Budget",
+                Owner = GetCurrentUserId().ToString(),
+            };
+            return View(model);
         }
 
-        //
-        // POST: /Budgets/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        //public ActionResult Create(FormCollection collection)
+        public ActionResult Create(BudgetViewModel model)
         {
             try
             {
+                var handler = MvcApplication.CommandManager.Create<CreateBudget>();
+
+                handler.Handle(new CreateBudget
+                {
+                    UserId = GetCurrentUserId().ToString(),
+                    BudgetName = model.Name,
+                    BudgetId = model.Id,
+                    Id = Guid.NewGuid(),
+                    Timestamp = DateTime.Now,
+                });
                 // TODO: Add insert logic here
 
                 return RedirectToAction("Index");
@@ -57,15 +67,15 @@ namespace MyBudget.Web.AspNet.Controllers
             }
         }
 
-        //
-        // GET: /Budgets/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            var model = new BudgetViewModel
+            {
+
+            };
+            return View(model);
         }
 
-        //
-        // POST: /Budgets/Edit/5
         [HttpPost]
         public ActionResult Edit(int id, FormCollection collection)
         {
@@ -81,15 +91,13 @@ namespace MyBudget.Web.AspNet.Controllers
             }
         }
 
-        //
-        // GET: /Budgets/Delete/5
+
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        //
-        // POST: /Budgets/Delete/5
+
         [HttpPost]
         public ActionResult Delete(int id, FormCollection collection)
         {

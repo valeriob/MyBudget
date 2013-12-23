@@ -12,7 +12,7 @@ namespace MyBudget.Projections
 {
     public class BudgetsListProjection : InMemoryProjection
     {
-        Dictionary<string, BudgetState> _budgets = new Dictionary<string, BudgetState>();
+        Dictionary<string, Budget> _budgets = new Dictionary<string, Budget>();
 
 
         public BudgetsListProjection(IEventStoreConnection connection, UserCredentials credentials)
@@ -33,21 +33,42 @@ namespace MyBudget.Projections
 
         public void When(BudgetCreated evnt)
         {
-            var s = new BudgetState();
+            var s = new Budget();
             s.Apply(evnt);
             _budgets.Add(evnt.BudgetId.ToString(), s);
         }
 
-        public IEnumerable<BudgetState> GetBudgetsUserCanView(UserId userId)
+        public IEnumerable<Budget> GetBudgetsUserCanView(UserId userId)
         {
             return _budgets.Values.Where(b => b.CanRead(userId));
         }
 
-        public BudgetState GetBudgetById(BudgetId budgetId)
+        public Budget GetBudgetById(BudgetId budgetId)
         {
             return _budgets[budgetId.ToString()];
         }
 
+    }
+
+    public class Budget
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public DateTime Created { get; set; }
+        public string Owner { get; set; }
+
+        public void Apply(BudgetCreated evnt)
+        {
+            Id = evnt.BudgetId.ToString();
+            Name = evnt.Name;
+            Owner = evnt.Owner.ToString();
+            Created = evnt.Timestamp;
+        }
+
+        internal bool CanRead(UserId userId)
+        {
+            return userId.ToString() == Id;
+        }
     }
 
 }

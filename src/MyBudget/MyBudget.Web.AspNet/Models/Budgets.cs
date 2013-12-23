@@ -1,5 +1,4 @@
-﻿
-using MyBudget.Domain.Budgets;
+﻿using MyBudget.Projections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +8,22 @@ namespace MyBudget.Web.AspNet.Models
 {
     public class BudgetListViewModel
     {
-        public IEnumerable<BudgetState> Budgets { get; private set; }
+        public IEnumerable<Budget> Budgets { get; private set; }
 
-        public BudgetListViewModel(IEnumerable<BudgetState> budgets)
+        public BudgetListViewModel(IEnumerable<Budget> budgets)
         {
             Budgets = budgets;
         }
+
+    
+    }
+
+    public class BudgetViewModel
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public DateTime Created { get; set; }
+        public string Owner { get; set; }
     }
 
 }
