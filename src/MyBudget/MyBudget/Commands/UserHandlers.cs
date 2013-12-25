@@ -13,6 +13,8 @@ namespace MyBudget.Commands
     {
         public string UserId { get; set; }
         public UserLoginInfo UserLoginInfo { get; set; }
+
+        public string UserName { get; set; }
     }
 
     class UserHandlers : Handle<AddUser>
@@ -27,7 +29,7 @@ namespace MyBudget.Commands
         public void Handle(AddUser cmd)
         {
             var user = _repository.GetById<User>(cmd.UserId);
-            user.Create(new UserId(cmd.UserId), cmd.UserLoginInfo);
+            user.Create(new UserId(cmd.UserId), cmd.UserLoginInfo, cmd.UserName);
             _repository.Save(user, Guid.NewGuid(), cmd);
         }
     }

@@ -73,6 +73,7 @@ namespace MyBudget.Web.AspNet.Controllers
             h.Handle(new MyBudget.Commands.AddUser 
             {
                 UserId = user.Id,
+                UserName = user.UserName,
                 UserLoginInfo = new MyBudget.Domain.ValueObjects.UserLoginInfo(userLoginInfo.LoginProvider, userLoginInfo.ProviderKey)
             });
         }

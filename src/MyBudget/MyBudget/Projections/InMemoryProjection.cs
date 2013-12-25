@@ -5,26 +5,40 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MyBudget.Projections
 {
-    public class InMemoryProjection
+    public class InMemoryProjection : IDisposable
     {
         static readonly string EventClrTypeHeader = "EventClrTypeName";
-        Position? _checkPoint;
-        IEventStoreConnection _connection;
-        EventStoreAllCatchUpSubscription _subscription;
         UserCredentials _credentials;
+        IEventStoreConnection _connection;
+        IPEndPoint _endpoint;
+        Position? _checkPoint;
+        EventStoreAllCatchUpSubscription _subscription;
+
         int _totalCount;
         int _succeded;
+        int _duplicates;
+        HashSet<Guid> ids = new HashSet<Guid>();
+        HashSet<RecordedEvent> events = new HashSet<RecordedEvent>();
 
         public InMemoryProjection()
         {
 
         }
+
+        public InMemoryProjection(IPEndPoint endpoint, UserCredentials credentials)
+        {
+            _endpoint = endpoint;
+            _credentials = credentials;
+        }
+
         public InMemoryProjection(IEventStoreConnection connection, UserCredentials credentials)
         {
             _connection = connection;
@@ -34,6 +48,8 @@ namespace MyBudget.Projections
 
         public void Start()
         {
+            _connection = EventStore.ClientAPI.EventStoreConnection.Create(_endpoint);
+            _connection.Connect();
             //var userCredentials = new EventStore.ClientAPI.SystemData.UserCredentials("admin","changeit");
             _subscription = _connection.SubscribeToAllFrom(_checkPoint, true, EventAppeared, null, SubscriptionDropped, _credentials);
             _subscription.Start();
@@ -41,8 +57,13 @@ namespace MyBudget.Projections
 
         public void Stop()
         {
-            _subscription.Stop(TimeSpan.MaxValue);
-            _subscription = null;
+            try
+            {
+                _subscription.Stop(TimeSpan.MaxValue);
+                _subscription = null;
+                _connection.Dispose();
+            }
+            catch { }
         }
 
         public virtual void Reset()
@@ -52,6 +73,14 @@ namespace MyBudget.Projections
 
         void EventAppeared(EventStoreCatchUpSubscription sub, ResolvedEvent evnt)
         {
+            if (ids.Contains(evnt.Event.EventId))
+                _duplicates++;
+
+            ids.Add(evnt.Event.EventId);
+
+            events.Add(evnt.Event);
+
+
             _totalCount++;
             dynamic ev = null;
             try
@@ -65,18 +94,26 @@ namespace MyBudget.Projections
             {
                 return;
             }
-            Dispatch(ev);
-            _succeded++;
-            _checkPoint = evnt.OriginalPosition.Value;
+            try
+            {
+                Dispatch(ev);
+                _succeded++;
+                _checkPoint = evnt.OriginalPosition.Value;
+            }
+            catch (Exception)
+            {
+                Debugger.Break();
+            }
+           
         }
 
 
         void SubscriptionDropped(EventStoreCatchUpSubscription sub, SubscriptionDropReason reason, Exception ex)
         {
-            
+            Start();
         }
 
-        public virtual void Dispatch(dynamic evnt)
+        protected virtual void Dispatch(dynamic evnt)
         {
             dynamic p = this;
             try
@@ -86,6 +123,14 @@ namespace MyBudget.Projections
             catch(Microsoft.CSharp.RuntimeBinder.RuntimeBinderException) { }
         }
 
+
+        public void Dispose()
+        {
+            if(_subscription != null)
+            {
+                _subscription.Stop(TimeSpan.FromSeconds(1));
+            }
+        }
     }
 
 }

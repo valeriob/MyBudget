@@ -5,6 +5,7 @@ using MyBudget.Domain.Users;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,9 +20,14 @@ namespace MyBudget.Projections
             : base(connection, credentials)
         {
         }
+        public BudgetsListProjection(IPEndPoint endpoint, UserCredentials credentials)
+            : base(endpoint, credentials)
+        {
+        }
 
 
-        public override void Dispatch(dynamic evnt)
+
+        protected override void Dispatch(dynamic evnt)
         {
             dynamic p = this;
             try
@@ -67,7 +73,7 @@ namespace MyBudget.Projections
 
         internal bool CanRead(UserId userId)
         {
-            return userId.ToString() == Id;
+            return userId.ToString() == Owner;
         }
     }
 

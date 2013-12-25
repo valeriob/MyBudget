@@ -51,7 +51,10 @@ namespace MyBudget.Domain.Users
             var other = obj as UserId;
             return other != null && other._id == _id;
         }
-
+        public override int GetHashCode()
+        {
+            return _id.GetHashCode();
+        }
         public static UserId CreateNew()
         {
             var id = "User-" + Guid.NewGuid();
@@ -63,14 +66,15 @@ namespace MyBudget.Domain.Users
     {
         public UserId UserId { get; set; }
         public UserLoginInfo LoginInfo { get; set; }
+        public string UserName { get; set; }
 
-
-        public UserCreated(Guid id, DateTime timestamp, UserId userId, UserLoginInfo loginInfo)
+        public UserCreated(Guid id, DateTime timestamp, UserId userId, UserLoginInfo loginInfo, string userName)
         {
             Id = id;
             Timestamp = timestamp;
             UserId = userId;
             LoginInfo = loginInfo;
+            UserName = userName;
         }
 
         //UserCreated(Guid id, DateTime timestamp, UserId userId, UserLoginInfo loginInfo) : base(id, timestamp)
@@ -92,12 +96,12 @@ namespace MyBudget.Domain.Users
         public User() : this(new UserState()) { }
 
 
-        public void Create(UserId userId, UserLoginInfo loginInfo)
+        public void Create(UserId userId, UserLoginInfo loginInfo, string userName)
         {
             if (string.IsNullOrEmpty(Id) == false)
                 throw new Exception("User already exists");
 
-            RaiseEvent(new UserCreated(Guid.NewGuid(), DateTime.Now, userId, loginInfo));
+            RaiseEvent(new UserCreated(Guid.NewGuid(), DateTime.Now, userId, loginInfo, userName));
         }
 
         protected override IMemento GetSnapshot()

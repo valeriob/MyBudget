@@ -4,6 +4,7 @@ using MyBudget.Domain.Lines;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,8 +22,14 @@ namespace MyBudget.Projections
             _budget = budget;
         }
 
+        public BudgetLinesProjection(string budget, IPEndPoint endpoint, UserCredentials credentials)
+            : base(endpoint, credentials)
+        {
+            _budget = budget;
+        }
 
-        public override void Dispatch(dynamic evnt)
+
+        protected override void Dispatch(dynamic evnt)
         {
             dynamic p = this;
             try

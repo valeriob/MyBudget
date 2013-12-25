@@ -18,7 +18,7 @@ namespace MyBudget.Tests
             var p = new MyProjection();
 
             dynamic evnt = new MyEvnt();
-            p.Dispatch(evnt);
+            p.FakeDispatch(evnt);
 
             Assert.AreEqual(evnt, p.EventAppened);
         }
@@ -34,7 +34,11 @@ namespace MyBudget.Tests
     {
         public MyEvnt EventAppened;
 
-        public override void Dispatch(dynamic evnt)
+        public void FakeDispatch(dynamic evnt)
+        {
+            Dispatch(evnt);
+        }
+        protected override void Dispatch(dynamic evnt)
         {
             dynamic p = this;
             try

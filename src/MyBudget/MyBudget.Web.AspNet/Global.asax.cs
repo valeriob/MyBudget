@@ -21,13 +21,15 @@ namespace MyBudget.Web.AspNet
         protected void Application_Start()
         {
             var cs = ConnectionSettings.Create();
-            
-            var con = EventStoreConnection.Create(new IPEndPoint(IPAddress.Loopback, 1113));
+
+            var address = new IPEndPoint(IPAddress.Loopback, 1113);
+            var con = EventStoreConnection.Create(address);
             con.Connect();
 
             var userCredentials = new EventStore.ClientAPI.SystemData.UserCredentials("admin", "changeit");
 
-            ProjectionManager = new ProjectionManager(con, userCredentials);
+            //ProjectionManager = new ProjectionManager(con, userCredentials);
+            ProjectionManager = new ProjectionManager(address, userCredentials);
             ProjectionManager.Run();
 
             CommandManager = new CommandManager(con);

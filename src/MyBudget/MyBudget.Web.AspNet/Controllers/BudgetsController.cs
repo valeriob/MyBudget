@@ -32,32 +32,30 @@ namespace MyBudget.Web.AspNet.Controllers
 
         public ActionResult Create()
         {
-            var model = new BudgetViewModel
+            var model = new CreateBudgetViewModel
             {
                 Id = BudgetId.Create().ToString(),
                 Name = "New Budget",
-                Owner = GetCurrentUserId().ToString(),
             };
             return View(model);
         }
 
         [HttpPost]
         //public ActionResult Create(FormCollection collection)
-        public ActionResult Create(BudgetViewModel model)
+        public ActionResult Create(CreateBudgetViewModel model)
         {
             try
             {
                 var handler = MvcApplication.CommandManager.Create<CreateBudget>();
-
                 handler.Handle(new CreateBudget
                 {
                     UserId = GetCurrentUserId().ToString(),
                     BudgetName = model.Name,
-                    BudgetId = model.Id,
+                    BudgetId = BudgetId.Create().ToString(),
                     Id = Guid.NewGuid(),
                     Timestamp = DateTime.Now,
                 });
-                // TODO: Add insert logic here
+
 
                 return RedirectToAction("Index");
             }
@@ -69,11 +67,11 @@ namespace MyBudget.Web.AspNet.Controllers
 
         public ActionResult Edit(int id)
         {
-            var model = new BudgetViewModel
-            {
+            //var model = new BudgetViewModel
+            //{
 
-            };
-            return View(model);
+            //};
+            return View();
         }
 
         [HttpPost]

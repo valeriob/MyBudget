@@ -39,9 +39,11 @@ namespace MyBudget.Domain.Budgets
         public string Name { get; private set; }
         public UserId Owner { get; private set; }
 
-        public BudgetCreated(BudgetId id, string name, UserId owner)
+        public BudgetCreated(Guid id, DateTime timestamp, BudgetId budgetId, string name, UserId owner)
         {
-            BudgetId = id;
+            Id = id;
+            Timestamp = timestamp;
+            BudgetId = budgetId;
             Name = name;
             Owner = owner;
         }
@@ -52,9 +54,9 @@ namespace MyBudget.Domain.Budgets
     {
         string _id;
 
-        public BudgetId(string id)
+        public BudgetId(string _id)
         {
-            _id = id;
+            this._id = _id;
         }
 
 
@@ -62,6 +64,20 @@ namespace MyBudget.Domain.Budgets
         {
             var id = "Budget-" + Guid.NewGuid();
             return new BudgetId(id);
+        }
+        public override string ToString()
+        {
+            return _id;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as BudgetId;
+            return other != null && other._id == _id;
+        }
+        public override int GetHashCode()
+        {
+            return _id.GetHashCode();
         }
     }
 
@@ -83,7 +99,7 @@ namespace MyBudget.Domain.Budgets
 
         public void Create(BudgetId id, string name, UserId owner)
         {
-            RaiseEvent(new BudgetCreated(id, name, owner));
+            RaiseEvent(new BudgetCreated(Guid.NewGuid(), DateTime.Now, id, name, owner));
         }
 
         public void AllowReadAccess(AccountId accountId)

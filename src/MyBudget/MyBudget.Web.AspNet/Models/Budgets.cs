@@ -18,12 +18,10 @@ namespace MyBudget.Web.AspNet.Models
     
     }
 
-    public class BudgetViewModel
+    public class CreateBudgetViewModel
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public DateTime Created { get; set; }
-        public string Owner { get; set; }
     }
 
 }
