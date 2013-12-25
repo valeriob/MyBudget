@@ -51,8 +51,13 @@ namespace MyBudget.Projections
             _connection = EventStore.ClientAPI.EventStoreConnection.Create(_endpoint);
             _connection.Connect();
             //var userCredentials = new EventStore.ClientAPI.SystemData.UserCredentials("admin","changeit");
-            _subscription = _connection.SubscribeToAllFrom(_checkPoint, true, EventAppeared, null, SubscriptionDropped, _credentials);
+            _subscription = _connection.SubscribeToAllFrom(_checkPoint, true, EventAppeared, Live, SubscriptionDropped, _credentials);
             _subscription.Start();
+        }
+
+        void Live(EventStoreCatchUpSubscription obj)
+        {
+            
         }
 
         public void Stop()
