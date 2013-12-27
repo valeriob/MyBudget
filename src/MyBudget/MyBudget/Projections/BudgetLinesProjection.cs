@@ -42,6 +42,8 @@ namespace MyBudget.Projections
 
         void When(LineCreated evnt)
         {
+            if (_lines.Any(l => l.Id == evnt.LineId.ToString()))
+                return;
             _lines.Add(new BudgetLine(evnt));
         }
 

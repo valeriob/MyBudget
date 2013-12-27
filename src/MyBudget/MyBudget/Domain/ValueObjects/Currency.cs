@@ -8,12 +8,24 @@ namespace MyBudget.Domain.ValueObjects
 {
     public class Currency
     {
-        string _name;
-        string _symbol;
-        public Currency(string symbol, string name)
+        public string IsoCode { get; private set; }
+        public string Sign { get; private set; }
+        public string Name { get; private set; }
+        
+        public Currency(string isoCode, string sign, string name)
         {
-            _symbol = symbol;
-            _name = name;
+            IsoCode = isoCode;
+            Sign = sign;
+            Name = name;
+        }
+
+        internal bool Is(string isoCode)
+        {
+            return IsoCode == isoCode;
+        }
+        public override string ToString()
+        {
+            return string.Format("{0}, {1}", IsoCode, Sign);
         }
     }
 
@@ -25,7 +37,12 @@ namespace MyBudget.Domain.ValueObjects
         }
         public static Currency Euro()
         {
-            return new Currency("€", "Euro");
+            return new Currency("EUR","€", "Euro");
+        }
+
+        public static Currency Parse(string isoCode)
+        {
+            return GetAll().Single(s => s.Is(isoCode));
         }
     }
 }

@@ -11,10 +11,15 @@ namespace MyBudget.Domain.ValueObjects
         decimal _amount;
         Currency _currency;
 
-        public Amount(Currency currency, decimal amount)
+        public Amount(Currency _currency, decimal _amount)
         {
-            _currency = currency;
-            _amount = amount;
+            this._currency = _currency;
+            this._amount = _amount;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0} {1}", _currency.Sign, _amount);
         }
     }
 

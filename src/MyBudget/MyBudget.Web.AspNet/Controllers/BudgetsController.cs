@@ -9,9 +9,9 @@ using System.Web.Mvc;
 
 namespace MyBudget.Web.AspNet.Controllers
 {
-    public class BudgetsController : MyBudgetController
+    public partial class BudgetsController : MyBudgetController
     {
-        public ActionResult Index()
+        public virtual ActionResult Index()
         {
             var readModel = MvcApplication.ProjectionManager.GetBudgetsList();
             var budgets = readModel.GetBudgetsUserCanView(GetCurrentUserId());
@@ -21,7 +21,7 @@ namespace MyBudget.Web.AspNet.Controllers
             return View(model);
         }
 
-        public ActionResult Details(string id)
+        public virtual ActionResult Details(string id)
         {
             var readModel = MvcApplication.ProjectionManager.GetBudgetsList();
             var budget = readModel.GetBudgetById(new BudgetId(id));
@@ -29,17 +29,17 @@ namespace MyBudget.Web.AspNet.Controllers
             return View(budget);
         }
 
-        public ActionResult Lines(string id)
-        {
-            var readModel = MvcApplication.ProjectionManager.GetBudgetLinesProjection(id);
-            var lines = readModel.GetAllLines();
-            var model = new BudgetLinesViewModel(lines);
+        //public ActionResult Lines(string id)
+        //{
+        //    var readModel = MvcApplication.ProjectionManager.GetBudgetLinesProjection(id);
+        //    var lines = readModel.GetAllLines();
+        //    var model = new BudgetLinesViewModel(id, lines);
 
-            return View(model);
-        }
+        //    return View(model);
+        //}
 
 
-        public ActionResult Create()
+        public virtual ActionResult Create()
         {
             var model = new CreateBudgetViewModel
             {
@@ -51,7 +51,7 @@ namespace MyBudget.Web.AspNet.Controllers
 
         [HttpPost]
         //public ActionResult Create(FormCollection collection)
-        public ActionResult Create(CreateBudgetViewModel model)
+        public virtual ActionResult Create(CreateBudgetViewModel model)
         {
             try
             {
@@ -65,7 +65,6 @@ namespace MyBudget.Web.AspNet.Controllers
                     Timestamp = DateTime.Now,
                 });
 
-
                 return RedirectToAction("Index");
             }
             catch
@@ -74,7 +73,7 @@ namespace MyBudget.Web.AspNet.Controllers
             }
         }
 
-        public ActionResult Edit(int id)
+        public virtual ActionResult Edit(int id)
         {
             //var model = new BudgetViewModel
             //{
@@ -84,7 +83,7 @@ namespace MyBudget.Web.AspNet.Controllers
         }
 
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public virtual ActionResult Edit(int id, FormCollection collection)
         {
             try
             {
@@ -99,14 +98,14 @@ namespace MyBudget.Web.AspNet.Controllers
         }
 
 
-        public ActionResult Delete(int id)
+        public virtual ActionResult Delete(int id)
         {
             return View();
         }
 
 
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public virtual ActionResult Delete(int id, FormCollection collection)
         {
             try
             {

@@ -7,21 +7,21 @@
 <h2>Lines</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create", "Lines")
+    @Html.ActionLink("Create New", "Create", new { id = Model.BudgetId })
 </p>
 <table class="table">
     <tr>
         <th>
-            Inserito
+            Date
         </th>
         <th>
-            Accaduto
+            Category
         </th>
         <th>
-            Categoria
+            Description
         </th>
         <th>
-            Descrizione
+            Amount
         </th>
         <th></th>
     </tr>
@@ -29,16 +29,16 @@
 @foreach (var item in Model.Lines) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Timestamp)
+            @item.Date
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Date)
+            @item.Category
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Category)
+            @item.Description
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Description)
+            @item.Amount
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |

@@ -1,6 +1,7 @@
 ﻿using CommonDomain;
 using CommonDomain.Core;
 using MyBudget.Domain.Budgets;
+using MyBudget.Domain.Users;
 using MyBudget.Domain.ValueObjects;
 using System;
 using System.Collections.Generic;
@@ -48,18 +49,20 @@ namespace MyBudget.Domain.Lines
         public DateTime Date { get; private set; }
         public string Category { get; private set; }
         public string Description { get; private set; }
+        public UserId CreatedBy { get; private set; }
 
-        public LineCreated(Guid id, DateTime timestamp, LineId lineId, BudgetId budgetId, Amount amount, DateTime date, string category, string desc)
+        public LineCreated(Guid id, DateTime timestamp, LineId lineId, BudgetId budgetId, Amount amount, DateTime date, string category, string description, UserId createdBy)
         {
             Id = id;
             Timestamp = timestamp;
 
             LineId = lineId;
             BudgetId = budgetId;
-            Date = Date;
+            Date = date;
             Amount = amount;
             Category = category;
-            Description = desc;
+            Description = description;
+            CreatedBy = createdBy;
         }
     }
 
@@ -133,15 +136,19 @@ namespace MyBudget.Domain.Lines
         public Line(LineState state)
         {
             _state = state;
+            Register<LineCreated>(e => Id = e.LineId.ToString());
         }
 
         public Line() : this(new LineState())
         {
         }
 
-        public void Create(LineId id, BudgetId budgetId, Expense expense)
+        public void Create(LineId id, BudgetId budgetId, Expense expense, UserId createdBy)
         {
-            RaiseEvent(new LineCreated(Guid.NewGuid(), DateTime.Now, id, budgetId, expense.Amount, expense.Timestamp, expense.Category, expense.Description));
+            if (string.IsNullOrEmpty(Id) == false)
+                throw new Exception("line already exists");
+
+            RaiseEvent(new LineCreated(Guid.NewGuid(), DateTime.Now, id, budgetId, expense.Amount, expense.Timestamp, expense.Category, expense.Description, createdBy));
         }
 
         public void Update(Expense expense)

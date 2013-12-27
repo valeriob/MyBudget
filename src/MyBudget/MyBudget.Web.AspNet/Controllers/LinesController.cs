@@ -1,4 +1,8 @@
-﻿using System;
+﻿using MyBudget.Commands;
+using MyBudget.Domain.Lines;
+using MyBudget.Domain.ValueObjects;
+using MyBudget.Web.AspNet.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -6,38 +10,57 @@ using System.Web.Mvc;
 
 namespace MyBudget.Web.AspNet.Controllers
 {
-    public class LinesController : Controller
+    public partial class LinesController : MyBudgetController
     {
-        //
-        // GET: /Lines/
-        public ActionResult Index()
+
+        public virtual ActionResult Index(string id)
+        {
+            var readModel = MvcApplication.ProjectionManager.GetBudgetLinesProjection(id);
+            var lines = readModel.GetAllLines();
+            var model = new BudgetLinesViewModel(id, lines);
+
+            return View(model);
+        }
+
+        public virtual ActionResult Details(int id)
         {
             return View();
         }
 
-        //
-        // GET: /Lines/Details/5
-        public ActionResult Details(int id)
+        public virtual ActionResult Create(string id)
         {
-            return View();
+            var model = new CreateBudgetLineViewModel 
+            {
+                BudgetId = id,
+                LineId = LineId.Create(new MyBudget.Domain.Budgets.BudgetId(id)).ToString(),
+                Date = DateTime.Now,
+                CurrencyISOCode = Currencies.Euro().IsoCode,
+            };
+            return View(model);
         }
 
-        //
-        // GET: /Lines/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        //
-        // POST: /Lines/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        //public ActionResult Create(FormCollection collection)
+        public virtual ActionResult Create(CreateBudgetLineViewModel model)
         {
             try
             {
-                // TODO: Add insert logic here
+                var handler = MvcApplication.CommandManager.Create<CreateLine>();
+                handler.Handle(new CreateLine
+                {
+                    UserId = GetCurrentUserId().ToString(),
+                    BudgetId = model.BudgetId.ToString(),
+                    LineId = model.LineId.ToString(),
+                    Date = model.Date,
+                    Amount = new Amount(Currencies.Parse(model.CurrencyISOCode), model.Amount),
+                    Category = model.Category,
+                    Description= model.Description,
 
+                    Id = Guid.NewGuid(),
+                    Timestamp = DateTime.Now,
+                });
+
+                return RedirectToAction(Actions.Index(model.BudgetId));
                 return RedirectToAction("Index");
             }
             catch
@@ -48,7 +71,7 @@ namespace MyBudget.Web.AspNet.Controllers
 
         //
         // GET: /Lines/Edit/5
-        public ActionResult Edit(int id)
+        public virtual ActionResult Edit(int id)
         {
             return View();
         }
@@ -56,7 +79,7 @@ namespace MyBudget.Web.AspNet.Controllers
         //
         // POST: /Lines/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public virtual ActionResult Edit(int id, FormCollection collection)
         {
             try
             {
@@ -72,7 +95,7 @@ namespace MyBudget.Web.AspNet.Controllers
 
         //
         // GET: /Lines/Delete/5
-        public ActionResult Delete(int id)
+        public virtual ActionResult Delete(int id)
         {
             return View();
         }
@@ -80,7 +103,7 @@ namespace MyBudget.Web.AspNet.Controllers
         //
         // POST: /Lines/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public virtual ActionResult Delete(int id, FormCollection collection)
         {
             try
             {

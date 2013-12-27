@@ -5,16 +5,19 @@ using System.Linq;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
 
 namespace MyBudget.Web.AspNet.Controllers
 {
-    public class MyBudgetController : Controller
+    public partial class MyBudgetController : Controller
     {
         UserId _userId;
 
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            var userId = Thread.CurrentPrincipal.Identity.Name;
+            //var userId = Thread.CurrentPrincipal.Identity.Name;
+
+            var userId = User.Identity.GetUserId();
 
             var users = MvcApplication.ProjectionManager.GetUsersList();
             var user = users.FindById(userId);

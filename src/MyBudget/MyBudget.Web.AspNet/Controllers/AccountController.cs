@@ -34,7 +34,7 @@ namespace MyBudget.Web.AspNet.Controllers
             return new ApplicationUser
             {
                 Id = map.Id,
-                UserName = map.Id,
+                UserName = map.UserName,
             };
             //return new ApplicationUser 
             //{ 
@@ -59,9 +59,12 @@ namespace MyBudget.Web.AspNet.Controllers
 
         public async Task<ClaimsIdentity> CreateIdentityAsync(ApplicationUser user, string cookies)
         {
-            var t = new System.Security.Principal.GenericIdentity(user.Id, cookies);
+            //var t = new System.Security.Principal.GenericIdentity(user.Id, cookies);
+            //var c2 = new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier", Guid.NewGuid() + "");
+            //var c1 = new Claim("http://schemas.microsoft.com/accesscontrolservice/2010/07/claims/identityprovider", "ASP.NET Identity");
 
-            var c2 = new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier", Guid.NewGuid() + "");
+            var t = new System.Security.Principal.GenericIdentity(user.UserName, cookies);
+            var c2 = new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier", user.Id + "");
             var c1 = new Claim("http://schemas.microsoft.com/accesscontrolservice/2010/07/claims/identityprovider", "ASP.NET Identity");
 
             return new ClaimsIdentity(t, new []{c1, c2});
@@ -80,7 +83,7 @@ namespace MyBudget.Web.AspNet.Controllers
     }
 
     [Authorize]
-    public class AccountController : Controller
+    public partial class AccountController : Controller
     {
         public MyUserManager UserManager { get; private set; }
 
@@ -91,7 +94,7 @@ namespace MyBudget.Web.AspNet.Controllers
         //
         // GET: /Account/Login
         [AllowAnonymous]
-        public ActionResult Login(string returnUrl)
+        public virtual ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
             return View();
@@ -103,7 +106,7 @@ namespace MyBudget.Web.AspNet.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult ExternalLogin(string provider, string returnUrl)
+        public virtual ActionResult ExternalLogin(string provider, string returnUrl)
         {
             // Request a redirect to the external login provider
             return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
@@ -112,7 +115,7 @@ namespace MyBudget.Web.AspNet.Controllers
         //
         // GET: /Account/ExternalLoginCallback
         [AllowAnonymous]
-        public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
+        public virtual async Task<ActionResult> ExternalLoginCallback(string returnUrl)
         {
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
             var externalIdentity = await AuthenticationManager.GetExternalIdentityAsync(DefaultAuthenticationTypes.ExternalCookie);
@@ -144,7 +147,7 @@ namespace MyBudget.Web.AspNet.Controllers
         // POST: /Account/LinkLogin
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult LinkLogin(string provider)
+        public virtual ActionResult LinkLogin(string provider)
         {
             // Request a redirect to the external login provider to link a login for the current user
             return new ChallengeResult(provider, Url.Action("LinkLoginCallback", "Account"), User.Identity.GetUserId());
@@ -152,7 +155,7 @@ namespace MyBudget.Web.AspNet.Controllers
 
         //
         // GET: /Account/LinkLoginCallback
-        public async Task<ActionResult> LinkLoginCallback()
+        public virtual async Task<ActionResult> LinkLoginCallback()
         {
             var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync(XsrfKey, User.Identity.GetUserId());
             if (loginInfo == null)
@@ -172,7 +175,7 @@ namespace MyBudget.Web.AspNet.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl)
+        public virtual async Task<ActionResult> ExternalLoginConfirmation(ExternalLoginConfirmationViewModel model, string returnUrl)
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -216,7 +219,7 @@ namespace MyBudget.Web.AspNet.Controllers
         // POST: /Account/LogOff
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult LogOff()
+        public virtual ActionResult LogOff()
         {
             AuthenticationManager.SignOut();
             return RedirectToAction("Index", "Home");
@@ -225,7 +228,7 @@ namespace MyBudget.Web.AspNet.Controllers
         //
         // GET: /Account/ExternalLoginFailure
         [AllowAnonymous]
-        public ActionResult ExternalLoginFailure()
+        public virtual ActionResult ExternalLoginFailure()
         {
             return View();
         }

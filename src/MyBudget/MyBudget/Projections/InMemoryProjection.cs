@@ -17,11 +17,12 @@ namespace MyBudget.Projections
     {
         static readonly string EventClrTypeHeader = "EventClrTypeName";
         UserCredentials _credentials;
+        string _streamName;
         IEventStoreConnection _connection;
+
         IPEndPoint _endpoint;
         Position? _checkPoint;
         int? _lastEventNumber;
-
         EventStoreCatchUpSubscription _subscription;
 
         int _totalCount;
@@ -29,8 +30,8 @@ namespace MyBudget.Projections
         int _duplicates;
         HashSet<Guid> ids = new HashSet<Guid>();
         HashSet<RecordedEvent> events = new HashSet<RecordedEvent>();
-        string _streamName;
 
+        public bool HasCaughtUp { get; private set; }
 
         public InMemoryProjection()
         {
@@ -66,6 +67,7 @@ namespace MyBudget.Projections
 
         public void Start()
         {
+            HasCaughtUp = false;
             _connection = EventStore.ClientAPI.EventStoreConnection.Create(_endpoint);
             _connection.Connect();
 
@@ -79,11 +81,12 @@ namespace MyBudget.Projections
 
         void Live(EventStoreCatchUpSubscription obj)
         {
-            
+            HasCaughtUp = true;
         }
 
         public void Stop()
         {
+            HasCaughtUp = false;
             try
             {
                 _subscription.Stop(TimeSpan.MaxValue);
@@ -102,13 +105,10 @@ namespace MyBudget.Projections
         {
             if (ids.Contains(evnt.Event.EventId))
                 _duplicates++;
-
             ids.Add(evnt.Event.EventId);
-
             events.Add(evnt.Event);
-
-
             _totalCount++;
+
             dynamic ev = null;
             try
             {
@@ -144,12 +144,6 @@ namespace MyBudget.Projections
 
         protected virtual void Dispatch(dynamic evnt)
         {
-            dynamic p = this;
-            try
-            {
-                p.When(evnt);
-            }
-            catch(Microsoft.CSharp.RuntimeBinder.RuntimeBinderException) { }
         }
 
 
