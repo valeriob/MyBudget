@@ -62,7 +62,7 @@ namespace MyBudget.Domain.Budgets
 
         public static BudgetId Create()
         {
-            var id = "Budget-" + Guid.NewGuid();
+            var id = "Budgets-" + Guid.NewGuid().ToString().Replace('-','_');
             return new BudgetId(id);
         }
         public override string ToString()

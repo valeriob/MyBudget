@@ -57,7 +57,7 @@ namespace MyBudget.Domain.Users
         }
         public static UserId CreateNew()
         {
-            var id = "User-" + Guid.NewGuid();
+            var id = "Users-" + Guid.NewGuid().ToString().Replace('-', '_');
             return new UserId(id);
         }
     }

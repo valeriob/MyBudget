@@ -45,15 +45,18 @@ namespace MyBudget.Domain.Lines
         public LineId LineId { get; private set; }
         public BudgetId BudgetId { get; private set; }
         public Amount Amount { get; private set; }
-        public DateTime Timestamp { get; private set; }
+        public DateTime Date { get; private set; }
         public string Category { get; private set; }
         public string Description { get; private set; }
 
-        public LineCreated(LineId lineId, BudgetId budgetId, Amount amount, DateTime timespan, string category, string desc)
+        public LineCreated(Guid id, DateTime timestamp, LineId lineId, BudgetId budgetId, Amount amount, DateTime date, string category, string desc)
         {
+            Id = id;
+            Timestamp = timestamp;
+
             LineId = lineId;
             BudgetId = budgetId;
-            Timestamp = Timestamp;
+            Date = Date;
             Amount = amount;
             Category = category;
             Description = desc;
@@ -93,17 +96,34 @@ namespace MyBudget.Domain.Lines
     }
 
 
-
     public class LineId
     {
         string _id;
-        public LineId(string id)
+
+        public LineId(string _id)
         {
-            _id = id;
+            this._id = _id;
         }
-        public LineId()
+
+
+        public static LineId Create(BudgetId budgetId)
         {
-            _id = "Line-" + Guid.NewGuid();
+            var id = "Lines-" + Guid.NewGuid().ToString().Replace('-', '_');
+            return new LineId(id);
+        }
+        public override string ToString()
+        {
+            return _id;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as LineId;
+            return other != null && other._id == _id;
+        }
+        public override int GetHashCode()
+        {
+            return _id.GetHashCode();
         }
     }
 
@@ -121,7 +141,7 @@ namespace MyBudget.Domain.Lines
 
         public void Create(LineId id, BudgetId budgetId, Expense expense)
         {
-            RaiseEvent(new LineCreated(id, budgetId, expense.Amount, expense.Timestamp, expense.Category, expense.Description));
+            RaiseEvent(new LineCreated(Guid.NewGuid(), DateTime.Now, id, budgetId, expense.Amount, expense.Timestamp, expense.Category, expense.Description));
         }
 
         public void Update(Expense expense)

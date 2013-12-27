@@ -16,31 +16,34 @@ namespace MyBudget.Projections
         UserCredentials _credentials;
         UsersListProjection _users;
         BudgetsListProjection _budgets;
+        Dictionary<string, BudgetLinesProjection> _budgetLines;
 
-        public ProjectionManager(IPEndPoint endpoint, UserCredentials credentials)
+
+        ProjectionManager(UserCredentials credentials)
+        {
+            _credentials = credentials;
+          
+            _budgetLines = new Dictionary<string, BudgetLinesProjection>();
+        }
+        public ProjectionManager(IPEndPoint endpoint, UserCredentials credentials) 
+            : this(credentials)
         {
             _endpoint = endpoint;
-            _credentials = credentials;
-
-            _users = new UsersListProjection(_endpoint, credentials);
-            _budgets = new BudgetsListProjection(_endpoint, credentials);
-
         }
         public ProjectionManager(IEventStoreConnection connection, UserCredentials credentials)
+            : this(credentials)
         {
             _connection = connection;
-            _credentials = credentials;
-            _users = new UsersListProjection(_endpoint, credentials);
-            _budgets = new BudgetsListProjection(_endpoint, credentials);
-        }
-
-        IEventStoreConnection CreateConnection()
-        {
-            return EventStoreConnection.Create(_endpoint);
         }
 
         public void Run()
         {
+            _users = new UsersListProjection(_endpoint, _credentials, null);
+            _budgets = new BudgetsListProjection(_endpoint, _credentials, null);
+
+            //_users = new UsersListProjection(_endpoint, _credentials, "$category-Users");
+            //_budgets = new BudgetsListProjection(_endpoint, _credentials, "$category-Budgets");
+
             _users.Start();
             _budgets.Start();
         }
@@ -53,6 +56,16 @@ namespace MyBudget.Projections
         public BudgetsListProjection GetBudgetsList()
         {
             return _budgets;
+        }
+
+        public BudgetLinesProjection GetBudgetLinesProjection(string budgetId)
+        {
+            BudgetLinesProjection blp = null;
+
+            if (_budgetLines.TryGetValue(budgetId, out blp) == false)
+                _budgetLines[budgetId] = new BudgetLinesProjection(budgetId, _endpoint, _credentials);
+
+            return blp;
         }
 
     }

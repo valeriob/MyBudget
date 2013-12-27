@@ -29,6 +29,15 @@ namespace MyBudget.Web.AspNet.Controllers
             return View(budget);
         }
 
+        public ActionResult Lines(string id)
+        {
+            var readModel = MvcApplication.ProjectionManager.GetBudgetLinesProjection(id);
+            var lines = readModel.GetAllLines();
+            var model = new BudgetLinesViewModel(lines);
+
+            return View(model);
+        }
+
 
         public ActionResult Create()
         {

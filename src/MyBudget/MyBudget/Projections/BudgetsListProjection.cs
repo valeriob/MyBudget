@@ -16,12 +16,12 @@ namespace MyBudget.Projections
         Dictionary<string, Budget> _budgets = new Dictionary<string, Budget>();
 
 
-        public BudgetsListProjection(IEventStoreConnection connection, UserCredentials credentials)
-            : base(connection, credentials)
+        public BudgetsListProjection(IEventStoreConnection connection, UserCredentials credentials, string streamName)
+            : base(connection, credentials, streamName)
         {
         }
-        public BudgetsListProjection(IPEndPoint endpoint, UserCredentials credentials)
-            : base(endpoint, credentials)
+        public BudgetsListProjection(IPEndPoint endpoint, UserCredentials credentials, string streamName)
+            : base(endpoint, credentials, streamName)
         {
         }
 
@@ -29,16 +29,17 @@ namespace MyBudget.Projections
 
         protected override void Dispatch(dynamic evnt)
         {
-            dynamic p = this;
             try
             {
-                p.When(evnt);
+                ((dynamic)this).When(evnt);
             }
             catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException) { }
         }
 
         public void When(BudgetCreated evnt)
         {
+            if (_budgets.ContainsKey(evnt.BudgetId.ToString()))
+                return;
             var s = new Budget();
             s.Apply(evnt);
             _budgets.Add(evnt.BudgetId.ToString(), s);

@@ -1,4 +1,5 @@
 ﻿using EventStore.ClientAPI;
+using EventStore.ClientAPI.SystemData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,24 +14,53 @@ namespace ES_Subscription
     {
         static void Main(string[] args)
         {
-            var userCredentials = new EventStore.ClientAPI.SystemData.UserCredentials("admin", "changeit");
+            var userCredentials = new UserCredentials("admin", "changeit");
 
             var address = new IPEndPoint(IPAddress.Loopback, 1113);
             var con = EventStoreConnection.Create(address);
             con.Connect();
 
-            var sub = con.SubscribeToAllFrom(Position.Start, true, Appeared, Live, Dropped, userCredentials);
+           // FromAll(con, userCredentials);
+            FromStream(con, userCredentials);
+        }
+
+        static void FromStream(IEventStoreConnection con, UserCredentials userCredentials)
+        {
+            var sub = con.SubscribeToStreamFrom("$category-Users", null, true, Appeared, Live, Dropped, userCredentials);
             sub.Start();
 
-            var read = con.ReadAllEventsForward(Position.Start, 100, true, userCredentials);
+            //var read = con.ReadStreamEventsForward("$category-Users", 0, 1000, true, userCredentials);
             var mre = new ManualResetEvent(false);
             mre.WaitOne(3000);
 
             var rgpsa = events.GroupBy(g => g.Event.EventId).ToList();
-            int i =0;
+            int i = 0;
             var rgps = events.Select(s => new { s, position = i++ }).GroupBy(g => g.s.Event.EventId).ToList();
+            //var rgps2 = read.Events.Select(s => new { s, position = i++ }).GroupBy(g => g.s.Event.EventId).ToList();
 
-            foreach(var r in rgps)
+            foreach (var r in rgps)
+            {
+                var values = r.ToArray();
+
+            }
+            Console.ReadLine();
+        }
+
+        static void FromAll(IEventStoreConnection con, UserCredentials userCredentials)
+        {
+            var sub = con.SubscribeToAllFrom(Position.Start, true, Appeared, Live, Dropped, userCredentials);
+            sub.Start();
+
+            var read = con.ReadAllEventsForward(Position.Start, 1000, true, userCredentials);
+            var mre = new ManualResetEvent(false);
+            mre.WaitOne(3000);
+
+            var rgpsa = events.GroupBy(g => g.Event.EventId).ToList();
+            int i = 0;
+            var rgps = events.Select(s => new { s, position = i++ }).GroupBy(g => g.s.Event.EventId).ToList();
+            var rgps2 = read.Events.Select(s => new { s, position = i++ }).GroupBy(g => g.s.Event.EventId).ToList();
+
+            foreach (var r in rgps)
             {
                 var values = r.ToArray();
 

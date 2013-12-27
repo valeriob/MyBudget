@@ -20,13 +20,17 @@ namespace MyBudget.Projections
         IEventStoreConnection _connection;
         IPEndPoint _endpoint;
         Position? _checkPoint;
-        EventStoreAllCatchUpSubscription _subscription;
+        int? _lastEventNumber;
+
+        EventStoreCatchUpSubscription _subscription;
 
         int _totalCount;
         int _succeded;
         int _duplicates;
         HashSet<Guid> ids = new HashSet<Guid>();
         HashSet<RecordedEvent> events = new HashSet<RecordedEvent>();
+        string _streamName;
+
 
         public InMemoryProjection()
         {
@@ -45,13 +49,31 @@ namespace MyBudget.Projections
             _credentials = credentials;
         }
 
+        public InMemoryProjection(IPEndPoint endpoint, UserCredentials credentials, string streamName)
+        {
+            _endpoint = endpoint;
+            _credentials = credentials;
+            _streamName = streamName;
+        }
+
+        public InMemoryProjection(IEventStoreConnection connection, UserCredentials credentials, string streamName)
+        {
+            _connection = connection;
+            _credentials = credentials;
+            _streamName = streamName;
+        }
+
 
         public void Start()
         {
             _connection = EventStore.ClientAPI.EventStoreConnection.Create(_endpoint);
             _connection.Connect();
-            //var userCredentials = new EventStore.ClientAPI.SystemData.UserCredentials("admin","changeit");
-            _subscription = _connection.SubscribeToAllFrom(_checkPoint, true, EventAppeared, Live, SubscriptionDropped, _credentials);
+
+            if (string.IsNullOrEmpty(_streamName))
+                _subscription = _connection.SubscribeToAllFrom(_checkPoint, true, EventAppeared, Live, SubscriptionDropped, _credentials);
+            else
+                _subscription = _connection.SubscribeToStreamFrom(_streamName, _lastEventNumber, true, EventAppeared, Live, SubscriptionDropped, _credentials);
+
             _subscription.Start();
         }
 
@@ -92,7 +114,8 @@ namespace MyBudget.Projections
             {
                 var metadata = evnt.Event.Metadata;
                 var data = evnt.Event.Data;
-                var eventClrTypeName = JObject.Parse(Encoding.UTF8.GetString(metadata)).Property(EventClrTypeHeader).Value;
+                var jmeta = JObject.Parse(Encoding.UTF8.GetString(metadata));
+                var eventClrTypeName = jmeta.Property(EventClrTypeHeader).Value;
                 ev = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(data), Type.GetType((string)eventClrTypeName));
             }
             catch
@@ -104,6 +127,7 @@ namespace MyBudget.Projections
                 Dispatch(ev);
                 _succeded++;
                 _checkPoint = evnt.OriginalPosition.Value;
+                _lastEventNumber = evnt.OriginalEventNumber;
             }
             catch (Exception)
             {

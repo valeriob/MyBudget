@@ -15,29 +15,33 @@ namespace MyBudget.Projections
     {
         Dictionary<string, User> _users;
 
-        public UsersListProjection(IEventStoreConnection connection, UserCredentials credentials):base(connection, credentials)
+
+        public UsersListProjection(IEventStoreConnection connection, UserCredentials credentials, string streamName)
+            : base(connection, credentials, streamName)
         {
             _users = new Dictionary<string, User>();
         }
 
-        public UsersListProjection(IPEndPoint endpoint, UserCredentials credentials)
-            : base(endpoint, credentials)
+        public UsersListProjection(IPEndPoint endpoint, UserCredentials credentials, string streamName)
+            : base(endpoint, credentials, streamName)
         {
             _users = new Dictionary<string, User>();
         }
+
 
         protected override void Dispatch(dynamic evnt)
         {
-            dynamic p = this;
             try
             {
-                p.When(evnt);
+                ((dynamic)this).When(evnt);
             }
-            catch(Microsoft.CSharp.RuntimeBinder.RuntimeBinderException) { }
+            catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException) { }
         }
 
         void When(UserCreated evnt)
         {
+            if (_users.ContainsKey(evnt.UserId.ToString()))
+                return;
             var s = new User();
             s.Apply(evnt);
             _users.Add(evnt.UserId.ToString(), s);

@@ -24,4 +24,13 @@ namespace MyBudget.Web.AspNet.Models
         public string Name { get; set; }
     }
 
+    public class BudgetLinesViewModel
+    {
+        public IEnumerable<BudgetLine> Lines { get; private set; }
+
+        public BudgetLinesViewModel(IEnumerable<BudgetLine> lines)
+        {
+            Lines = lines;
+        }
+    }
 }
