@@ -66,6 +66,7 @@
     <Compile Include="Infrastructure\ISerialize.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="Projections\BudgetLinesProjection.cs" />
+    <Compile Include="Projections\CategoriesProjection.cs" />
     <Compile Include="Projections\ProjectionManager.cs" />
     <Compile Include="Projections\UsersListProjection.cs" />
     <Compile Include="Projections\BudgetsListProjection.cs" />

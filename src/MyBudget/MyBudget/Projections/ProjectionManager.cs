@@ -16,6 +16,7 @@ namespace MyBudget.Projections
         UserCredentials _credentials;
         UsersListProjection _users;
         BudgetsListProjection _budgets;
+        CategoriesProjection _categories;
         Dictionary<string, BudgetLinesProjection> _budgetLines;
 
 
@@ -40,12 +41,13 @@ namespace MyBudget.Projections
         {
             _users = new UsersListProjection(_endpoint, _credentials, null);
             _budgets = new BudgetsListProjection(_endpoint, _credentials, null);
-
+            _categories = new CategoriesProjection(_endpoint, _credentials, null);
             //_users = new UsersListProjection(_endpoint, _credentials, "$category-Users");
             //_budgets = new BudgetsListProjection(_endpoint, _credentials, "$category-Budgets");
 
             _users.Start();
             _budgets.Start();
+            _categories.Start();
         }
 
         public UsersListProjection GetUsersList()
@@ -56,6 +58,10 @@ namespace MyBudget.Projections
         public BudgetsListProjection GetBudgetsList()
         {
             return _budgets;
+        }
+        public CategoriesProjection GetCategories()
+        {
+            return _categories;
         }
 
         public BudgetLinesProjection GetBudgetLinesProjection(string budgetId)
