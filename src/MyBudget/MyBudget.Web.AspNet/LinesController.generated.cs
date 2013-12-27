@@ -139,8 +139,10 @@ namespace MyBudget.Web.AspNet.Controllers
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public class ActionParamsClass_Edit
         {
+            public readonly string budgetId = "budgetId";
+            public readonly string lineId = "lineId";
             public readonly string id = "id";
-            public readonly string collection = "collection";
+            public readonly string model = "model";
         }
         static readonly ActionParamsClass_Delete s_params_Delete = new ActionParamsClass_Delete();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -214,24 +216,25 @@ namespace MyBudget.Web.AspNet.Controllers
             return callInfo;
         }
 
-        partial void EditOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, int id);
+        partial void EditOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string budgetId, string lineId);
 
-        public override System.Web.Mvc.ActionResult Edit(int id)
+        public override System.Web.Mvc.ActionResult Edit(string budgetId, string lineId)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Edit);
-            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
-            EditOverride(callInfo, id);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "budgetId", budgetId);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "lineId", lineId);
+            EditOverride(callInfo, budgetId, lineId);
             return callInfo;
         }
 
-        partial void EditOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, int id, System.Web.Mvc.FormCollection collection);
+        partial void EditOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string id, MyBudget.Web.AspNet.Models.EditBudgetLineViewModel model);
 
-        public override System.Web.Mvc.ActionResult Edit(int id, System.Web.Mvc.FormCollection collection)
+        public override System.Web.Mvc.ActionResult Edit(string id, MyBudget.Web.AspNet.Models.EditBudgetLineViewModel model)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Edit);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
-            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "collection", collection);
-            EditOverride(callInfo, id, collection);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
+            EditOverride(callInfo, id, model);
             return callInfo;
         }
 

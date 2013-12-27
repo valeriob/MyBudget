@@ -74,15 +74,20 @@ namespace MyBudget.Domain.Lines
         public DateTime Timestamp { get; private set; }
         public string Category { get; private set; }
         public string Description { get; private set; }
+        public UserId UpdatedBy { get; private set; }
 
-        public LineExpenseChanged(LineId lineId, BudgetId budgetId, Amount amount, DateTime timespan, string category, string desc)
+
+        public LineExpenseChanged(Guid id, DateTime timestamp, LineId lineId, BudgetId budgetId, Amount amount, DateTime timespan, string category, string description, UserId updatedBy)
         {
+            Id = id;
+            Timestamp = timestamp;
             LineId = lineId;
             BudgetId = budgetId;
             Timestamp = Timestamp;
             Amount = amount;
             Category = category;
-            Description = desc;
+            Description = description;
+            UpdatedBy = updatedBy;
         }
     }
 
@@ -90,11 +95,17 @@ namespace MyBudget.Domain.Lines
     {
         public LineId LineId { get; private set; }
         public BudgetId BudgetId { get; private set; }
+        public UserId UserId { get; private set; }
+        public LineId ObsoletedFor { get; set; }
 
-        public LineMarkedObsolete(LineId lineId, BudgetId budget)
+        public LineMarkedObsolete(Guid id, DateTime timestamp, LineId lineId, BudgetId budget, UserId userId, LineId obsoletedFor)
         {
+            Id = id;
+            Timestamp = timestamp;
             LineId = lineId;
             BudgetId = budget;
+            UserId = userId;
+            ObsoletedFor = obsoletedFor;
         }
     }
 
@@ -139,7 +150,8 @@ namespace MyBudget.Domain.Lines
             Register<LineCreated>(e => Id = e.LineId.ToString());
         }
 
-        public Line() : this(new LineState())
+        public Line()
+            : this(new LineState())
         {
         }
 
@@ -151,14 +163,20 @@ namespace MyBudget.Domain.Lines
             RaiseEvent(new LineCreated(Guid.NewGuid(), DateTime.Now, id, budgetId, expense.Amount, expense.Timestamp, expense.Category, expense.Description, createdBy));
         }
 
-        public void Update(Expense expense)
+        public void Update(Expense expense, UserId updatedBy)
         {
-            RaiseEvent(new LineExpenseChanged(_state.GetLineId(), _state.GetBudgetId(), expense.Amount, expense.Timestamp, expense.Category, expense.Description));
+            if (string.IsNullOrEmpty(Id))
+                throw new Exception("line does not exists");
+
+            RaiseEvent(new LineExpenseChanged(Guid.NewGuid(), DateTime.Now, _state.GetLineId(), _state.GetBudgetId(), expense.Amount, expense.Timestamp, expense.Category, expense.Description, updatedBy));
         }
 
-        public void MarkObsolete()
+        public void MarkObsolete(UserId userId, LineId obsoletedFor)
         {
-            RaiseEvent(new LineMarkedObsolete(_state.GetLineId(), _state.GetBudgetId()));
+            if (string.IsNullOrEmpty(Id) == false)
+                throw new Exception("line does not exists");
+
+            RaiseEvent(new LineMarkedObsolete(Guid.NewGuid(), DateTime.Now, _state.GetLineId(), _state.GetBudgetId(), userId, obsoletedFor));
         }
 
 

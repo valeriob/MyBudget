@@ -40,7 +40,6 @@ namespace MyBudget.Web.AspNet.Controllers
         }
 
         [HttpPost]
-        //public ActionResult Create(FormCollection collection)
         public virtual ActionResult Create(CreateBudgetLineViewModel model)
         {
             try
@@ -61,7 +60,6 @@ namespace MyBudget.Web.AspNet.Controllers
                 });
 
                 return RedirectToAction(Actions.Index(model.BudgetId));
-                return RedirectToAction("Index");
             }
             catch
             {
@@ -69,23 +67,36 @@ namespace MyBudget.Web.AspNet.Controllers
             }
         }
 
-        //
-        // GET: /Lines/Edit/5
-        public virtual ActionResult Edit(int id)
+        public virtual ActionResult Edit(string budgetId, string lineId)
         {
-            return View();
+            var readModel = MvcApplication.ProjectionManager.GetBudgetLinesProjection(budgetId);
+            var line = readModel.GetLine(lineId);
+
+            var model = new EditBudgetLineViewModel(budgetId, line);
+            return View(model);
         }
 
-        //
-        // POST: /Lines/Edit/5
         [HttpPost]
-        public virtual ActionResult Edit(int id, FormCollection collection)
+        public virtual ActionResult Edit(string id, EditBudgetLineViewModel model)
         {
             try
             {
-                // TODO: Add update logic here
+                var handler = MvcApplication.CommandManager.Create<UpdateLine>();
+                handler.Handle(new UpdateLine
+                {
+                    UserId = GetCurrentUserId().ToString(),
+                    BudgetId = model.BudgetId.ToString(),
+                    LineId = model.LineId.ToString(),
+                    Date = model.Date,
+                    Amount = new Amount(Currencies.Parse(model.CurrencyISOCode), model.Amount),
+                    Category = model.Category,
+                    Description = model.Description,
 
-                return RedirectToAction("Index");
+                    Id = Guid.NewGuid(),
+                    Timestamp = DateTime.Now,
+                });
+
+                return RedirectToAction(Actions.Index(model.BudgetId));
             }
             catch
             {
@@ -93,15 +104,12 @@ namespace MyBudget.Web.AspNet.Controllers
             }
         }
 
-        //
-        // GET: /Lines/Delete/5
+
         public virtual ActionResult Delete(int id)
         {
             return View();
         }
 
-        //
-        // POST: /Lines/Delete/5
         [HttpPost]
         public virtual ActionResult Delete(int id, FormCollection collection)
         {
@@ -116,5 +124,7 @@ namespace MyBudget.Web.AspNet.Controllers
                 return View();
             }
         }
+
     }
+
 }

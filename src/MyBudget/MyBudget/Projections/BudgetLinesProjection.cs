@@ -51,6 +51,11 @@ namespace MyBudget.Projections
         {
             return _lines;
         }
+
+        public BudgetLine GetLine(string id)
+        {
+            return _lines.Single(l => l.Id == id);
+        }
     }
 
     public class BudgetLine
