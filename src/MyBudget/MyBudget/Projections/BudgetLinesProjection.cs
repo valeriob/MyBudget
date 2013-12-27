@@ -62,6 +62,12 @@ namespace MyBudget.Projections
         {
             return _lines.Single(l => l.Id == id);
         }
+
+        public IEnumerable<dynamic> GetLineEvents(string lineId)
+        {
+            var slice = GetConnection().ReadStreamEventsForward(lineId, 0, int.MaxValue, true, GetUserCredentials());
+            return GetEventsFrom(slice);
+        }
     }
 
     public class BudgetLine

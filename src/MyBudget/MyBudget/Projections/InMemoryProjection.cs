@@ -109,19 +109,11 @@ namespace MyBudget.Projections
             events.Add(evnt.Event);
             _totalCount++;
 
-            dynamic ev = null;
-            try
-            {
-                var metadata = evnt.Event.Metadata;
-                var data = evnt.Event.Data;
-                var jmeta = JObject.Parse(Encoding.UTF8.GetString(metadata));
-                var eventClrTypeName = jmeta.Property(EventClrTypeHeader).Value;
-                ev = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(data), Type.GetType((string)eventClrTypeName));
-            }
-            catch
-            {
+
+            dynamic ev = TryGetDomainEvent(evnt);
+            if (ev == null)
                 return;
-            }
+
             try
             {
                 lock (this)
@@ -139,6 +131,37 @@ namespace MyBudget.Projections
            
         }
 
+        protected IEnumerable<dynamic> GetEventsFrom(StreamEventsSlice slice)
+        {
+            foreach(var evnt in slice.Events)
+            {
+                var r = TryGetDomainEvent(evnt);
+                if (r != null)
+                    yield return r;
+            }
+        }
+
+        dynamic TryGetDomainEvent(ResolvedEvent evnt)
+        {
+            try
+            {
+                return GetDomainEvent(evnt);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        dynamic GetDomainEvent(ResolvedEvent evnt)
+        {
+            var metadata = evnt.Event.Metadata;
+            var data = evnt.Event.Data;
+            var jmeta = JObject.Parse(Encoding.UTF8.GetString(metadata));
+            var eventClrTypeName = jmeta.Property(EventClrTypeHeader).Value;
+            dynamic ev = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(data), Type.GetType((string)eventClrTypeName));
+            return ev;
+        }
+
 
         void SubscriptionDropped(EventStoreCatchUpSubscription sub, SubscriptionDropReason reason, Exception ex)
         {
@@ -149,6 +172,15 @@ namespace MyBudget.Projections
         {
         }
 
+        protected IEventStoreConnection GetConnection()
+        {
+            return _connection;
+        }
+
+        protected UserCredentials GetUserCredentials()
+        {
+            return _credentials;
+        }
 
         public void Dispose()
         {

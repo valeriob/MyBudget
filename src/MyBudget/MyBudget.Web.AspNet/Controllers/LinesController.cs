@@ -70,9 +70,9 @@ namespace MyBudget.Web.AspNet.Controllers
         public virtual ActionResult Edit(string budgetId, string lineId)
         {
             var readModel = MvcApplication.ProjectionManager.GetBudgetLinesProjection(budgetId);
-            var line = readModel.GetLine(lineId);
-
-            var model = new EditBudgetLineViewModel(budgetId, line);
+           // var line = readModel.GetLine(lineId);
+            //var model = new EditBudgetLineViewModel(budgetId, line);
+            var model = new EditBudgetLineViewModel(readModel.GetLineEvents(lineId));
             return View(model);
         }
 
@@ -81,9 +81,6 @@ namespace MyBudget.Web.AspNet.Controllers
         {
             try
             {
-                var readModel = MvcApplication.ProjectionManager.GetBudgetLinesProjection(model.BudgetId);
-                var line = readModel.GetLine(model.LineId);
-
                 var handler = MvcApplication.CommandManager.Create<UpdateLine>();
                 handler.Handle(new UpdateLine
                 {

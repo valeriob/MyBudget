@@ -1,4 +1,6 @@
-﻿using MyBudget.Projections;
+﻿using MyBudget.Domain.Lines;
+using MyBudget.Infrastructure;
+using MyBudget.Projections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,16 +39,21 @@ namespace MyBudget.Web.AspNet.Models
 
         }
 
-        public EditBudgetLineViewModel(string budgetId, BudgetLine line)
+        public EditBudgetLineViewModel(IEnumerable<dynamic> events)
         {
-            LineId = line.Id;
-            BudgetId = budgetId;
-            Date = line.Date;
-            Category = line.Category;
-            Description = line.Description;
-            Amount = line.Amount;
-            CurrencyISOCode = line.Amount.GetCurrency().IsoCode;
+            EventHelper.Apply(events, this);
         }
+
+        //public EditBudgetLineViewModel(string budgetId, BudgetLine line)
+        //{
+        //    LineId = line.Id;
+        //    BudgetId = budgetId;
+        //    Date = line.Date;
+        //    Category = line.Category;
+        //    Description = line.Description;
+        //    Amount = line.Amount;
+        //    CurrencyISOCode = line.Amount.GetCurrency().IsoCode;
+        //}
 
         public string LineId { get; set; }
         public string BudgetId { get; set; }
@@ -56,6 +63,26 @@ namespace MyBudget.Web.AspNet.Models
         public string Description { get; set; }
         public decimal Amount { get; set; }
         public string CurrencyISOCode { get; set; }
+
+        public void When(LineCreated evnt)
+        {
+            LineId = evnt.LineId.ToString();
+            BudgetId = evnt.BudgetId.ToString();
+            Date = evnt.Date;
+            Category = evnt.Category;
+            Description = evnt.Description;
+            Amount = evnt.Amount;
+            CurrencyISOCode = evnt.Amount.GetCurrency().IsoCode;
+        }
+
+        public void When(LineExpenseChanged evnt)
+        {
+            Date = evnt.Date;
+            Category = evnt.Category;
+            Description = evnt.Description;
+            Amount = evnt.Amount;
+            CurrencyISOCode = evnt.Amount.GetCurrency().IsoCode;
+        }
     }
 
 }
