@@ -71,19 +71,19 @@ namespace MyBudget.Domain.Lines
         public LineId LineId { get; private set; }
         public BudgetId BudgetId { get; private set; }
         public Amount Amount { get; private set; }
-        public DateTime Timestamp { get; private set; }
+        public DateTime Date { get; private set; }
         public string Category { get; private set; }
         public string Description { get; private set; }
         public UserId UpdatedBy { get; private set; }
 
 
-        public LineExpenseChanged(Guid id, DateTime timestamp, LineId lineId, BudgetId budgetId, Amount amount, DateTime timespan, string category, string description, UserId updatedBy)
+        public LineExpenseChanged(Guid id, DateTime timestamp, LineId lineId, BudgetId budgetId, Amount amount, DateTime date, string category, string description, UserId updatedBy)
         {
             Id = id;
-            Timestamp = timestamp;
+            Date = timestamp;
             LineId = lineId;
             BudgetId = budgetId;
-            Timestamp = Timestamp;
+            Date = date;
             Amount = amount;
             Category = category;
             Description = description;
@@ -147,7 +147,7 @@ namespace MyBudget.Domain.Lines
         public Line(LineState state)
         {
             _state = state;
-            Register<LineCreated>(e => Id = e.LineId.ToString());
+            Register<LineCreated>(e => { Id = e.LineId.ToString(); _state.Apply(e); });
         }
 
         public Line()

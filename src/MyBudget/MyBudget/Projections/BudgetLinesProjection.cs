@@ -47,6 +47,12 @@ namespace MyBudget.Projections
             _lines.Add(new BudgetLine(evnt));
         }
 
+        void When(LineExpenseChanged evnt)
+        {
+            var line = _lines.Single(l => l.Id == evnt.LineId.ToString());
+            line.When(evnt);
+        }
+
         public IEnumerable<BudgetLine> GetAllLines()
         {
             return _lines;
@@ -77,5 +83,12 @@ namespace MyBudget.Projections
             Description = evnt.Description;
         }
 
+        internal void When(LineExpenseChanged evnt)
+        {
+            Amount = evnt.Amount;
+            Category = evnt.Category;
+            Description = evnt.Description;
+            Date = evnt.Date;
+        }
     }
 }

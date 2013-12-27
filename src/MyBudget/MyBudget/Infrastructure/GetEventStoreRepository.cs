@@ -37,7 +37,7 @@ namespace CommonDomain.Persistence.GetEventStore
             var aggregate = ConstructAggregate<TAggregate>();
 
             StreamEventsSlice currentSlice;
-            var nextSliceStart = 1;
+            var nextSliceStart = 0;
             do
             {
                 currentSlice = _eventStoreConnection.ReadStreamEventsForward(streamName, nextSliceStart, ReadPageSize, true);
@@ -56,7 +56,7 @@ namespace CommonDomain.Persistence.GetEventStore
 
             var aggregate = ConstructAggregate<TAggregate>();
 
-            var sliceStart = 1; //Ignores $StreamCreated
+            var sliceStart = 0; //Ignores $StreamCreated
             StreamEventsSlice currentSlice;
             do
             {
@@ -95,6 +95,7 @@ namespace CommonDomain.Persistence.GetEventStore
             var newEvents = aggregate.GetUncommittedEvents().Cast<object>().ToList();
             var originalVersion = aggregate.Version - newEvents.Count;
             var expectedVersion = originalVersion == 0 ? -1 : originalVersion;
+            expectedVersion--;
 
             var transaction = _eventStoreConnection.StartTransaction(streamName, expectedVersion);
 

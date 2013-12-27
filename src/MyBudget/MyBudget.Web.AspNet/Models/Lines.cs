@@ -32,6 +32,11 @@ namespace MyBudget.Web.AspNet.Models
 
     public class EditBudgetLineViewModel
     {
+        public EditBudgetLineViewModel()
+        {
+
+        }
+
         public EditBudgetLineViewModel(string budgetId, BudgetLine line)
         {
             LineId = line.Id;
@@ -39,9 +44,10 @@ namespace MyBudget.Web.AspNet.Models
             Date = line.Date;
             Category = line.Category;
             Description = line.Description;
-            //Amount = line.Amount
-            //CurrencyISOCode = line.Amount.GetHashCode
+            Amount = line.Amount;
+            CurrencyISOCode = line.Amount.GetCurrency().IsoCode;
         }
+
         public string LineId { get; set; }
         public string BudgetId { get; set; }
 

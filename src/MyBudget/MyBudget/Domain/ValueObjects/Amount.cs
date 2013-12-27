@@ -21,6 +21,17 @@ namespace MyBudget.Domain.ValueObjects
         {
             return string.Format("{0} {1}", _currency.Sign, _amount);
         }
+
+        public static implicit operator decimal(Amount amount)
+        {
+            return amount._amount;
+        }
+
+        public Currency GetCurrency()
+        {
+            return _currency;
+        }
+
     }
 
 

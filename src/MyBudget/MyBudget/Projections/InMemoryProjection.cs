@@ -124,10 +124,13 @@ namespace MyBudget.Projections
             }
             try
             {
-                Dispatch(ev);
-                _succeded++;
-                _checkPoint = evnt.OriginalPosition.Value;
-                _lastEventNumber = evnt.OriginalEventNumber;
+                lock (this)
+                {
+                    Dispatch(ev);
+                    _succeded++;
+                    _checkPoint = evnt.OriginalPosition.Value;
+                    _lastEventNumber = evnt.OriginalEventNumber;
+                }
             }
             catch (Exception)
             {

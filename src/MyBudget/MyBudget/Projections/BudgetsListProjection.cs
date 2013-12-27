@@ -45,6 +45,7 @@ namespace MyBudget.Projections
             _budgets.Add(evnt.BudgetId.ToString(), s);
         }
 
+
         public IEnumerable<Budget> GetBudgetsUserCanView(UserId userId)
         {
             return _budgets.Values.Where(b => b.CanRead(userId));

@@ -77,16 +77,20 @@ namespace MyBudget.Web.AspNet.Controllers
         }
 
         [HttpPost]
-        public virtual ActionResult Edit(string id, EditBudgetLineViewModel model)
+        public virtual ActionResult Edit(EditBudgetLineViewModel model)
         {
             try
             {
+                var readModel = MvcApplication.ProjectionManager.GetBudgetLinesProjection(model.BudgetId);
+                var line = readModel.GetLine(model.LineId);
+
                 var handler = MvcApplication.CommandManager.Create<UpdateLine>();
                 handler.Handle(new UpdateLine
                 {
                     UserId = GetCurrentUserId().ToString(),
                     BudgetId = model.BudgetId.ToString(),
                     LineId = model.LineId.ToString(),
+
                     Date = model.Date,
                     Amount = new Amount(Currencies.Parse(model.CurrencyISOCode), model.Amount),
                     Category = model.Category,

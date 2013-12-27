@@ -27,7 +27,7 @@ namespace MyBudget.Commands
 
         public void Handle(CreateBudget cmd)
         {
-            var user = _repository.GetById<Budget>(cmd.UserId);
+            var user = _repository.GetById<Budget>(cmd.BudgetId);
             user.Create(new BudgetId(cmd.BudgetId), cmd.BudgetName, new UserId(cmd.UserId));
             _repository.Save(user, Guid.NewGuid(), cmd);
         }

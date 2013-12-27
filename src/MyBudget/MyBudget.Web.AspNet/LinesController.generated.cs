@@ -141,7 +141,6 @@ namespace MyBudget.Web.AspNet.Controllers
         {
             public readonly string budgetId = "budgetId";
             public readonly string lineId = "lineId";
-            public readonly string id = "id";
             public readonly string model = "model";
         }
         static readonly ActionParamsClass_Delete s_params_Delete = new ActionParamsClass_Delete();
@@ -164,9 +163,11 @@ namespace MyBudget.Web.AspNet.Controllers
             public class _ViewNamesClass
             {
                 public readonly string Create = "Create";
+                public readonly string Edit = "Edit";
                 public readonly string Index = "Index";
             }
             public readonly string Create = "~/Views/Lines/Create.cshtml";
+            public readonly string Edit = "~/Views/Lines/Edit.cshtml";
             public readonly string Index = "~/Views/Lines/Index.cshtml";
         }
     }
@@ -227,14 +228,13 @@ namespace MyBudget.Web.AspNet.Controllers
             return callInfo;
         }
 
-        partial void EditOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string id, MyBudget.Web.AspNet.Models.EditBudgetLineViewModel model);
+        partial void EditOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, MyBudget.Web.AspNet.Models.EditBudgetLineViewModel model);
 
-        public override System.Web.Mvc.ActionResult Edit(string id, MyBudget.Web.AspNet.Models.EditBudgetLineViewModel model)
+        public override System.Web.Mvc.ActionResult Edit(MyBudget.Web.AspNet.Models.EditBudgetLineViewModel model)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Edit);
-            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
-            EditOverride(callInfo, id, model);
+            EditOverride(callInfo, model);
             return callInfo;
         }
 
