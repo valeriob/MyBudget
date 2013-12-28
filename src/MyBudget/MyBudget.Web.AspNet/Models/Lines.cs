@@ -21,18 +21,6 @@ namespace MyBudget.Web.AspNet.Models
         }
     }
 
-    public class CreateBudgetLineViewModel
-    {
-        public string LineId { get; set; }
-        public string BudgetId { get; set; }
-
-        public DateTime Date { get; set; }
-        public string Category { get; set; }
-        public string Description { get; set; }
-        public decimal Amount { get; set; }
-        public string CurrencyISOCode { get; set; }
-    }
-
     public class EditBudgetLineViewModel
     {
         public string LineId { get; set; }
@@ -55,14 +43,25 @@ namespace MyBudget.Web.AspNet.Models
 
         }
 
-        public EditBudgetLineViewModel(string budgetName, IEnumerable<dynamic> events, IEnumerable<string> categories, IEnumerable<Currency> currencies)
+        public EditBudgetLineViewModel(string budgetName, string budgetId, IEnumerable<string> categories, IEnumerable<Currency> currencies)
         {
-            EventHelper.Apply(events, this);
-            _categories = categories.ToList();
             BudgetName = budgetName;
+            _categories = categories.ToList();
             _currencies = currencies;
+
+            BudgetId = budgetId;
+            LineId = MyBudget.Domain.Lines.LineId.Create(new MyBudget.Domain.Budgets.BudgetId(budgetId)).ToString();
+            Date = DateTime.Now;
+            CurrencyISOCode = Currencies.Euro().IsoCode;
         }
 
+        public EditBudgetLineViewModel(string budgetName, IEnumerable<dynamic> events, IEnumerable<string> categories, IEnumerable<Currency> currencies)
+            : this(budgetName, "", categories, currencies)
+        {
+            EventHelper.Apply(events, this);
+        }
+
+        /*
         public string GetJsonCategories()
         {
             var array = _categories.Select(c => new
@@ -74,7 +73,7 @@ namespace MyBudget.Web.AspNet.Models
         }
         public string GetJsonSelectedCategories()
         {
-            var array = _categories.Where(c=> string.Compare(c, Category, true) == 0).Select(c => new
+            var array = _categories.Where(c => string.Compare(c, Category, true) == 0).Select(c => new
             {
                 id = c,
                 name = c,
@@ -100,12 +99,12 @@ namespace MyBudget.Web.AspNet.Models
                 name = c.Name,
             }).ToArray();
             return Newtonsoft.Json.JsonConvert.SerializeObject(array);
-        }
-        /*
+        }*/
+
         public IEnumerable<System.Web.Mvc.SelectListItem> GetCategories()
         {
-            return _categories.Select(c => new System.Web.Mvc.SelectListItem 
-            { 
+            return _categories.Select(c => new System.Web.Mvc.SelectListItem
+            {
                 Value = c,
                 Text = c,
                 Selected = string.Compare(c, Category, true) == 0
@@ -120,7 +119,7 @@ namespace MyBudget.Web.AspNet.Models
                 Text = c.Name,
                 Selected = string.Compare(c.IsoCode, CurrencyISOCode, true) == 0
             }).ToList();
-        }*/
+        }
 
         public void When(LineCreated evnt)
         {

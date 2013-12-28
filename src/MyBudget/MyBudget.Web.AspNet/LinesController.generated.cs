@@ -207,9 +207,9 @@ namespace MyBudget.Web.AspNet.Controllers
             return callInfo;
         }
 
-        partial void CreateOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, MyBudget.Web.AspNet.Models.CreateBudgetLineViewModel model);
+        partial void CreateOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, MyBudget.Web.AspNet.Models.EditBudgetLineViewModel model);
 
-        public override System.Web.Mvc.ActionResult Create(MyBudget.Web.AspNet.Models.CreateBudgetLineViewModel model)
+        public override System.Web.Mvc.ActionResult Create(MyBudget.Web.AspNet.Models.EditBudgetLineViewModel model)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Create);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);

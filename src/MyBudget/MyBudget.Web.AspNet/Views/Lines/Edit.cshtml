@@ -1,8 +1,8 @@
 ﻿@model MyBudget.Web.AspNet.Models.EditBudgetLineViewModel
 
-@{
+@*@{
     ViewBag.Title = "Edit";
-}
+}*@
 
 <h2>Edit</h2>
 
@@ -15,14 +15,15 @@
     @Html.HiddenFor(model => model.BudgetId)
 
     <div class="form-horizontal">
-        <h4>EditBudgetLineViewModel</h4>
+        <h4>Budget @Model.BudgetName</h4>
         <hr />
         @Html.ValidationSummary(true)
 
         <div class="form-group">
+
             @Html.LabelFor(model => model.Date, new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Date)
+                <input class="text-box single-line" id="Date" name="Date" value="@Model.Date.Date.ToString("d")" data-date-format="dd/mm/yyyy">
                 @Html.ValidationMessageFor(model => model.Date)
             </div>
         </div>
@@ -30,12 +31,17 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Category, new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @*<input type="radio" id="old" name="category" checked />Old
-                <input type="radio" id="new" name="category" />New*@
-                <input type="checkbox" id="addNew"> Add
+                New <input type="checkbox" id="addNew">
 
-                <input class="text-box single-line" id="Category" name="Category" type="text" value="asd">
-                
+                @*<input class="text-box single-line" id="Category" name="Category" type="text" value="asd">*@
+
+                <select id="Category" name="Category">
+                    @foreach(var category in Model.GetCategories())
+                    { 
+                        @:<option value="@(category.Value)" @(category.Selected? "selected=selected" :"") >@(category.Text)</option>
+                    }
+                </select>
+
                 @Html.ValidationMessageFor(model => model.Category)
             </div>
         </div>
@@ -60,8 +66,8 @@
             @Html.LabelFor(model => model.CurrencyISOCode, new { @class = "control-label col-md-2" })
             <div class="col-md-10">
 
-                <input class="text-box single-line" id="CurrencyISOCode" name="CurrencyISOCode" type="text" value="asd">
-
+                @*<input class="text-box single-line" id="CurrencyISOCode" name="CurrencyISOCode" type="text" value="asd">*@
+                @Html.DropDownListFor(f => f.CurrencyISOCode, Model.GetCurrencies())
                 @Html.ValidationMessageFor(model => model.CurrencyISOCode)
             </div>
         </div>
@@ -80,78 +86,73 @@
 
 @section Scripts {
     @*@Scripts.Render("~/bundles/jqueryval")*@
-
-    @Scripts.Render("~/Scripts/jquery.tokeninput.js")
-
-    <script type="text/javascript">
-        var currencies = @Html.Raw(Model.GetJsonCurrencies());
-        var selectedCurrency = @Html.Raw(Model.GetJsonSelectedCurrency());
-
-        $(document).ready(function () {
-            $("#CurrencyISOCode").tokenInput(currencies, {
-                searchDelay: 0,
-                minChars: 0,
-                tokenLimit: 1,
-                prePopulate: selectedCurrency
-            });
-        });
-    </script>
+    @*@Scripts.Render("~/Scripts/jquery.tokeninput.js")*@
 
     <script type="text/javascript">
-        var categories = @Html.Raw(Model.GetJsonCategories());
-        var selectedCategories = @Html.Raw(Model.GetJsonSelectedCategories());
 
+        var comboBox = $("#Category");
+
+        var inputHTML = "<input class='text-box single-line' id='Category' name='Category' type='text' value='Test'>";
         $(document).ready(function () {
-            $("#Category").tokenInput(categories, {
-                searchDelay: 0,
-                minChars: 0,
-                tokenLimit: 1,
-                prePopulate: selectedCategories
-            });
-
             $('#addNew').click(function () {
-                //$("#txtAge").toggle(this.checked);
-                if(this.checked)
-                {
-                    $("#Category").prev().remove();
-                    $("#Category").removeAttr("style");
-                    $("#Category").css("display","block");
+                if (this.checked) {
+                    $(inputHTML).insertAfter("#addNew");
+                    comboBox.css("display", "none");
                 }
-                else
-                {
-                    var value = $("#Category").val();
-                    $("#Category").tokenInput(categories, {
-                        searchDelay: 0,
-                        minChars: 0,
-                        tokenLimit: 1,
-                        //prePopulate: [{ id:value, name:value}]
-                    });
+                else {
+                    comboBox.prev().remove();
+                    comboBox.removeAttr("style");
                 }
             });
 
-            //$('#new').on("change", function(event){
-            //    if(event.target.checked === true)
-            //    {
-            //        $("#Category").prev().remove();
-            //        $("#Category").removeAttr("style");
-            //        $("#Category").css("display","block");
-            //    }
-            //});
-            //$('#old').on("change", function(event){
-            //    if(event.target.checked === true)
-            //    {
-            //        var value = $("#Category").val();
-            //        $("#Category").tokenInput(categories, {
-            //            searchDelay: 0,
-            //            minChars: 0,
-            //            tokenLimit: 1,
-            //            //prePopulate: [{ id:value, name:value}]
-            //        });
-            //    }
-            //});
         });
 
-
+       $('#Date').datepicker();
     </script>
+    @*<script type="text/javascript">
+            var currencies = @Html.Raw(Model.GetJsonCurrencies());
+            var selectedCurrency = @Html.Raw(Model.GetJsonSelectedCurrency());
+
+            $(document).ready(function () {
+                $("#CurrencyISOCode").tokenInput(currencies, {
+                    searchDelay: 0,
+                    minChars: 0,
+                    tokenLimit: 1,
+                    prePopulate: selectedCurrency
+                });
+            });
+        </script>*@
+
+    @*<script type="text/javascript">
+            var categories = @Html.Raw(Model.GetJsonCategories());
+            var selectedCategories = @Html.Raw(Model.GetJsonSelectedCategories());
+
+            $(document).ready(function () {
+                $("#Category").tokenInput(categories, {
+                    searchDelay: 0,
+                    minChars: 0,
+                    tokenLimit: 1,
+                    prePopulate: selectedCategories
+                });
+
+                $('#addNew').click(function () {
+                    if(this.checked)
+                    {
+                        $("#Category").prev().remove();
+                        $("#Category").removeAttr("style");
+                        $("#Category").css("display","block");
+                    }
+                    else
+                    {
+                        var value = $("#Category").val();
+                        $("#Category").tokenInput(categories, {
+                            searchDelay: 0,
+                            minChars: 0,
+                            tokenLimit: 1,
+                        });
+                    }
+                });
+            });
+        </script>*@
 
 }

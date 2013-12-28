@@ -29,18 +29,15 @@ namespace MyBudget.Web.AspNet.Controllers
 
         public virtual ActionResult Create(string id)
         {
-            var model = new CreateBudgetLineViewModel 
-            {
-                BudgetId = id,
-                LineId = LineId.Create(new MyBudget.Domain.Budgets.BudgetId(id)).ToString(),
-                Date = DateTime.Now,
-                CurrencyISOCode = Currencies.Euro().IsoCode,
-            };
-            return View(model);
+            var categories = ProjectionManager.GetCategories().GetBudgetsCategories(new Domain.Budgets.BudgetId(id));
+            var budgetName = ProjectionManager.GetBudgetsList().GetBudgetById(new Domain.Budgets.BudgetId(id)).Name;
+            var model = new EditBudgetLineViewModel(budgetName, id, categories, Currencies.GetAll());
+            
+            return View(Views.Edit, model);
         }
 
         [HttpPost]
-        public virtual ActionResult Create(CreateBudgetLineViewModel model)
+        public virtual ActionResult Create(EditBudgetLineViewModel model)
         {
             try
             {
@@ -70,7 +67,8 @@ namespace MyBudget.Web.AspNet.Controllers
         public virtual ActionResult Edit(string budgetId, string lineId)
         {
             var categories = ProjectionManager.GetCategories().GetBudgetsCategories(new Domain.Budgets.BudgetId(budgetId));
-            var model = new EditBudgetLineViewModel("TODO", ProjectionManager.GetStreamEvents(lineId), categories, Currencies.GetAll());
+            var budgetName = ProjectionManager.GetBudgetsList().GetBudgetById(new Domain.Budgets.BudgetId(budgetId)).Name;
+            var model = new EditBudgetLineViewModel(budgetName, ProjectionManager.GetStreamEvents(lineId), categories, Currencies.GetAll());
 
             return View(model);
         }
