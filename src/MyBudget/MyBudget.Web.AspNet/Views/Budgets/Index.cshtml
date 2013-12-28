@@ -10,26 +10,18 @@
     @Html.ActionLink("Create New", "Create")
 </p>
 <table class="table">
-    <tr>
-        @*<th>
-            @Html.DisplayNameFor(model => model.Id)
-        </th>*@
-        <th></th>
-    </tr>
+
 
 @foreach (var item in Model.Budgets) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Id)
+            @item.Name
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Name)
+            @item.Created
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Created)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Owner)
+            @item.OwnerUsername
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
