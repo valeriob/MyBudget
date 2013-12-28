@@ -32,6 +32,7 @@ namespace MyBudget.Web.AspNet.Controllers
         {
             return _userId;
         }
+
         protected ProjectionManager ProjectionManager 
         {
             get { return MvcApplication.ProjectionManager; }

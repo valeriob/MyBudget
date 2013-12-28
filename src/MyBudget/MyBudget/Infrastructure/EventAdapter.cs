@@ -72,7 +72,9 @@ namespace MyBudget.Infrastructure
 
         IEventStoreConnection GetConnection()
         {
-            return EventStoreConnection.Create(_endpoint);
+            var c = EventStoreConnection.Create(_endpoint);
+            c.Connect();
+            return c;
         }
 
         UserCredentials GetUserCredentials()

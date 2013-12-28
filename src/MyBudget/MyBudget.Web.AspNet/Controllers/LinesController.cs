@@ -70,7 +70,7 @@ namespace MyBudget.Web.AspNet.Controllers
         public virtual ActionResult Edit(string budgetId, string lineId)
         {
             var categories = ProjectionManager.GetCategories().GetBudgetsCategories(new Domain.Budgets.BudgetId(budgetId));
-            var model = new EditBudgetLineViewModel("TODO", ProjectionManager.GetStreamEvents(lineId), categories);
+            var model = new EditBudgetLineViewModel("TODO", ProjectionManager.GetStreamEvents(lineId), categories, Currencies.GetAll());
 
             return View(model);
         }

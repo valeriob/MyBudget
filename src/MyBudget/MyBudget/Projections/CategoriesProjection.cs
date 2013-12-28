@@ -36,17 +36,25 @@ namespace MyBudget.Projections
 
         void When(LineCreated evnt)
         {
-            if (_categories.ContainsKey(evnt.BudgetId.ToString()))
-                return;
-
-            List<string> categories;
-            if(_categories.TryGetValue(evnt.BudgetId.ToString(), out categories) == false)
-                _categories[evnt.BudgetId.ToString()] = categories = new List<string>();
-
-            if(categories.Any(c=> string.Compare(c, evnt.Category, true) != 0 ) == false)
-                categories.Add(evnt.Category);
+            AddCategory(evnt.BudgetId.ToString(), evnt.Category);
         }
 
+        void When(LineExpenseChanged evnt)
+        {
+            AddCategory(evnt.BudgetId.ToString(), evnt.Category);
+        }
+
+        void AddCategory(string budget, string category)
+        {
+            if (string.IsNullOrWhiteSpace(category))
+                return;
+            List<string> categories;
+            if (_categories.TryGetValue(budget, out categories) == false)
+                _categories[budget] = categories = new List<string>();
+
+            if (categories.Any(c => string.Compare(c, category, true) == 0) == false)
+                categories.Add(category);
+        }
 
         public IEnumerable<string> GetBudgetsCategories(BudgetId budgetId)
         {

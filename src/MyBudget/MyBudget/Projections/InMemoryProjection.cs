@@ -87,12 +87,13 @@ namespace MyBudget.Projections
 
         void EventAppeared(EventStoreCatchUpSubscription sub, ResolvedEvent evnt)
         {
-            if (ids.Contains(evnt.Event.EventId))
-                _duplicates++;
-            ids.Add(evnt.Event.EventId);
-            events.Add(evnt.Event);
-            _totalCount++;
-
+            //if (ids.Contains(evnt.Event.EventId))
+            //    _duplicates++;
+            //ids.Add(evnt.Event.EventId);
+            //events.Add(evnt.Event);
+            //_totalCount++;
+            if (evnt.OriginalStreamId.StartsWith("$"))
+                return;
     
             dynamic ev = _adapter.TryGetDomainEvent(evnt);
             if (ev == null)

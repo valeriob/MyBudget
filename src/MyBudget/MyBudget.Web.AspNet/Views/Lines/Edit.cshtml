@@ -10,15 +10,15 @@
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
-     @Html.HiddenFor(model => model.LineId)
+
+    @Html.HiddenFor(model => model.LineId)
     @Html.HiddenFor(model => model.BudgetId)
-    
+
     <div class="form-horizontal">
         <h4>EditBudgetLineViewModel</h4>
         <hr />
         @Html.ValidationSummary(true)
-       
+
         <div class="form-group">
             @Html.LabelFor(model => model.Date, new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -30,7 +30,12 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Category, new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Category)
+                @*<input type="radio" id="old" name="category" checked />Old
+                <input type="radio" id="new" name="category" />New*@
+                <input type="checkbox" id="addNew"> Add
+
+                <input class="text-box single-line" id="Category" name="Category" type="text" value="asd">
+                
                 @Html.ValidationMessageFor(model => model.Category)
             </div>
         </div>
@@ -54,8 +59,9 @@
         <div class="form-group">
             @Html.LabelFor(model => model.CurrencyISOCode, new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownListFor(model=> model.CurrencyISOCode, Model.Categories)
-                @Html.EditorFor(model => model.CurrencyISOCode)
+
+                <input class="text-box single-line" id="CurrencyISOCode" name="CurrencyISOCode" type="text" value="asd">
+
                 @Html.ValidationMessageFor(model => model.CurrencyISOCode)
             </div>
         </div>
@@ -69,9 +75,83 @@
 }
 
 <div>
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to Lines", MVC.Lines.Index(Model.BudgetId))
 </div>
 
-@*@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}*@
+@section Scripts {
+    @*@Scripts.Render("~/bundles/jqueryval")*@
+
+    @Scripts.Render("~/Scripts/jquery.tokeninput.js")
+
+    <script type="text/javascript">
+        var currencies = @Html.Raw(Model.GetJsonCurrencies());
+        var selectedCurrency = @Html.Raw(Model.GetJsonSelectedCurrency());
+
+        $(document).ready(function () {
+            $("#CurrencyISOCode").tokenInput(currencies, {
+                searchDelay: 0,
+                minChars: 0,
+                tokenLimit: 1,
+                prePopulate: selectedCurrency
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+        var categories = @Html.Raw(Model.GetJsonCategories());
+        var selectedCategories = @Html.Raw(Model.GetJsonSelectedCategories());
+
+        $(document).ready(function () {
+            $("#Category").tokenInput(categories, {
+                searchDelay: 0,
+                minChars: 0,
+                tokenLimit: 1,
+                prePopulate: selectedCategories
+            });
+
+            $('#addNew').click(function () {
+                //$("#txtAge").toggle(this.checked);
+                if(this.checked)
+                {
+                    $("#Category").prev().remove();
+                    $("#Category").removeAttr("style");
+                    $("#Category").css("display","block");
+                }
+                else
+                {
+                    var value = $("#Category").val();
+                    $("#Category").tokenInput(categories, {
+                        searchDelay: 0,
+                        minChars: 0,
+                        tokenLimit: 1,
+                        //prePopulate: [{ id:value, name:value}]
+                    });
+                }
+            });
+
+            //$('#new').on("change", function(event){
+            //    if(event.target.checked === true)
+            //    {
+            //        $("#Category").prev().remove();
+            //        $("#Category").removeAttr("style");
+            //        $("#Category").css("display","block");
+            //    }
+            //});
+            //$('#old').on("change", function(event){
+            //    if(event.target.checked === true)
+            //    {
+            //        var value = $("#Category").val();
+            //        $("#Category").tokenInput(categories, {
+            //            searchDelay: 0,
+            //            minChars: 0,
+            //            tokenLimit: 1,
+            //            //prePopulate: [{ id:value, name:value}]
+            //        });
+            //    }
+            //});
+        });
+
+
+    </script>
+
+}

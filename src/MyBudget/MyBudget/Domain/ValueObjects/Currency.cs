@@ -34,11 +34,19 @@ namespace MyBudget.Domain.ValueObjects
         public static IEnumerable<Currency> GetAll()
         {
             yield return Euro();
+            yield return UsaDollar();
         }
+
         public static Currency Euro()
         {
-            return new Currency("EUR","€", "Euro");
+            return new Currency("EUR", "€", "Euro");
         }
+
+        public static Currency UsaDollar()
+        {
+            return new Currency("USD", "$", "United States dollar");
+        }
+         
 
         public static Currency Parse(string isoCode)
         {
