@@ -1,4 +1,5 @@
 ﻿using EventStore.ClientAPI;
+using MyBudget.Infrastructure;
 using MyBudget.Projections;
 using System;
 using System.Collections.Generic;
@@ -22,14 +23,14 @@ namespace MyBudget.Web.AspNet
         {
             var cs = ConnectionSettings.Create();
 
-            var address = new IPEndPoint(IPAddress.Loopback, 1113);
-            var con = EventStoreConnection.Create(address);
+            var endpoint = new IPEndPoint(IPAddress.Loopback, 1113);
+            var con = EventStoreConnection.Create(endpoint);
             con.Connect();
 
-            var userCredentials = new EventStore.ClientAPI.SystemData.UserCredentials("admin", "changeit");
+            var credentials = new EventStore.ClientAPI.SystemData.UserCredentials("admin", "changeit");
 
-            //ProjectionManager = new ProjectionManager(con, userCredentials);
-            ProjectionManager = new ProjectionManager(address, userCredentials);
+            var adapter = new EventStoreAdapter(endpoint, credentials);
+            ProjectionManager = new ProjectionManager(endpoint, credentials, adapter);
             ProjectionManager.Run();
 
             CommandManager = new CommandManager(con);

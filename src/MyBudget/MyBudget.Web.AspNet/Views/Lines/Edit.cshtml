@@ -11,26 +11,14 @@
 {
     @Html.AntiForgeryToken()
     
+     @Html.HiddenFor(model => model.LineId)
+    @Html.HiddenFor(model => model.BudgetId)
+    
     <div class="form-horizontal">
         <h4>EditBudgetLineViewModel</h4>
         <hr />
         @Html.ValidationSummary(true)
-        <div class="form-group">
-            @Html.LabelFor(model => model.LineId, new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.LineId)
-                @Html.ValidationMessageFor(model => model.LineId)
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.BudgetId, new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.BudgetId)
-                @Html.ValidationMessageFor(model => model.BudgetId)
-            </div>
-        </div>
-
+       
         <div class="form-group">
             @Html.LabelFor(model => model.Date, new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -66,6 +54,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.CurrencyISOCode, new { @class = "control-label col-md-2" })
             <div class="col-md-10">
+                @Html.DropDownListFor(model=> model.CurrencyISOCode, Model.Categories)
                 @Html.EditorFor(model => model.CurrencyISOCode)
                 @Html.ValidationMessageFor(model => model.CurrencyISOCode)
             </div>

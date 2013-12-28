@@ -13,7 +13,7 @@ namespace MyBudget.Web.AspNet.Controllers
     {
         public virtual ActionResult Index()
         {
-            var readModel = MvcApplication.ProjectionManager.GetBudgetsList();
+            var readModel = ProjectionManager.GetBudgetsList();
             var budgets = readModel.GetBudgetsUserCanView(GetCurrentUserId());
 
             var model = new BudgetListViewModel(budgets);
@@ -23,7 +23,7 @@ namespace MyBudget.Web.AspNet.Controllers
 
         public virtual ActionResult Details(string id)
         {
-            var readModel = MvcApplication.ProjectionManager.GetBudgetsList();
+            var readModel = ProjectionManager.GetBudgetsList();
             var budget = readModel.GetBudgetById(new BudgetId(id));
 
             return View(budget);
@@ -55,7 +55,7 @@ namespace MyBudget.Web.AspNet.Controllers
         {
             try
             {
-                var handler = MvcApplication.CommandManager.Create<CreateBudget>();
+                var handler = CommandManager.Create<CreateBudget>();
                 handler.Handle(new CreateBudget
                 {
                     UserId = GetCurrentUserId().ToString(),

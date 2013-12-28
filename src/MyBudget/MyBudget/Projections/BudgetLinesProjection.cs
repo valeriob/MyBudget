@@ -2,6 +2,7 @@
 using EventStore.ClientAPI.SystemData;
 using MyBudget.Domain.Lines;
 using MyBudget.Domain.ValueObjects;
+using MyBudget.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,14 +19,8 @@ namespace MyBudget.Projections
         public string BudgetId { get { return _budget; } }
 
 
-        public BudgetLinesProjection(string budget, IEventStoreConnection connection, UserCredentials credentials)
-            : base(connection, credentials)
-        {
-            _budget = budget;
-        }
-
-        public BudgetLinesProjection(string budget, IPEndPoint endpoint, UserCredentials credentials)
-            : base(endpoint, credentials)
+        public BudgetLinesProjection(string budget, IPEndPoint endpoint, UserCredentials credentials, IAdaptEvents adapter)
+            : base(endpoint, credentials, adapter, null)
         {
             _budget = budget;
         }
@@ -63,11 +58,11 @@ namespace MyBudget.Projections
             return _lines.Single(l => l.Id == id);
         }
 
-        public IEnumerable<dynamic> GetLineEvents(string lineId)
-        {
-            var slice = GetConnection().ReadStreamEventsForward(lineId, 0, int.MaxValue, true, GetUserCredentials());
-            return GetEventsFrom(slice);
-        }
+        //public IEnumerable<dynamic> GetLineEvents(string lineId)
+        //{
+        //    var slice = GetConnection().ReadStreamEventsForward(lineId, 0, int.MaxValue, true, GetUserCredentials());
+        //    return GetEventsFrom(slice);
+        //}
     }
 
     public class BudgetLine

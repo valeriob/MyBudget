@@ -3,6 +3,7 @@ using EventStore.ClientAPI.SystemData;
 using MyBudget.Domain.Budgets;
 using MyBudget.Domain.Lines;
 using MyBudget.Domain.Users;
+using MyBudget.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +18,8 @@ namespace MyBudget.Projections
         Dictionary<string, List<string>> _categories = new Dictionary<string, List<string>>();
 
 
-        public CategoriesProjection(IEventStoreConnection connection, UserCredentials credentials, string streamName)
-            : base(connection, credentials, streamName)
-        {
-        }
-        public CategoriesProjection(IPEndPoint endpoint, UserCredentials credentials, string streamName)
-            : base(endpoint, credentials, streamName)
+        public CategoriesProjection(IPEndPoint endpoint, UserCredentials credentials, IAdaptEvents adapter, string streamName)
+            : base(endpoint, credentials, adapter, streamName)
         {
         }
 

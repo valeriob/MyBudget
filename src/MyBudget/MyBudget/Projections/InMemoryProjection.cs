@@ -24,6 +24,7 @@ namespace MyBudget.Projections
         Position? _checkPoint;
         int? _lastEventNumber;
         EventStoreCatchUpSubscription _subscription;
+        IAdaptEvents _adapter;
 
         int _totalCount;
         int _succeded;
@@ -33,34 +34,17 @@ namespace MyBudget.Projections
 
         public bool HasCaughtUp { get; private set; }
 
-        public InMemoryProjection()
-        {
 
+        public InMemoryProjection(UserCredentials credentials, IAdaptEvents adapter)
+        {
+            _credentials = credentials;
+            _adapter = adapter;
         }
 
-        public InMemoryProjection(IPEndPoint endpoint, UserCredentials credentials)
+        public InMemoryProjection(IPEndPoint endpoint, UserCredentials credentials, IAdaptEvents adapter, string streamName)
+            :this(credentials, adapter)
         {
             _endpoint = endpoint;
-            _credentials = credentials;
-        }
-
-        public InMemoryProjection(IEventStoreConnection connection, UserCredentials credentials)
-        {
-            _connection = connection;
-            _credentials = credentials;
-        }
-
-        public InMemoryProjection(IPEndPoint endpoint, UserCredentials credentials, string streamName)
-        {
-            _endpoint = endpoint;
-            _credentials = credentials;
-            _streamName = streamName;
-        }
-
-        public InMemoryProjection(IEventStoreConnection connection, UserCredentials credentials, string streamName)
-        {
-            _connection = connection;
-            _credentials = credentials;
             _streamName = streamName;
         }
 
@@ -109,8 +93,8 @@ namespace MyBudget.Projections
             events.Add(evnt.Event);
             _totalCount++;
 
-
-            dynamic ev = TryGetDomainEvent(evnt);
+    
+            dynamic ev = _adapter.TryGetDomainEvent(evnt);
             if (ev == null)
                 return;
 
@@ -131,36 +115,6 @@ namespace MyBudget.Projections
            
         }
 
-        protected IEnumerable<dynamic> GetEventsFrom(StreamEventsSlice slice)
-        {
-            foreach(var evnt in slice.Events)
-            {
-                var r = TryGetDomainEvent(evnt);
-                if (r != null)
-                    yield return r;
-            }
-        }
-
-        dynamic TryGetDomainEvent(ResolvedEvent evnt)
-        {
-            try
-            {
-                return GetDomainEvent(evnt);
-            }
-            catch
-            {
-                return null;
-            }
-        }
-        dynamic GetDomainEvent(ResolvedEvent evnt)
-        {
-            var metadata = evnt.Event.Metadata;
-            var data = evnt.Event.Data;
-            var jmeta = JObject.Parse(Encoding.UTF8.GetString(metadata));
-            var eventClrTypeName = jmeta.Property(EventClrTypeHeader).Value;
-            dynamic ev = JsonConvert.DeserializeObject(Encoding.UTF8.GetString(data), Type.GetType((string)eventClrTypeName));
-            return ev;
-        }
 
 
         void SubscriptionDropped(EventStoreCatchUpSubscription sub, SubscriptionDropReason reason, Exception ex)
@@ -172,16 +126,6 @@ namespace MyBudget.Projections
         {
         }
 
-        protected IEventStoreConnection GetConnection()
-        {
-            return _connection;
-        }
-
-        protected UserCredentials GetUserCredentials()
-        {
-            return _credentials;
-        }
-
         public void Dispose()
         {
             if(_subscription != null)
@@ -189,6 +133,7 @@ namespace MyBudget.Projections
                 _subscription.Stop(TimeSpan.FromSeconds(1));
             }
         }
+
     }
 
 }

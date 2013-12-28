@@ -34,27 +34,6 @@ namespace MyBudget.Web.AspNet.Models
 
     public class EditBudgetLineViewModel
     {
-        public EditBudgetLineViewModel()
-        {
-
-        }
-
-        public EditBudgetLineViewModel(IEnumerable<dynamic> events)
-        {
-            EventHelper.Apply(events, this);
-        }
-
-        //public EditBudgetLineViewModel(string budgetId, BudgetLine line)
-        //{
-        //    LineId = line.Id;
-        //    BudgetId = budgetId;
-        //    Date = line.Date;
-        //    Category = line.Category;
-        //    Description = line.Description;
-        //    Amount = line.Amount;
-        //    CurrencyISOCode = line.Amount.GetCurrency().IsoCode;
-        //}
-
         public string LineId { get; set; }
         public string BudgetId { get; set; }
 
@@ -63,6 +42,24 @@ namespace MyBudget.Web.AspNet.Models
         public string Description { get; set; }
         public decimal Amount { get; set; }
         public string CurrencyISOCode { get; set; }
+
+        public IEnumerable<string> Categories { get; set; }
+        public string BudgetName { get; set; }
+
+        [Obsolete("Serialization", true)]
+        public EditBudgetLineViewModel()
+        {
+
+        }
+
+        public EditBudgetLineViewModel(string budgetName, IEnumerable<dynamic> events, IEnumerable<string> categories)
+        {
+            EventHelper.Apply(events, this);
+            Categories = categories.ToList();
+            BudgetName = budgetName;
+        }
+
+
 
         public void When(LineCreated evnt)
         {

@@ -1,5 +1,6 @@
 ﻿using EventStore.ClientAPI;
 using EventStore.ClientAPI.SystemData;
+using MyBudget.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,30 +19,22 @@ namespace MyBudget.Projections
         BudgetsListProjection _budgets;
         CategoriesProjection _categories;
         Dictionary<string, BudgetLinesProjection> _budgetLines;
+        IAdaptEvents _adapter;
 
 
-        ProjectionManager(UserCredentials credentials)
+        public ProjectionManager(IPEndPoint endpoint, UserCredentials credentials, IAdaptEvents adapter) 
         {
-            _credentials = credentials;
-          
-            _budgetLines = new Dictionary<string, BudgetLinesProjection>();
-        }
-        public ProjectionManager(IPEndPoint endpoint, UserCredentials credentials) 
-            : this(credentials)
-        {
+            _adapter = adapter;
             _endpoint = endpoint;
-        }
-        public ProjectionManager(IEventStoreConnection connection, UserCredentials credentials)
-            : this(credentials)
-        {
-            _connection = connection;
+            _credentials = credentials;
+            _budgetLines = new Dictionary<string, BudgetLinesProjection>();
         }
 
         public void Run()
         {
-            _users = new UsersListProjection(_endpoint, _credentials, null);
-            _budgets = new BudgetsListProjection(_endpoint, _credentials, null);
-            _categories = new CategoriesProjection(_endpoint, _credentials, null);
+            _users = new UsersListProjection(_endpoint, _credentials, _adapter, null);
+            _budgets = new BudgetsListProjection(_endpoint, _credentials, _adapter, null);
+            _categories = new CategoriesProjection(_endpoint, _credentials, _adapter, null);
             //_users = new UsersListProjection(_endpoint, _credentials, "$category-Users");
             //_budgets = new BudgetsListProjection(_endpoint, _credentials, "$category-Budgets");
 
@@ -70,22 +63,20 @@ namespace MyBudget.Projections
 
             if (_budgetLines.TryGetValue(budgetId, out blp) == false)
             {
-                _budgetLines[budgetId] = blp = new BudgetLinesProjection(budgetId, _endpoint, _credentials);
+                _budgetLines[budgetId] = blp = new BudgetLinesProjection(budgetId, _endpoint, _credentials, _adapter);
                 blp.Start();
             }
             return blp;
         }
 
+
+        public IEnumerable<dynamic> GetStreamEvents(string streamId)
+        {
+            return _adapter.GetStreamEvents(streamId);
+        }
     }
 
    
-    public class CountAllEventsProjection : InMemoryProjection
-    {
-        int count;
-        protected override void Dispatch(dynamic evnt)
-        {
-            count++;
-        }
-    }
+
 
 }

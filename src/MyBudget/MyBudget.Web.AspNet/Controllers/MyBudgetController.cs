@@ -6,6 +6,7 @@ using System.Threading;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
+using MyBudget.Projections;
 
 namespace MyBudget.Web.AspNet.Controllers
 {
@@ -19,7 +20,7 @@ namespace MyBudget.Web.AspNet.Controllers
 
             var userId = User.Identity.GetUserId();
 
-            var users = MvcApplication.ProjectionManager.GetUsersList();
+            var users = ProjectionManager.GetUsersList();
             var user = users.FindById(userId);
             if(user == null)
                 throw new Exception("Utente non è riconosciuto dal sistema");
@@ -31,7 +32,15 @@ namespace MyBudget.Web.AspNet.Controllers
         {
             return _userId;
         }
+        protected ProjectionManager ProjectionManager 
+        {
+            get { return MvcApplication.ProjectionManager; }
+        }
 
+        protected CommandManager CommandManager
+        {
+            get { return MvcApplication.CommandManager; }
+        }
 	}
 
 }

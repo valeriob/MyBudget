@@ -15,7 +15,7 @@ namespace MyBudget.Web.AspNet.Controllers
 
         public virtual ActionResult Index(string id)
         {
-            var readModel = MvcApplication.ProjectionManager.GetBudgetLinesProjection(id);
+            var readModel = ProjectionManager.GetBudgetLinesProjection(id);
             var lines = readModel.GetAllLines();
             var model = new BudgetLinesViewModel(id, lines);
 
@@ -44,7 +44,7 @@ namespace MyBudget.Web.AspNet.Controllers
         {
             try
             {
-                var handler = MvcApplication.CommandManager.Create<CreateLine>();
+                var handler = CommandManager.Create<CreateLine>();
                 handler.Handle(new CreateLine
                 {
                     UserId = GetCurrentUserId().ToString(),
@@ -69,10 +69,9 @@ namespace MyBudget.Web.AspNet.Controllers
 
         public virtual ActionResult Edit(string budgetId, string lineId)
         {
-            var readModel = MvcApplication.ProjectionManager.GetBudgetLinesProjection(budgetId);
-           // var line = readModel.GetLine(lineId);
-            //var model = new EditBudgetLineViewModel(budgetId, line);
-            var model = new EditBudgetLineViewModel(readModel.GetLineEvents(lineId));
+            var categories = ProjectionManager.GetCategories().GetBudgetsCategories(new Domain.Budgets.BudgetId(budgetId));
+            var model = new EditBudgetLineViewModel("TODO", ProjectionManager.GetStreamEvents(lineId), categories);
+
             return View(model);
         }
 
@@ -81,7 +80,7 @@ namespace MyBudget.Web.AspNet.Controllers
         {
             try
             {
-                var handler = MvcApplication.CommandManager.Create<UpdateLine>();
+                var handler = CommandManager.Create<UpdateLine>();
                 handler.Handle(new UpdateLine
                 {
                     UserId = GetCurrentUserId().ToString(),
