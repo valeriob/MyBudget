@@ -32,8 +32,11 @@ namespace MyBudget.Projections
 
         public void Run()
         {
-            _users = new UsersListProjection(_endpoint, _credentials, _adapter, null);
-            _budgets = new BudgetsListProjection(_endpoint, _credentials, _adapter, null);
+            var usersStream = "categoria_Users";
+            var budgetsStream = "categoria_Budgets";
+            //var categoriesStream = "categoria_Budgets";
+            _users = new UsersListProjection(_endpoint, _credentials, _adapter, usersStream);
+            _budgets = new BudgetsListProjection(_endpoint, _credentials, _adapter, budgetsStream);
             _categories = new CategoriesProjection(_endpoint, _credentials, _adapter, null);
             //_users = new UsersListProjection(_endpoint, _credentials, "$category-Users");
             //_budgets = new BudgetsListProjection(_endpoint, _credentials, "$category-Budgets");
@@ -63,7 +66,8 @@ namespace MyBudget.Projections
 
             if (_budgetLines.TryGetValue(budgetId, out blp) == false)
             {
-                _budgetLines[budgetId] = blp = new BudgetLinesProjection(budgetId, _endpoint, _credentials, _adapter);
+                var linesStream = "lines_of_" + budgetId;
+                _budgetLines[budgetId] = blp = new BudgetLinesProjection(budgetId, _endpoint, _credentials, _adapter, linesStream);
                 blp.Start();
             }
             return blp;

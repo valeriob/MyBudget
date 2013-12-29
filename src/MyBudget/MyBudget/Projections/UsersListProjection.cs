@@ -52,6 +52,12 @@ namespace MyBudget.Projections
         {
             return _users[userId];
         }
+        public async Task<User> FindByIdAsync(string userId)
+        {
+            while (HasCaughtUp == false)
+                await Task.Delay(100);
+            return _users[userId];
+        }
     }
 
     public class User

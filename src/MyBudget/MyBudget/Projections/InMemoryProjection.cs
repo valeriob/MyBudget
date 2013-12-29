@@ -60,7 +60,7 @@ namespace MyBudget.Projections
             else
                 _subscription = _connection.SubscribeToStreamFrom(_streamName, _lastEventNumber, true, EventAppeared, Live, SubscriptionDropped, _credentials);
 
-            _subscription.Start();
+            //_subscription.Start();
         }
 
         void Live(EventStoreCatchUpSubscription obj)
@@ -105,7 +105,7 @@ namespace MyBudget.Projections
                 {
                     Dispatch(ev);
                     _succeded++;
-                    _checkPoint = evnt.OriginalPosition.Value;
+                    _checkPoint = evnt.OriginalPosition.GetValueOrDefault();
                     _lastEventNumber = evnt.OriginalEventNumber;
                 }
             }

@@ -10,7 +10,7 @@ using MyBudget.Projections;
 
 namespace MyBudget.Web.AspNet.Controllers
 {
-    public partial class MyBudgetController : Controller
+    public partial class MyBudgetController : AsyncController
     {
         UserId _userId;
 
@@ -21,7 +21,8 @@ namespace MyBudget.Web.AspNet.Controllers
             var userId = User.Identity.GetUserId();
 
             var users = ProjectionManager.GetUsersList();
-            var user = users.FindById(userId);
+            var task = users.FindByIdAsync(userId);
+            var user = task.Result;
             if(user == null)
                 throw new Exception("Utente non è riconosciuto dal sistema");
 

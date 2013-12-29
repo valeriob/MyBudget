@@ -19,8 +19,8 @@ namespace MyBudget.Projections
         public string BudgetId { get { return _budget; } }
 
 
-        public BudgetLinesProjection(string budget, IPEndPoint endpoint, UserCredentials credentials, IAdaptEvents adapter)
-            : base(endpoint, credentials, adapter, null)
+        public BudgetLinesProjection(string budget, IPEndPoint endpoint, UserCredentials credentials, IAdaptEvents adapter, string stream)
+            : base(endpoint, credentials, adapter, stream)
         {
             _budget = budget;
         }
@@ -64,11 +64,6 @@ namespace MyBudget.Projections
             return _lines.Single(l => l.Id == id);
         }
 
-        //public IEnumerable<dynamic> GetLineEvents(string lineId)
-        //{
-        //    var slice = GetConnection().ReadStreamEventsForward(lineId, 0, int.MaxValue, true, GetUserCredentials());
-        //    return GetEventsFrom(slice);
-        //}
     }
 
     public class BudgetLine

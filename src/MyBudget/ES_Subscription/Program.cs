@@ -12,11 +12,13 @@ namespace ES_Subscription
 {
     class Program
     {
+        static IPEndPoint address;
+        static UserCredentials userCredentials;
         static void Main(string[] args)
         {
-            var userCredentials = new UserCredentials("admin", "changeit");
+            userCredentials = new UserCredentials("admin", "changeit");
 
-            var address = new IPEndPoint(IPAddress.Loopback, 1113);
+            address = new IPEndPoint(IPAddress.Loopback, 1113);
             var con = EventStoreConnection.Create(address);
             con.Connect();
 
@@ -26,10 +28,18 @@ namespace ES_Subscription
 
         static void FromStream(IEventStoreConnection con, UserCredentials userCredentials)
         {
-            var sub = con.SubscribeToStreamFrom("$category-Users", null, true, Appeared, Live, Dropped, userCredentials);
-            sub.Start();
+            var ad = new MyBudget.Infrastructure.EventStoreAdapter(address, userCredentials);
 
-            //var read = con.ReadStreamEventsForward("$category-Users", 0, 1000, true, userCredentials);
+           // var sub = con.SubscribeToStreamFrom("$category-Users", null, true, Appeared, Live, Dropped, userCredentials);
+         //   sub.Start();
+
+            var read = con.ReadStreamEventsForward("lines_of_", 0, 1000, true, userCredentials);
+
+            foreach(var e in read.Events)
+            {
+                var t = ad.TryGetDomainEvent(e);
+  
+            }
             var mre = new ManualResetEvent(false);
             mre.WaitOne(3000);
 
@@ -42,14 +52,21 @@ namespace ES_Subscription
             {
                 var values = r.ToArray();
 
+                foreach (var v in values)
+                {
+                  
+                    var t = ad.TryGetDomainEvent(v.s);
+                }
             }
+                    
+
             Console.ReadLine();
         }
 
         static void FromAll(IEventStoreConnection con, UserCredentials userCredentials)
         {
             var sub = con.SubscribeToAllFrom(Position.Start, true, Appeared, Live, Dropped, userCredentials);
-            sub.Start();
+           // sub.Start();
 
             var read = con.ReadAllEventsForward(Position.Start, 1000, true, userCredentials);
             var mre = new ManualResetEvent(false);

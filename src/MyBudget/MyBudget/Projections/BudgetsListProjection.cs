@@ -38,7 +38,8 @@ namespace MyBudget.Projections
             if (_budgets.ContainsKey(evnt.BudgetId.ToString()))
                 return;
 
-            var userName = _userNames[evnt.Owner.ToString()];
+            //var userName = _userNames[evnt.Owner.ToString()];
+            var userName = "NA";
 
             var s = new Budget();
             s.Apply(evnt, userName);
