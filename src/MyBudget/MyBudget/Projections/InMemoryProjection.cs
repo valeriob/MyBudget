@@ -32,7 +32,7 @@ namespace MyBudget.Projections
         HashSet<Guid> ids = new HashSet<Guid>();
         HashSet<RecordedEvent> events = new HashSet<RecordedEvent>();
 
-        public bool HasCaughtUp { get; private set; }
+        public bool HasLoaded { get; private set; }
 
 
         public InMemoryProjection(UserCredentials credentials, IAdaptEvents adapter)
@@ -51,7 +51,7 @@ namespace MyBudget.Projections
 
         public void Start()
         {
-            HasCaughtUp = false;
+            HasLoaded = false;
             _connection = EventStore.ClientAPI.EventStoreConnection.Create(_endpoint);
             _connection.Connect();
 
@@ -65,12 +65,12 @@ namespace MyBudget.Projections
 
         void Live(EventStoreCatchUpSubscription obj)
         {
-            HasCaughtUp = true;
+            HasLoaded = true;
         }
 
         public void Stop()
         {
-            HasCaughtUp = false;
+            HasLoaded = false;
             try
             {
                 _subscription.Stop(TimeSpan.MaxValue);

@@ -338,6 +338,7 @@
     </None>
     <Content Include="Views\Lines\Edit.cshtml" />
     <Content Include="Views\BudgetStats\ByCategory.cshtml" />
+    <Content Include="Views\BudgetStats\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
