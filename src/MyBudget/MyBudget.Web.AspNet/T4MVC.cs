@@ -26,6 +26,7 @@ public static class MVC
 {
     public static MyBudget.Web.AspNet.Controllers.AccountController Account = new MyBudget.Web.AspNet.Controllers.T4MVC_AccountController();
     public static MyBudget.Web.AspNet.Controllers.BudgetsController Budgets = new MyBudget.Web.AspNet.Controllers.T4MVC_BudgetsController();
+    public static MyBudget.Web.AspNet.Controllers.BudgetStatsController BudgetStats = new MyBudget.Web.AspNet.Controllers.T4MVC_BudgetStatsController();
     public static MyBudget.Web.AspNet.Controllers.HomeController Home = new MyBudget.Web.AspNet.Controllers.T4MVC_HomeController();
     public static MyBudget.Web.AspNet.Controllers.LinesController Lines = new MyBudget.Web.AspNet.Controllers.T4MVC_LinesController();
     public static MyBudget.Web.AspNet.Controllers.MyBudgetController MyBudget = new MyBudget.Web.AspNet.Controllers.T4MVC_MyBudgetController();
@@ -139,6 +140,7 @@ namespace Links
         }
     
         public static readonly string modernizr_2_6_2_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/modernizr-2.6.2.min.js") ? Url("modernizr-2.6.2.min.js") : Url("modernizr-2.6.2.js");
+        public static readonly string Projections_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/Projections.min.js") ? Url("Projections.min.js") : Url("Projections.js");
         public static readonly string respond_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/respond.min.js") ? Url("respond.min.js") : Url("respond.js");
         public static readonly string respond_min_js = Url("respond.min.js");
     }

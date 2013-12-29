@@ -189,8 +189,12 @@
     <Compile Include="BudgetsController.generated.cs">
       <DependentUpon>T4MVC.tt</DependentUpon>
     </Compile>
+    <Compile Include="BudgetStatsController.generated.cs">
+      <DependentUpon>T4MVC.tt</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BudgetsController.cs" />
+    <Compile Include="Controllers\BudgetStatsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LinesController.cs" />
     <Compile Include="Controllers\MyBudgetController.cs" />
@@ -333,6 +337,7 @@
       <LastGenOutput>T4MVC.cs</LastGenOutput>
     </None>
     <Content Include="Views\Lines\Edit.cshtml" />
+    <Content Include="Views\BudgetStats\ByCategory.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

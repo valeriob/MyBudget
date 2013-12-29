@@ -50,8 +50,10 @@ namespace MyBudget.Domain.Lines
         public string Category { get; private set; }
         public string Description { get; private set; }
         public UserId CreatedBy { get; private set; }
+        public string[] Tags { get; private set; }
 
-        public LineCreated(Guid id, DateTime timestamp, LineId lineId, BudgetId budgetId, Amount amount, DateTime date, string category, string description, UserId createdBy)
+        public LineCreated(Guid id, DateTime timestamp, LineId lineId, BudgetId budgetId, Amount amount, DateTime date, string category, string description, 
+            string[] tags, UserId createdBy)
         {
             Id = id;
             Timestamp = timestamp;
@@ -63,6 +65,7 @@ namespace MyBudget.Domain.Lines
             Category = category;
             Description = description;
             CreatedBy = createdBy;
+            Tags = tags;
         }
     }
 
@@ -155,12 +158,12 @@ namespace MyBudget.Domain.Lines
         {
         }
 
-        public void Create(LineId id, BudgetId budgetId, Expense expense, UserId createdBy)
+        public void Create(LineId id, BudgetId budgetId, Expense expense, UserId createdBy, string[] tags)
         {
             if (string.IsNullOrEmpty(Id) == false)
                 throw new Exception("line already exists");
 
-            RaiseEvent(new LineCreated(Guid.NewGuid(), DateTime.Now, id, budgetId, expense.Amount, expense.Timestamp, expense.Category, expense.Description, createdBy));
+            RaiseEvent(new LineCreated(Guid.NewGuid(), DateTime.Now, id, budgetId, expense.Amount, expense.Timestamp, expense.Category, expense.Description, tags, createdBy));
         }
 
         public void Update(Expense expense, UserId updatedBy)

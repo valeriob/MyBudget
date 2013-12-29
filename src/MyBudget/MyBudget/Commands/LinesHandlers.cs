@@ -21,6 +21,7 @@ namespace MyBudget.Commands
         public DateTime Date { get; set; }
         public string Category { get; set; }
         public string Description { get; set; }
+        public string[] Tags { get; set; }
     }
 
     public class MarkLineAsObsolete : Command
@@ -58,7 +59,7 @@ namespace MyBudget.Commands
             var expense = new Expense(cmd.Amount, cmd.Date, cmd.Category, cmd.Description);
 
             var line = _repository.GetById<Line>(cmd.LineId);
-            line.Create(new LineId(cmd.LineId), new BudgetId(cmd.BudgetId), expense, new UserId(cmd.UserId));
+            line.Create(new LineId(cmd.LineId), new BudgetId(cmd.BudgetId), expense, new UserId(cmd.UserId), cmd.Tags);
             _repository.Save(line, Guid.NewGuid(), cmd);
         }
 

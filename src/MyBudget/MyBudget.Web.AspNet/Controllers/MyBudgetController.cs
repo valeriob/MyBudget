@@ -21,8 +21,9 @@ namespace MyBudget.Web.AspNet.Controllers
             var userId = User.Identity.GetUserId();
 
             var users = ProjectionManager.GetUsersList();
-            var task = users.FindByIdAsync(userId);
-            var user = task.Result;
+            //var task = users.FindByIdAsync(userId);
+            //var user = task.Result;
+            var user = users.FindById(userId);
             if(user == null)
                 throw new Exception("Utente non è riconosciuto dal sistema");
 

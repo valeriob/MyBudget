@@ -1,0 +1,23 @@
+﻿@model MyBudget.Web.AspNet.Controllers.BudgetStatsByCategoryViewModel
+@{
+    ViewBag.Title = "ByCategory";
+}
+
+<h2>ByCategory</h2>
+
+<div class="form-horizontal">
+    @foreach (var category in Model.Categories)
+    {
+        <div class="form-group">
+            <label class="control-label col-md-2">
+                @category.Category
+            </label>
+            <div class="col-md-10">
+                <div class="text-box single-line">
+                    @category.Amount
+                </div>
+            </div>
+        </div>
+    }
+
+</div>

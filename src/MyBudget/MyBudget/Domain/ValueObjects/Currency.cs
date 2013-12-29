@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MyBudget.Domain.ValueObjects
 {
-    public class Currency
+    public class Currency : IEquatable<Currency>
     {
         public string IsoCode { get; private set; }
         public string Sign { get; private set; }
@@ -14,6 +14,9 @@ namespace MyBudget.Domain.ValueObjects
         
         public Currency(string isoCode, string sign, string name)
         {
+            if (string.IsNullOrEmpty(isoCode))
+                throw new ArgumentNullException("isoCode");
+
             IsoCode = isoCode;
             Sign = sign;
             Name = name;
@@ -27,6 +30,29 @@ namespace MyBudget.Domain.ValueObjects
         {
             return string.Format("{0}, {1}", IsoCode, Sign);
         }
+        public override int GetHashCode()
+        {
+            return IsoCode.GetHashCode();
+        }
+        public override bool Equals(object obj)
+        {
+            var other = obj as Currency;
+            return !ReferenceEquals(other, null) && IsoCode == other.IsoCode;
+        }
+
+        public bool Equals(Currency other)
+        {
+            return !ReferenceEquals(other, null) && IsoCode == other.IsoCode;
+        }
+
+        public static bool operator ==(Currency c1, Currency c2)
+        {
+            return (ReferenceEquals(c1, null) && ReferenceEquals(c2, null)) || (!ReferenceEquals(c1, null) && c1.Equals(c2));
+        }
+        public static bool operator !=(Currency c1, Currency c2)
+        {
+            return !(c1 == c2);
+        }
     }
 
     public static class Currencies
@@ -35,6 +61,11 @@ namespace MyBudget.Domain.ValueObjects
         {
             yield return Euro();
             yield return UsaDollar();
+        }
+
+        public static Currency Unknown()
+        {
+            return new Currency("NA", "", "Unknown");
         }
 
         public static Currency Euro()

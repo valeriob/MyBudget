@@ -29,15 +29,6 @@ namespace MyBudget.Web.AspNet.Controllers
             return View(budget);
         }
 
-        //public ActionResult Lines(string id)
-        //{
-        //    var readModel = MvcApplication.ProjectionManager.GetBudgetLinesProjection(id);
-        //    var lines = readModel.GetAllLines();
-        //    var model = new BudgetLinesViewModel(id, lines);
-
-        //    return View(model);
-        //}
-
 
         public virtual ActionResult Create()
         {
@@ -50,7 +41,6 @@ namespace MyBudget.Web.AspNet.Controllers
         }
 
         [HttpPost]
-        //public ActionResult Create(FormCollection collection)
         public virtual ActionResult Create(CreateBudgetViewModel model)
         {
             try
@@ -72,6 +62,7 @@ namespace MyBudget.Web.AspNet.Controllers
                 return View();
             }
         }
+
 
         public virtual ActionResult Edit(int id)
         {
@@ -103,7 +94,6 @@ namespace MyBudget.Web.AspNet.Controllers
             return View();
         }
 
-
         [HttpPost]
         public virtual ActionResult Delete(int id, FormCollection collection)
         {
@@ -120,4 +110,5 @@ namespace MyBudget.Web.AspNet.Controllers
         }
 
     }
+
 }

@@ -64,6 +64,17 @@ namespace MyBudget.Projections
             return _lines.Single(l => l.Id == id);
         }
 
+
+        public IEnumerable<BudgetLine> GetAllLinesBetween(DateTime? from, DateTime? to)
+        {
+            var q = _lines.AsEnumerable();
+            if (from.HasValue)
+                q = q.Where(r => r.Date >= from.Value);
+            if (to.HasValue)
+                q = q.Where(r => r.Date <= to.Value);
+            return q;
+        }
+
     }
 
     public class BudgetLine
