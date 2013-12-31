@@ -5,3 +5,5 @@
 
 <h2>Index</h2>
 
+@Html.ActionLink("By Category", MVC.BudgetStats.ByCategory((string)ViewBag.BudgetId,null, null))
+@Html.ActionLink("By Category in time", MVC.BudgetStats.ByCategoryInTime((string)ViewBag.BudgetId, null, null, null))

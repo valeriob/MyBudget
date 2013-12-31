@@ -1,0 +1,70 @@
+﻿@model MyBudget.Web.AspNet.Controllers.BudgetStatsByCategoryInTimeViewModel
+@{
+    ViewBag.Title = "ByCategory";
+}
+
+<h2>ByCategory</h2>
+
+
+<div>
+    @using (Html.BeginForm(MVC.BudgetStats.ByCategory(), FormMethod.Get))
+    {
+        @Html.HiddenFor(b => b.BudgetId);
+
+        <div class="input-daterange" id="datepicker">
+            <input type="text" class="input-small" name="from" id="From" value="@Model.GetFormattedFrom()" />
+            <span class="add-on">to</span>
+            <input type="text" class="input-small" name="to" id="To" value="@Model.GetFormattedTo()" />
+
+            <input type="submit" value="Search" class="btn btn-default" />
+        </div>
+    }
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th> </th>
+
+            @foreach (var category in Model.Categories)
+            {
+                <th> @category</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var group in Model.TimeSerie)
+        {
+            <tr>
+                <td> @group.Group </td>
+
+                @foreach (var category in Model.Categories)
+                {
+                    <td> @group.OfCategory(category); </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script type="text/javascript">
+        ////$('#From').datepicker();
+        //$('#From').datepicker({
+        //    format: "dd/mm/yyyy",
+        //    //language: "it"
+        //});
+        ////$('#To').datepicker();
+        //$('#To').datepicker({
+        //    format: "dd/mm/yyyy",
+        //    // language: "it"
+        //});
+
+        $('#datepicker').datepicker({
+            format: "dd/mm/yyyy",
+            // language: "it",
+            autoclose: true,
+            todayHighlight: true
+        });
+    </script>
+}

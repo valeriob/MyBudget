@@ -5,43 +5,63 @@
 
 <h2>ByCategory</h2>
 
-<div class="form-horizontal">
-    @using (Html.BeginForm(MVC.BudgetStats.ByCategory()))
-    {
-        @Html.AntiForgeryToken()
+
+<div>
+    @using (Html.BeginForm(MVC.BudgetStats.ByCategory(), FormMethod.Get))
+        {
+            //@Html.AntiForgeryToken()
         @Html.HiddenFor(b => b.BudgetId);
-        <div class="form-group">
-            <label class="control-label col-md-2">
-                @Model.From
-            </label>
-            <div class="col-md-10">
-                <div class="text-box single-line">
-                    <input class="text-box single-line" id="From" name="From" value="@Model.From" data-date-format="dd/mm/yyyy">
-                </div>
-            </div>
+
+        <div class="input-daterange" id="datepicker">
+            <input type="text" class="input-small" name="from" id="From" value="@Model.GetFormattedFrom()" />
+            <span class="add-on">to</span>
+            <input type="text" class="input-small" name="to" id="To" value="@Model.GetFormattedTo()" />
+
+            <input type="submit" value="Search" class="btn btn-default" />
         </div>
 
-        <div class="form-group">
-            <label class="control-label col-md-2">
-                @Model.To
-            </label>
-            <div class="col-md-10">
-                <div class="text-box single-line">
-                    <input class="text-box single-line" id="To" name="To" value="@Model.To" data-date-format="dd/mm/yyyy">
+        @*<div class="form-group">
+                <label class="control-label col-md-2">
+                    From
+                </label>
+                <div class="col-md-10">
+                    <div class="text-box single-line">
+                        <input class="text-box single-line" id="From" name="From" value="@Model.GetFormattedFrom()">
+                    </div>
                 </div>
             </div>
-        </div>
-        
-         <div class="form-group">
+
+            <div class="form-group">
+                <label class="control-label col-md-2">
+                    To
+                </label>
+                <div class="col-md-10">
+                    <div class="text-box single-line">
+                        <input class="text-box single-line" id="To" name="To" value="@Model.GetFormattedTo()">
+                    </div>
+                </div>
+            </div>*@
+
+        @*<div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>
-        </div>
-    }
+        </div>*@
+        }
 </div>
 
 <div class="form-horizontal">
 
+    <div class="form-group">
+        <label class="control-label col-md-2">
+            Total
+        </label>
+        <div class="col-md-10">
+            <div class="text-box single-line">
+                @Model.TotalAmount
+            </div>
+        </div>
+    </div>
     @foreach (var category in Model.Categories)
     {
         <div class="form-group">
@@ -61,7 +81,22 @@
 
 @section Scripts {
     <script type="text/javascript">
-        $('#From').datepicker();
-        $('#To').datepicker();
+        ////$('#From').datepicker();
+        //$('#From').datepicker({
+        //    format: "dd/mm/yyyy",
+        //    //language: "it"
+        //});
+        ////$('#To').datepicker();
+        //$('#To').datepicker({
+        //    format: "dd/mm/yyyy",
+        //    // language: "it"
+        //});
+
+        $('#datepicker').datepicker({
+            format: "dd/mm/yyyy",
+            // language: "it",
+            autoclose: true,
+            todayHighlight: true
+        });
     </script>
 }

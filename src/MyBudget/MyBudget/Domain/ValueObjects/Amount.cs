@@ -65,6 +65,11 @@ namespace MyBudget.Domain.ValueObjects
             return new Amount(a1._currency, a1._amount + a2._amount);
         }
 
+
+        public static Amount Zero(Currency currency)
+        {
+            return new Amount(currency, 0);
+        }
     }
 
     public static class AmountExtensions

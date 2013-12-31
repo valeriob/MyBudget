@@ -12,6 +12,10 @@ namespace MyBudget.Web.AspNet.Controllers
 {
     public partial class MyBudgetController : AsyncController
     {
+        protected override void Initialize(System.Web.Routing.RequestContext requestContext)
+        {
+            base.Initialize(requestContext);
+        }
         UserId _userId;
 
         protected override void OnActionExecuting(ActionExecutingContext filterContext)

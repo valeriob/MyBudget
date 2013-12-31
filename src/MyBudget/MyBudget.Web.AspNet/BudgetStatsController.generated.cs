@@ -56,6 +56,12 @@ namespace MyBudget.Web.AspNet.Controllers
         {
             return new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.ByCategory);
         }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public virtual System.Web.Mvc.ActionResult ByCategoryInTime()
+        {
+            return new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.ByCategoryInTime);
+        }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public BudgetStatsController Actions { get { return MVC.BudgetStats; } }
@@ -74,6 +80,7 @@ namespace MyBudget.Web.AspNet.Controllers
         {
             public readonly string Index = "Index";
             public readonly string ByCategory = "ByCategory";
+            public readonly string ByCategoryInTime = "ByCategoryInTime";
         }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -81,6 +88,7 @@ namespace MyBudget.Web.AspNet.Controllers
         {
             public const string Index = "Index";
             public const string ByCategory = "ByCategory";
+            public const string ByCategoryInTime = "ByCategoryInTime";
         }
 
 
@@ -99,8 +107,19 @@ namespace MyBudget.Web.AspNet.Controllers
         public class ActionParamsClass_ByCategory
         {
             public readonly string budgetId = "budgetId";
-            public readonly string from = "from";
-            public readonly string to = "to";
+            public readonly string From = "From";
+            public readonly string To = "To";
+        }
+        static readonly ActionParamsClass_ByCategoryInTime s_params_ByCategoryInTime = new ActionParamsClass_ByCategoryInTime();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_ByCategoryInTime ByCategoryInTimeParams { get { return s_params_ByCategoryInTime; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_ByCategoryInTime
+        {
+            public readonly string budgetId = "budgetId";
+            public readonly string From = "From";
+            public readonly string To = "To";
+            public readonly string groupBy = "groupBy";
         }
         static readonly ViewsClass s_views = new ViewsClass();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -113,8 +132,10 @@ namespace MyBudget.Web.AspNet.Controllers
             public class _ViewNamesClass
             {
                 public readonly string ByCategory = "ByCategory";
+                public readonly string Index = "Index";
             }
             public readonly string ByCategory = "~/Views/BudgetStats/ByCategory.cshtml";
+            public readonly string Index = "~/Views/BudgetStats/Index.cshtml";
         }
     }
 
@@ -133,15 +154,28 @@ namespace MyBudget.Web.AspNet.Controllers
             return callInfo;
         }
 
-        partial void ByCategoryOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string budgetId, System.DateTime? from, System.DateTime? to);
+        partial void ByCategoryOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string budgetId, string From, string To);
 
-        public override System.Web.Mvc.ActionResult ByCategory(string budgetId, System.DateTime? from, System.DateTime? to)
+        public override System.Web.Mvc.ActionResult ByCategory(string budgetId, string From, string To)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.ByCategory);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "budgetId", budgetId);
-            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "from", from);
-            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "to", to);
-            ByCategoryOverride(callInfo, budgetId, from, to);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "From", From);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "To", To);
+            ByCategoryOverride(callInfo, budgetId, From, To);
+            return callInfo;
+        }
+
+        partial void ByCategoryInTimeOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string budgetId, string From, string To, string groupBy);
+
+        public override System.Web.Mvc.ActionResult ByCategoryInTime(string budgetId, string From, string To, string groupBy)
+        {
+            var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.ByCategoryInTime);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "budgetId", budgetId);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "From", From);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "To", To);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "groupBy", groupBy);
+            ByCategoryInTimeOverride(callInfo, budgetId, From, To, groupBy);
             return callInfo;
         }
 

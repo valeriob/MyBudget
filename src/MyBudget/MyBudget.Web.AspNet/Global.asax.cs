@@ -35,6 +35,10 @@ namespace MyBudget.Web.AspNet
 
             CommandManager = new CommandManager(con);
 
+            //var binder = new DefaultModelBinder();
+            //ModelBinders.Binders.Add(typeof(DateTime), binder);
+            //ModelBinders.Binders.Add(typeof(DateTime?), binder);
+
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
