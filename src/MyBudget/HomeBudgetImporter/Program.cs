@@ -16,6 +16,9 @@ namespace HomeBudgetImporter
 {
     class Program
     {
+        static string budgetId = "Budgets-22d5c5d0_8eef_459a_8224_269292b55d2e";
+        static string userId = "Users-5e3191f5_bb94_4074_b46b_9d4f8e4461b2";
+
         static string _cs = "Data Source=vborioni.cloudapp.net,1433;Initial Catalog=HomeBudget;Integrated Security=False;User ID=vborioni;Password=onit!2013;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False";
         static string query = @"select m.DateTime, m.Import, m.ShortDescription, c.Name from  Movements m
 join Categories c on m.CategoryId = c.Id
@@ -40,7 +43,7 @@ and Deleted = 0";
 
                 var handler = cm.Create<CreateLine>();
                 foreach (var m in movements)
-                    handler.Handle(m.ToCreateLine(new BudgetId("Budgets-d1333a46_bcad_4178_83b5_bd976472c45b"), "Users-782af1d8_9c02_4b69_8bb7_4a4f7c4e8c68"));
+                    handler.Handle(m.ToCreateLine(new BudgetId(budgetId), userId));
             }
         }
 

@@ -57,7 +57,7 @@ namespace MyBudget.Web.AspNet.Controllers
                 to = DateTime.Parse(To);
             //to = To;
 
-            GroupBy groupBy = MyBudget.Web.AspNet.Controllers.GroupBy.Day;
+            GroupBy groupBy = MyBudget.Web.AspNet.Controllers.GroupBy.Year;
 
             try
             {
@@ -233,7 +233,8 @@ namespace MyBudget.Web.AspNet.Controllers
                 {
                     Category = s.Key,
                     Amount = s.Select(r => r.Amount).Sum(),
-                }).ToList();
+                }).OrderByDescending(d=> d.Amount)
+                .ToList();
 
             TotalAmount = Categories.Select(s => s.Amount).Sum();
         }

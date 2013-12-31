@@ -38,8 +38,6 @@ namespace MyBudget.Projections
             _users = new UsersListProjection(_endpoint, _credentials, _adapter, usersStream);
             _budgets = new BudgetsListProjection(_endpoint, _credentials, _adapter, budgetsStream);
             _categories = new CategoriesProjection(_endpoint, _credentials, _adapter, null);
-            //_users = new UsersListProjection(_endpoint, _credentials, "$category-Users");
-            //_budgets = new BudgetsListProjection(_endpoint, _credentials, "$category-Budgets");
 
             _users.Start();
             _budgets.Start();

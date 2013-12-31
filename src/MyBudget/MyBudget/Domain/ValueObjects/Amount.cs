@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MyBudget.Domain.ValueObjects
 {
-    public class Amount : IEquatable<Amount>
+    public class Amount : IEquatable<Amount>, IComparable<Amount>
     {
         public readonly static Amount Unknown = new Amount(Currencies.Unknown(), 0);
 
@@ -72,6 +72,15 @@ namespace MyBudget.Domain.ValueObjects
         public static Amount Zero(Currency currency)
         {
             return new Amount(currency, 0);
+        }
+
+        public int CompareTo(Amount other)
+        {
+            if (other == null)
+                throw new ArgumentNullException("other");
+            if(other._currency != _currency)
+                throw new Exception("different currencies");
+            return Comparer<decimal>.Default.Compare(_amount, other._amount);
         }
     }
 

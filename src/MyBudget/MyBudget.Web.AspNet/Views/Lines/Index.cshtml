@@ -29,7 +29,7 @@
 @foreach (var item in Model.Lines) {
     <tr>
         <td>
-            @item.Date
+            @item.Date.ToString("d")
         </td>
         <td>
             @item.Category
