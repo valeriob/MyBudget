@@ -22,6 +22,24 @@ namespace MyBudget.Web.AspNet.Controllers
             return View(model);
         }
 
+        public virtual ActionResult Page(string id, string From, string To, int? pageIndex)
+        {
+            DateTime? from = null;
+            DateTime? to = null;
+
+            if (From != null)
+                from = DateTime.Parse(From);
+            //from = From;
+            if (To != null)
+                to = DateTime.Parse(To);
+
+            var readModel = ProjectionManager.GetBudgetLinesProjection(id);
+            var lines = readModel.GetAllLinesPaged(pageIndex.GetValueOrDefault(), from, to);
+            var model = new BudgetLinesPagedViewModel(id, lines, from, to);
+
+            return View(model);
+        }
+
         public virtual ActionResult Details(int id)
         {
             return View();

@@ -119,7 +119,7 @@ namespace MyBudget.Web.AspNet.Controllers
             public readonly string budgetId = "budgetId";
             public readonly string From = "From";
             public readonly string To = "To";
-            public readonly string groupBy = "groupBy";
+            public readonly string GroupBy = "GroupBy";
         }
         static readonly ViewsClass s_views = new ViewsClass();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -132,9 +132,11 @@ namespace MyBudget.Web.AspNet.Controllers
             public class _ViewNamesClass
             {
                 public readonly string ByCategory = "ByCategory";
+                public readonly string ByCategoryInTime = "ByCategoryInTime";
                 public readonly string Index = "Index";
             }
             public readonly string ByCategory = "~/Views/BudgetStats/ByCategory.cshtml";
+            public readonly string ByCategoryInTime = "~/Views/BudgetStats/ByCategoryInTime.cshtml";
             public readonly string Index = "~/Views/BudgetStats/Index.cshtml";
         }
     }
@@ -166,16 +168,16 @@ namespace MyBudget.Web.AspNet.Controllers
             return callInfo;
         }
 
-        partial void ByCategoryInTimeOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string budgetId, string From, string To, string groupBy);
+        partial void ByCategoryInTimeOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string budgetId, string From, string To, string GroupBy);
 
-        public override System.Web.Mvc.ActionResult ByCategoryInTime(string budgetId, string From, string To, string groupBy)
+        public override System.Web.Mvc.ActionResult ByCategoryInTime(string budgetId, string From, string To, string GroupBy)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.ByCategoryInTime);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "budgetId", budgetId);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "From", From);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "To", To);
-            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "groupBy", groupBy);
-            ByCategoryInTimeOverride(callInfo, budgetId, From, To, groupBy);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "GroupBy", GroupBy);
+            ByCategoryInTimeOverride(callInfo, budgetId, From, To, GroupBy);
             return callInfo;
         }
 

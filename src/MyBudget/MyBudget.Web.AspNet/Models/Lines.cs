@@ -21,6 +21,35 @@ namespace MyBudget.Web.AspNet.Models
         }
     }
 
+    public class BudgetLinesPagedViewModel
+    {
+        public IEnumerable<BudgetLine> Lines { get; private set; }
+        public string BudgetId { get; private set; }
+        public DateTime? From { get; private set; }
+        public DateTime? To { get; private set; }
+        public int PageIndex { get; private set; }
+        public int TotalPages { get; private set; }
+
+        public BudgetLinesPagedViewModel(string budgetId, PagedResult<BudgetLine> lines, DateTime? from, DateTime? to)
+        {
+            From = from;
+            To = to;
+            BudgetId = budgetId;
+            Lines = lines;
+            PageIndex = lines.PageIndex;
+            TotalPages = lines.TotalPages();
+        }
+
+        public bool PrevLinkVisible()
+        {
+            return PageIndex > 0;
+        }
+        public bool NextLinkVisible()
+        {
+            return PageIndex < TotalPages;
+        }
+    }
+
     public class EditBudgetLineViewModel
     {
         public string LineId { get; set; }

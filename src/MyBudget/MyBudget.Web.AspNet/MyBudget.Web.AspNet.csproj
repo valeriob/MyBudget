@@ -341,6 +341,7 @@
     <Content Include="Views\BudgetStats\ByCategory.cshtml" />
     <Content Include="Views\BudgetStats\Index.cshtml" />
     <Content Include="Views\BudgetStats\ByCategoryInTime.cshtml" />
+    <Content Include="Views\Lines\Page.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

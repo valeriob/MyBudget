@@ -27,7 +27,8 @@
             @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
             @Html.ActionLink("Details", "Details", new { id=item.Id }) |
             @Html.ActionLink("Stats", MVC.BudgetStats.Index(item.Id)) |
-            @Html.ActionLink("Lines", "Index", "Lines", new { id = item.Id }, new object()) |
+            @Html.ActionLink("Lines", MVC.Lines.Page(item.Id, null, null, null)) |
+            @*@Html.ActionLink("Lines", "Index", "Lines", new { id = item.Id }, new object()) |*@
             @Html.ActionLink("Delete", "Delete", new { id=item.Id })
         </td>
     </tr>

@@ -75,6 +75,50 @@ namespace MyBudget.Projections
             return q.OrderBy(d => d.Date);
         }
 
+        readonly static int _pageSize = 50;
+        public PagedResult<BudgetLine> GetAllLinesPaged(int page, DateTime? from, DateTime? to)
+        {
+            var q = _lines.AsEnumerable();
+            if (from.HasValue)
+                q = q.Where(r => r.Date >= from.Value);
+            if (to.HasValue)
+                q = q.Where(r => r.Date <= to.Value);
+            q = q.OrderBy(d => d.Date);
+
+            q = q.Skip(_pageSize * page).Take(_pageSize);
+
+            return new PagedResult<BudgetLine>(q.ToList(), _lines.Count, page, _pageSize);
+        }
+    }
+
+    public class PagedResult<T> : IEnumerable<T>
+    {
+        public IEnumerable<T> Items { get; private set; }
+        public int TotalItems { get; private set; }
+        public int PageSize { get; private set; }
+        public int PageIndex { get; private set; }
+
+        public PagedResult(IEnumerable<T> items, int totalItems, int pageIndex, int pageSize)
+        {
+            Items = items;
+            TotalItems = totalItems;
+            PageIndex = pageIndex;
+            PageSize = pageSize;
+        }
+
+        public int TotalPages()
+        {
+            return TotalItems / PageSize;
+        }
+        public IEnumerator<T> GetEnumerator()
+        {
+            return Items.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return Items.GetEnumerator();
+        }
     }
 
     public class BudgetLine

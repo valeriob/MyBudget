@@ -52,6 +52,12 @@ namespace MyBudget.Web.AspNet.Controllers
         }
         [NonAction]
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public virtual System.Web.Mvc.ActionResult Page()
+        {
+            return new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Page);
+        }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public virtual System.Web.Mvc.ActionResult Details()
         {
             return new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Details);
@@ -91,6 +97,7 @@ namespace MyBudget.Web.AspNet.Controllers
         public class ActionNamesClass
         {
             public readonly string Index = "Index";
+            public readonly string Page = "Page";
             public readonly string Details = "Details";
             public readonly string Create = "Create";
             public readonly string Edit = "Edit";
@@ -101,6 +108,7 @@ namespace MyBudget.Web.AspNet.Controllers
         public class ActionNameConstants
         {
             public const string Index = "Index";
+            public const string Page = "Page";
             public const string Details = "Details";
             public const string Create = "Create";
             public const string Edit = "Edit";
@@ -115,6 +123,17 @@ namespace MyBudget.Web.AspNet.Controllers
         public class ActionParamsClass_Index
         {
             public readonly string id = "id";
+        }
+        static readonly ActionParamsClass_Page s_params_Page = new ActionParamsClass_Page();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_Page PageParams { get { return s_params_Page; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_Page
+        {
+            public readonly string id = "id";
+            public readonly string From = "From";
+            public readonly string To = "To";
+            public readonly string pageIndex = "pageIndex";
         }
         static readonly ActionParamsClass_Details s_params_Details = new ActionParamsClass_Details();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -165,10 +184,12 @@ namespace MyBudget.Web.AspNet.Controllers
                 public readonly string Create = "Create";
                 public readonly string Edit = "Edit";
                 public readonly string Index = "Index";
+                public readonly string Page = "Page";
             }
             public readonly string Create = "~/Views/Lines/Create.cshtml";
             public readonly string Edit = "~/Views/Lines/Edit.cshtml";
             public readonly string Index = "~/Views/Lines/Index.cshtml";
+            public readonly string Page = "~/Views/Lines/Page.cshtml";
         }
     }
 
@@ -184,6 +205,19 @@ namespace MyBudget.Web.AspNet.Controllers
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Index);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
             IndexOverride(callInfo, id);
+            return callInfo;
+        }
+
+        partial void PageOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string id, string From, string To, int? pageIndex);
+
+        public override System.Web.Mvc.ActionResult Page(string id, string From, string To, int? pageIndex)
+        {
+            var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Page);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "From", From);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "To", To);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "pageIndex", pageIndex);
+            PageOverride(callInfo, id, From, To, pageIndex);
             return callInfo;
         }
 
