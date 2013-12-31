@@ -87,6 +87,8 @@ namespace MyBudget.Web.AspNet.Controllers
 
         public IEnumerable<TimeGroup> TimeSerie { get; private set; }
         public string[] Categories { get; private set; }
+        public  GroupBy Grouping { get; private set; }
+
 
         public BudgetStatsByCategoryInTimeViewModel(IEnumerable<Projections.BudgetLine> lines,
             string budgetId, string budgetName, DateTime? from, DateTime? to, GroupBy grouping)
@@ -96,9 +98,10 @@ namespace MyBudget.Web.AspNet.Controllers
             From = from;
             To = to;
             Categories = lines.Select(s => s.Category).Distinct().ToArray();
-
+            Grouping = grouping;
             TimeSerie = Group(lines, grouping);
         }
+
 
         IEnumerable<TimeGroup> Group(IEnumerable<Projections.BudgetLine> lines, GroupBy grouping)
         {
@@ -110,11 +113,11 @@ namespace MyBudget.Web.AspNet.Controllers
 
                 case GroupBy.Month:
                     return lines.GroupBy(g => new { g.Date.Year, g.Date.Month })
-                        .Select(s => new TimeGroup(s.Key.Year + "" + s.Key.Month, s.ToCategoryStats())).ToList();
+                        .Select(s => new TimeGroup(CultureInfo.CurrentCulture.DateTimeFormat.MonthNames[s.Key.Month - 1] + " " + s.Key.Year , s.ToCategoryStats())).ToList();
 
                 case GroupBy.Week:
                     return lines.GroupBy(g => new { g.Date.Year, Week = GetIso8601WeekOfYear(g.Date) })
-                        .Select(s => new TimeGroup(s.Key.Year + "" + s.Key.Week, s.ToCategoryStats())).ToList();
+                        .Select(s => new TimeGroup(s.Key.Year % 100 +" #"+s.Key.Week , s.ToCategoryStats())).ToList();
                 case GroupBy.Day:
                     return lines.GroupBy(g => g.Date)
                       .Select(s => new TimeGroup(s.Key.ToString("d"), s.ToCategoryStats())).ToList();
@@ -159,6 +162,11 @@ namespace MyBudget.Web.AspNet.Controllers
             yield return GroupBy.Month;
             yield return GroupBy.Week;
             yield return GroupBy.Day;
+        }
+
+        public string GetIsSelected(GroupBy g)
+        {
+            return g == Grouping ? "selected='selected'" : "";
         }
     }
 

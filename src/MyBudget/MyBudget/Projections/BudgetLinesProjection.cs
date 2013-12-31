@@ -56,7 +56,7 @@ namespace MyBudget.Projections
 
         public IEnumerable<BudgetLine> GetAllLines()
         {
-            return _lines;
+            return _lines.OrderBy(d => d.Date);
         }
 
         public BudgetLine GetLine(string id)
@@ -72,7 +72,7 @@ namespace MyBudget.Projections
                 q = q.Where(r => r.Date >= from.Value);
             if (to.HasValue)
                 q = q.Where(r => r.Date <= to.Value);
-            return q;
+            return q.OrderBy(d => d.Date);
         }
 
     }

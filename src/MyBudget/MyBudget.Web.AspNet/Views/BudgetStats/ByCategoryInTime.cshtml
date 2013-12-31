@@ -7,7 +7,7 @@
 
 
 <div>
-    @using (Html.BeginForm(MVC.BudgetStats.ByCategory(), FormMethod.Get))
+    @using (Html.BeginForm(MVC.BudgetStats.ByCategoryInTime(), FormMethod.Get))
     {
         @Html.HiddenFor(b => b.BudgetId);
 
@@ -15,9 +15,15 @@
             <input type="text" class="input-small" name="from" id="From" value="@Model.GetFormattedFrom()" />
             <span class="add-on">to</span>
             <input type="text" class="input-small" name="to" id="To" value="@Model.GetFormattedTo()" />
-
-            <input type="submit" value="Search" class="btn btn-default" />
         </div>
+
+        <select name="groupBy" id="groupBy">
+            @foreach (var o in Model.GetGroupings())
+            {
+                <option value="@o" @Model.GetIsSelected(o)> @o</option>
+            }
+        </select>
+        <input type="submit" value="Search" class="btn btn-default" />
     }
 </div>
 
@@ -25,10 +31,9 @@
     <thead>
         <tr>
             <th> </th>
-
             @foreach (var category in Model.Categories)
             {
-                <th> @category</th>
+                <th style="white-space:pre;padding:10px"> @category</th>
             }
         </tr>
     </thead>
@@ -36,11 +41,11 @@
         @foreach (var group in Model.TimeSerie)
         {
             <tr>
-                <td> @group.Group </td>
+                <td style="white-space:pre;padding:10px"> @group.Group </td>
 
                 @foreach (var category in Model.Categories)
                 {
-                    <td> @group.OfCategory(category); </td>
+                    <td style="white-space:pre;padding:10px"> @group.OfCategory(category) </td>
                 }
             </tr>
         }

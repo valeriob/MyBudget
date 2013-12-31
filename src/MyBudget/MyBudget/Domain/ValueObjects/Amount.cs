@@ -21,7 +21,10 @@ namespace MyBudget.Domain.ValueObjects
 
         public override string ToString()
         {
-            return string.Format("{0} {1}", _currency.Sign, _amount);
+            if (_amount == 0)
+                return "";
+            //return string.Format("{0} {1}", _currency.Sign, _amount);
+            return string.Format("{1} {0}", _currency.Sign, _amount);
         }
 
         public override bool Equals(object obj)
