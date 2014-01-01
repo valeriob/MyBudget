@@ -27,10 +27,10 @@ namespace MyBudget.Web.AspNet.Controllers
             DateTime? from = null;
             DateTime? to = null;
 
-            if (From != null)
+            if (string.IsNullOrEmpty(From) == false)
                 from = DateTime.Parse(From);
             //from = From;
-            if (To != null)
+            if (string.IsNullOrEmpty(To) == false)
                 to = DateTime.Parse(To);
 
             var readModel = ProjectionManager.GetBudgetLinesProjection(id);

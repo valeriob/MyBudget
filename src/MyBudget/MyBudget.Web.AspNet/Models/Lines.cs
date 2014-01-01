@@ -40,6 +40,10 @@ namespace MyBudget.Web.AspNet.Models
             TotalPages = lines.TotalPages();
         }
 
+        public bool FirstLinkVisible()
+        {
+            return PageIndex != 0;
+        }
         public bool PrevLinkVisible()
         {
             return PageIndex > 0;
@@ -47,6 +51,20 @@ namespace MyBudget.Web.AspNet.Models
         public bool NextLinkVisible()
         {
             return PageIndex < TotalPages;
+        }
+
+        public string GetFormattedFrom()
+        {
+            if (From == null)
+                return "";
+            return From.Value.ToString("d");
+        }
+
+        public string GetFormattedTo()
+        {
+            if (To == null)
+                return "";
+            return To.Value.ToString("d");
         }
     }
 

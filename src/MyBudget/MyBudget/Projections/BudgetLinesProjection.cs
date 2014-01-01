@@ -75,7 +75,7 @@ namespace MyBudget.Projections
             return q.OrderBy(d => d.Date);
         }
 
-        readonly static int _pageSize = 50;
+        readonly static int _pageSize = 15;
         public PagedResult<BudgetLine> GetAllLinesPaged(int page, DateTime? from, DateTime? to)
         {
             var q = _lines.AsEnumerable();
@@ -83,7 +83,7 @@ namespace MyBudget.Projections
                 q = q.Where(r => r.Date >= from.Value);
             if (to.HasValue)
                 q = q.Where(r => r.Date <= to.Value);
-            q = q.OrderBy(d => d.Date);
+            q = q.OrderByDescending(d => d.Date);
 
             q = q.Skip(_pageSize * page).Take(_pageSize);
 

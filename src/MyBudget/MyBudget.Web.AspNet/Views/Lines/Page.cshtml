@@ -8,15 +8,44 @@
 
 <p>
     @Html.ActionLink("Create New", "Create", new { id = Model.BudgetId })
+    @if (Model.FirstLinkVisible())
+    {
+        <a id="linkFirst" onclick='return goToPage(0)'>First</a>
+        @*@Html.ActionLink("First", MVC.Lines.Page(Model.BudgetId, Model.From + "", Model.To + "", 0))*@
+    }
     @if (Model.PrevLinkVisible())
     {
-        @Html.ActionLink("Prev", MVC.Lines.Page(Model.BudgetId, Model.From +"", Model.To +"", Model.PageIndex - 1))
+        <a id="linkPrev" onclick='return goToPage(@(Model.PageIndex - 1))'>Prev</a>
+        @*@Html.ActionLink("Prev", MVC.Lines.Page(Model.BudgetId, Model.From + "", Model.To + "", Model.PageIndex - 1))*@
     }
     @if (Model.NextLinkVisible())
     {
-        @Html.ActionLink("Next", MVC.Lines.Page(Model.BudgetId, Model.From + "", Model.To +"", Model.PageIndex + 1))
+        <a id="linkNext" onclick='return goToPage(@(Model.PageIndex + 1))'>Next</a>
+        @*@Html.ActionLink("Next", MVC.Lines.Page(Model.BudgetId, Model.From + "", Model.To + "", Model.PageIndex + 1))*@
     }
 </p>
+
+<div>
+    @using (Html.BeginForm(MVC.Lines.Page(), FormMethod.Get, new { id = "search" }))
+    {
+        @Html.HiddenFor(b => b.BudgetId);
+
+        <input id="pageIndex" name="pageIndex" type="hidden" />
+
+        <div class="input-daterange" id="datepicker">
+            <input type="text" class="input-small" name="from" id="From" value="@Model.GetFormattedFrom()" />
+            <span class="add-on">to</span>
+            <input type="text" class="input-small" name="to" id="To" value="@Model.GetFormattedTo()" />
+        </div>
+
+        <input type="submit" value="Search" class="btn btn-default" />
+    }
+
+
+</div>
+
+
+
 <table class="table">
     <tr>
         <th>
@@ -58,3 +87,40 @@
     }
 
 </table>
+
+
+@section Scripts {
+
+    <script type="text/javascript">
+        var baseUrl = '@(MVC.Lines.Page())?budgetId=@(Model.BudgetId)&';
+
+        var goToPage = function (pageIndex) {
+            var idx = document.getElementById("pageIndex");
+            idx.value = pageIndex;
+            document.getElementById("search").submit();
+        }
+
+        var updateUrls = function () {
+            var from = $("#From").val();
+            var to = $("#To").val();
+
+
+            var first = $("#linkFirst");
+            first.attr("href", baseUrl + from + '&' + to);
+
+            var prev = $("#linkPrev");
+            prev.attr("href", baseUrl + from + '&' + to);
+
+            var next = $("#linkNext");
+            next.attr("href", baseUrl + from + '&' + to);
+        }
+
+        $('#datepicker').datepicker({
+            format: "dd/mm/yyyy",
+            // language: "it",
+            autoclose: true,
+            todayHighlight: true
+        });//.on('changeDate', updateUrls);
+
+    </script>
+}
