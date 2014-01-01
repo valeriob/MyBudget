@@ -1,0 +1,1 @@
+F:\Git\GetEventStore\bin\eventstore\debug\anycpu\Eventstore.SingleNode.exe --run-projections=ALL -s100000 -d Data --log=Log
