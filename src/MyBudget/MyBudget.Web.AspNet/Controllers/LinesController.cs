@@ -22,7 +22,7 @@ namespace MyBudget.Web.AspNet.Controllers
             return View(model);
         }
 
-        public virtual ActionResult Page(string id, string From, string To, int? pageIndex)
+        public virtual ActionResult Page(string id, string From, string To, int? pageIndex, string category)
         {
             DateTime? from = null;
             DateTime? to = null;
@@ -33,9 +33,10 @@ namespace MyBudget.Web.AspNet.Controllers
             if (string.IsNullOrEmpty(To) == false)
                 to = DateTime.Parse(To);
 
+            var catReadModel = ProjectionManager.GetCategories();
             var readModel = ProjectionManager.GetBudgetLinesProjection(id);
-            var lines = readModel.GetAllLinesPaged(pageIndex.GetValueOrDefault(), from, to);
-            var model = new BudgetLinesPagedViewModel(id, lines, from, to);
+            var lines = readModel.GetAllLinesPaged(pageIndex.GetValueOrDefault(), from, to, category);
+            var model = new BudgetLinesPagedViewModel(id, lines, from, to, catReadModel.GetBudgetsCategories(new Domain.Budgets.BudgetId(id)), category);
 
             return View(model);
         }

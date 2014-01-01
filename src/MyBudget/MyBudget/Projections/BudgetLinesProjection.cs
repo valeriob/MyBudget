@@ -76,18 +76,24 @@ namespace MyBudget.Projections
         }
 
         readonly static int _pageSize = 15;
-        public PagedResult<BudgetLine> GetAllLinesPaged(int page, DateTime? from, DateTime? to)
+        public PagedResult<BudgetLine> GetAllLinesPaged(int page, DateTime? from, DateTime? to, string category)
         {
             var q = _lines.AsEnumerable();
             if (from.HasValue)
                 q = q.Where(r => r.Date >= from.Value);
             if (to.HasValue)
                 q = q.Where(r => r.Date <= to.Value);
+
+            if (string.IsNullOrEmpty(category) == false)
+                q = q.Where(r => r.Category == category);
+
+            var total = q.Count();
+
             q = q.OrderByDescending(d => d.Date);
 
             q = q.Skip(_pageSize * page).Take(_pageSize);
 
-            return new PagedResult<BudgetLine>(q.ToList(), _lines.Count, page, _pageSize);
+            return new PagedResult<BudgetLine>(q.ToList(), total, page, _pageSize);
         }
     }
 

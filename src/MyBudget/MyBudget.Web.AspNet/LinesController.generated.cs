@@ -134,6 +134,7 @@ namespace MyBudget.Web.AspNet.Controllers
             public readonly string From = "From";
             public readonly string To = "To";
             public readonly string pageIndex = "pageIndex";
+            public readonly string category = "category";
         }
         static readonly ActionParamsClass_Details s_params_Details = new ActionParamsClass_Details();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -208,16 +209,17 @@ namespace MyBudget.Web.AspNet.Controllers
             return callInfo;
         }
 
-        partial void PageOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string id, string From, string To, int? pageIndex);
+        partial void PageOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string id, string From, string To, int? pageIndex, string category);
 
-        public override System.Web.Mvc.ActionResult Page(string id, string From, string To, int? pageIndex)
+        public override System.Web.Mvc.ActionResult Page(string id, string From, string To, int? pageIndex, string category)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Page);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "From", From);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "To", To);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "pageIndex", pageIndex);
-            PageOverride(callInfo, id, From, To, pageIndex);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "category", category);
+            PageOverride(callInfo, id, From, To, pageIndex, category);
             return callInfo;
         }
 

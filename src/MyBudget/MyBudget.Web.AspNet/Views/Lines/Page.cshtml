@@ -11,17 +11,14 @@
     @if (Model.FirstLinkVisible())
     {
         <a id="linkFirst" onclick='return goToPage(0)'>First</a>
-        @*@Html.ActionLink("First", MVC.Lines.Page(Model.BudgetId, Model.From + "", Model.To + "", 0))*@
     }
     @if (Model.PrevLinkVisible())
     {
         <a id="linkPrev" onclick='return goToPage(@(Model.PageIndex - 1))'>Prev</a>
-        @*@Html.ActionLink("Prev", MVC.Lines.Page(Model.BudgetId, Model.From + "", Model.To + "", Model.PageIndex - 1))*@
     }
     @if (Model.NextLinkVisible())
     {
         <a id="linkNext" onclick='return goToPage(@(Model.PageIndex + 1))'>Next</a>
-        @*@Html.ActionLink("Next", MVC.Lines.Page(Model.BudgetId, Model.From + "", Model.To + "", Model.PageIndex + 1))*@
     }
 </p>
 
@@ -32,12 +29,13 @@
 
         <input id="pageIndex" name="pageIndex" type="hidden" />
 
-        <div class="input-daterange" id="datepicker">
+        <div class="input-daterange" id="datepicker" style="display:inline">
             <input type="text" class="input-small" name="from" id="From" value="@Model.GetFormattedFrom()" />
             <span class="add-on">to</span>
             <input type="text" class="input-small" name="to" id="To" value="@Model.GetFormattedTo()" />
         </div>
-
+        @Html.DropDownListFor(c=> c.Category, Model.GetCategories())
+        
         <input type="submit" value="Search" class="btn btn-default" />
     }
 

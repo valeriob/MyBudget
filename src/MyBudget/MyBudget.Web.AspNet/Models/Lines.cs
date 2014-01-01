@@ -29,8 +29,10 @@ namespace MyBudget.Web.AspNet.Models
         public DateTime? To { get; private set; }
         public int PageIndex { get; private set; }
         public int TotalPages { get; private set; }
+        public IEnumerable<string> Categories { get; private set; }
+        public string Category { get; private set; }
 
-        public BudgetLinesPagedViewModel(string budgetId, PagedResult<BudgetLine> lines, DateTime? from, DateTime? to)
+        public BudgetLinesPagedViewModel(string budgetId, PagedResult<BudgetLine> lines, DateTime? from, DateTime? to, IEnumerable<string> categories, string category)
         {
             From = from;
             To = to;
@@ -38,6 +40,12 @@ namespace MyBudget.Web.AspNet.Models
             Lines = lines;
             PageIndex = lines.PageIndex;
             TotalPages = lines.TotalPages();
+
+            var c = categories.ToList();
+            c.Insert(0, "");
+
+            Categories = c;
+            Category = category;
         }
 
         public bool FirstLinkVisible()
@@ -65,6 +73,16 @@ namespace MyBudget.Web.AspNet.Models
             if (To == null)
                 return "";
             return To.Value.ToString("d");
+        }
+
+        public IEnumerable<System.Web.Mvc.SelectListItem> GetCategories()
+        {
+            return Categories.Select(s => new System.Web.Mvc.SelectListItem
+            {
+                Value = s,
+                Text = s,
+                Selected = s == Category
+            });
         }
     }
 

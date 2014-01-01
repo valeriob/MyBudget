@@ -31,6 +31,8 @@
     <thead>
         <tr>
             <th> </th>
+            <th> Total </th>
+
             @foreach (var category in Model.Categories)
             {
                 <th style="white-space:pre;padding:10px"> @category</th>
@@ -42,6 +44,8 @@
         {
             <tr>
                 <td style="white-space:pre;padding:10px"> @group.Group </td>
+
+                <td style="white-space:pre;padding:10px"> @group.TotalAmount </td>
 
                 @foreach (var category in Model.Categories)
                 {

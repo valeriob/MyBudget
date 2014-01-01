@@ -61,7 +61,7 @@ namespace MyBudget.Projections
             List<string> categories;
             if (_categories.TryGetValue(budgetId.ToString(), out categories) == false)
                 _categories[budgetId.ToString()] = categories = new List<string>();
-            return categories;
+            return categories.OrderBy(d => d);
         }
 
     }
