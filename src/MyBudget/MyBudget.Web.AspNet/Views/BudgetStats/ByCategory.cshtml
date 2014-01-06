@@ -7,7 +7,7 @@
 
 
 <div>
-    @using (Html.BeginForm(MVC.BudgetStats.ByCategory(), FormMethod.Get))
+    @using (Html.BeginForm(MVC.BudgetStats.ByCategory(), FormMethod.Post))
         {
             //@Html.AntiForgeryToken()
         @Html.HiddenFor(b => b.BudgetId);

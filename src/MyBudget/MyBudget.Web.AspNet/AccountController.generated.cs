@@ -49,6 +49,19 @@ namespace MyBudget.Web.AspNet.Controllers
         }
         [NonAction]
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public virtual System.Threading.Tasks.Task<System.Web.Mvc.ActionResult> Disassociate()
+        {
+            var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Disassociate);
+            return System.Threading.Tasks.Task.FromResult(callInfo as ActionResult);
+        }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public virtual System.Web.Mvc.ActionResult Manage()
+        {
+            return new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Manage);
+        }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public virtual System.Web.Mvc.ActionResult ExternalLogin()
         {
             return new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.ExternalLogin);
@@ -90,6 +103,9 @@ namespace MyBudget.Web.AspNet.Controllers
         public class ActionNamesClass
         {
             public readonly string Login = "Login";
+            public readonly string Register = "Register";
+            public readonly string Disassociate = "Disassociate";
+            public readonly string Manage = "Manage";
             public readonly string ExternalLogin = "ExternalLogin";
             public readonly string ExternalLoginCallback = "ExternalLoginCallback";
             public readonly string LinkLogin = "LinkLogin";
@@ -97,12 +113,16 @@ namespace MyBudget.Web.AspNet.Controllers
             public readonly string ExternalLoginConfirmation = "ExternalLoginConfirmation";
             public readonly string LogOff = "LogOff";
             public readonly string ExternalLoginFailure = "ExternalLoginFailure";
+            public readonly string RemoveAccountList = "RemoveAccountList";
         }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public class ActionNameConstants
         {
             public const string Login = "Login";
+            public const string Register = "Register";
+            public const string Disassociate = "Disassociate";
+            public const string Manage = "Manage";
             public const string ExternalLogin = "ExternalLogin";
             public const string ExternalLoginCallback = "ExternalLoginCallback";
             public const string LinkLogin = "LinkLogin";
@@ -110,6 +130,7 @@ namespace MyBudget.Web.AspNet.Controllers
             public const string ExternalLoginConfirmation = "ExternalLoginConfirmation";
             public const string LogOff = "LogOff";
             public const string ExternalLoginFailure = "ExternalLoginFailure";
+            public const string RemoveAccountList = "RemoveAccountList";
         }
 
 
@@ -120,6 +141,33 @@ namespace MyBudget.Web.AspNet.Controllers
         public class ActionParamsClass_Login
         {
             public readonly string returnUrl = "returnUrl";
+            public readonly string model = "model";
+        }
+        static readonly ActionParamsClass_Register s_params_Register = new ActionParamsClass_Register();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_Register RegisterParams { get { return s_params_Register; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_Register
+        {
+            public readonly string model = "model";
+        }
+        static readonly ActionParamsClass_Disassociate s_params_Disassociate = new ActionParamsClass_Disassociate();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_Disassociate DisassociateParams { get { return s_params_Disassociate; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_Disassociate
+        {
+            public readonly string loginProvider = "loginProvider";
+            public readonly string providerKey = "providerKey";
+        }
+        static readonly ActionParamsClass_Manage s_params_Manage = new ActionParamsClass_Manage();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_Manage ManageParams { get { return s_params_Manage; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_Manage
+        {
+            public readonly string message = "message";
+            public readonly string model = "model";
         }
         static readonly ActionParamsClass_ExternalLogin s_params_ExternalLogin = new ActionParamsClass_ExternalLogin();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -202,6 +250,67 @@ namespace MyBudget.Web.AspNet.Controllers
             return callInfo;
         }
 
+        partial void LoginOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, MyBudget.Web.AspNet.Models.LoginViewModel model, string returnUrl);
+
+        public override System.Threading.Tasks.Task<System.Web.Mvc.ActionResult> Login(MyBudget.Web.AspNet.Models.LoginViewModel model, string returnUrl)
+        {
+            var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Login);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "returnUrl", returnUrl);
+            LoginOverride(callInfo, model, returnUrl);
+            return System.Threading.Tasks.Task.FromResult(callInfo as ActionResult);
+        }
+
+        partial void RegisterOverride(T4MVC_System_Web_Mvc_ActionResult callInfo);
+
+        public override System.Web.Mvc.ActionResult Register()
+        {
+            var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Register);
+            RegisterOverride(callInfo);
+            return callInfo;
+        }
+
+        partial void RegisterOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, MyBudget.Web.AspNet.Models.RegisterViewModel model);
+
+        public override System.Threading.Tasks.Task<System.Web.Mvc.ActionResult> Register(MyBudget.Web.AspNet.Models.RegisterViewModel model)
+        {
+            var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Register);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
+            RegisterOverride(callInfo, model);
+            return System.Threading.Tasks.Task.FromResult(callInfo as ActionResult);
+        }
+
+        partial void DisassociateOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string loginProvider, string providerKey);
+
+        public override System.Threading.Tasks.Task<System.Web.Mvc.ActionResult> Disassociate(string loginProvider, string providerKey)
+        {
+            var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Disassociate);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "loginProvider", loginProvider);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "providerKey", providerKey);
+            DisassociateOverride(callInfo, loginProvider, providerKey);
+            return System.Threading.Tasks.Task.FromResult(callInfo as ActionResult);
+        }
+
+        partial void ManageOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, MyBudget.Web.AspNet.Controllers.AccountController.ManageMessageId? message);
+
+        public override System.Web.Mvc.ActionResult Manage(MyBudget.Web.AspNet.Controllers.AccountController.ManageMessageId? message)
+        {
+            var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Manage);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "message", message);
+            ManageOverride(callInfo, message);
+            return callInfo;
+        }
+
+        partial void ManageOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, MyBudget.Web.AspNet.Models.ManageUserViewModel model);
+
+        public override System.Threading.Tasks.Task<System.Web.Mvc.ActionResult> Manage(MyBudget.Web.AspNet.Models.ManageUserViewModel model)
+        {
+            var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Manage);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
+            ManageOverride(callInfo, model);
+            return System.Threading.Tasks.Task.FromResult(callInfo as ActionResult);
+        }
+
         partial void ExternalLoginOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string provider, string returnUrl);
 
         public override System.Web.Mvc.ActionResult ExternalLogin(string provider, string returnUrl)
@@ -268,6 +377,15 @@ namespace MyBudget.Web.AspNet.Controllers
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.ExternalLoginFailure);
             ExternalLoginFailureOverride(callInfo);
+            return callInfo;
+        }
+
+        partial void RemoveAccountListOverride(T4MVC_System_Web_Mvc_ActionResult callInfo);
+
+        public override System.Web.Mvc.ActionResult RemoveAccountList()
+        {
+            var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.RemoveAccountList);
+            RemoveAccountListOverride(callInfo);
             return callInfo;
         }
 

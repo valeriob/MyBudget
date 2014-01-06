@@ -192,7 +192,8 @@
     <Compile Include="BudgetStatsController.generated.cs">
       <DependentUpon>T4MVC.tt</DependentUpon>
     </Compile>
-    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\Account2Controller.cs" />
+    <None Include="Controllers\AccountController.cs_" />
     <Compile Include="Controllers\BudgetsController.cs" />
     <Compile Include="Controllers\BudgetStatsController.cs" />
     <Compile Include="Controllers\DefaultModelBinder.cs" />

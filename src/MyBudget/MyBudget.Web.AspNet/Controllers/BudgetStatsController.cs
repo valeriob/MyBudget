@@ -28,10 +28,10 @@ namespace MyBudget.Web.AspNet.Controllers
 
             if (From != null)
                 from = DateTime.Parse(From);
-            //from = From;
+                //from = From;
             if (To != null)
                 to = DateTime.Parse(To);
-            //to = To;
+                //to = To;
 
             var projection = ProjectionManager.GetBudgetLinesProjection(budgetId);
             IEnumerable<BudgetLine> lines = projection.GetAllLinesBetween(from, to);

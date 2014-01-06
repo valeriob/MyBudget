@@ -19,7 +19,7 @@ namespace MyBudget.Tests
         [Test]
         public void serialize_userAdded()
         {
-            var evnt = new UserCreated(Guid.NewGuid(), DateTime.Now, UserId.CreateNew(), new UserLoginInfo("prov", "key"), "username");
+            var evnt = new UserCreated(Guid.NewGuid(), DateTime.Now, UserId.CreateNew(), new UserLoginInfo("prov", "key"), "username", "password");
 
 
             var settings = new JsonSerializerSettings 

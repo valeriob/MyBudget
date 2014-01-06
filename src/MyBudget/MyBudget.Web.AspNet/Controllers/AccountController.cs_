@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin.Security;
 using MyBudget.Web.AspNet.Models;
 using MyBudget.Domain.Users;
+using MyBudget.Projections;
 
 namespace MyBudget.Web.AspNet.Controllers
 {

@@ -50,7 +50,11 @@ namespace MyBudget.Projections
 
         public User FindById(string userId)
         {
-            return _users[userId];
+            if (string.IsNullOrEmpty(userId))
+                return null;
+            User user = null;
+            _users.TryGetValue(userId, out user);
+            return user;
         }
         public async Task<User> FindByIdAsync(string userId)
         {

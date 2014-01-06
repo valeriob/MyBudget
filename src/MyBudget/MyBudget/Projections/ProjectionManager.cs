@@ -14,6 +14,7 @@ namespace MyBudget.Projections
     {
         IEventStoreConnection _connection;
         IPEndPoint _endpoint;
+        ApplicationUserProjection _applicationUsers;
         UserCredentials _credentials;
         UsersListProjection _users;
         BudgetsListProjection _budgets;
@@ -35,10 +36,12 @@ namespace MyBudget.Projections
             var usersStream = "categoria_Users";
             var budgetsStream = "categoria_Budgets";
             //var categoriesStream = "categoria_Budgets";
+            _applicationUsers = new ApplicationUserProjection(_endpoint, _credentials, _adapter, null);
             _users = new UsersListProjection(_endpoint, _credentials, _adapter, usersStream);
             _budgets = new BudgetsListProjection(_endpoint, _credentials, _adapter, budgetsStream);
             _categories = new CategoriesProjection(_endpoint, _credentials, _adapter, null);
 
+            _applicationUsers.Start();
             _users.Start();
             _budgets.Start();
             _categories.Start();
@@ -47,6 +50,11 @@ namespace MyBudget.Projections
         public UsersListProjection GetUsersList()
         {
             return _users;
+        }
+
+        public IApplicationUsersProjection GetApplicationUsers()
+        {
+            return _applicationUsers;
         }
 
         public BudgetsListProjection GetBudgetsList()
