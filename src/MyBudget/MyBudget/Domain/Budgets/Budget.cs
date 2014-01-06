@@ -26,7 +26,7 @@ namespace MyBudget.Domain.Budgets
             _owner = evnt.Owner;
         }
 
-        public void Apply(UserAccessAllowed evnt)
+        public void Apply(BudgetAccessAllowed evnt)
         {
 
         }
@@ -55,12 +55,12 @@ namespace MyBudget.Domain.Budgets
         }
     }
 
-    public class UserAccessAllowed : Event
+    public class BudgetAccessAllowed : Event
     {
         public BudgetId BudgetId { get; private set; }
         public UserId AllowedUserId { get; private set; }
 
-        public UserAccessAllowed(Guid id, DateTime timestamp, BudgetId budgetId, UserId allowedUserId)
+        public BudgetAccessAllowed(Guid id, DateTime timestamp, BudgetId budgetId, UserId allowedUserId)
         {
             Id = id;
             Timestamp = timestamp;
@@ -126,7 +126,7 @@ namespace MyBudget.Domain.Budgets
             if (_state.CanAllowAccess(fromUser) == false)
                 throw new Exception("User cannot allow access to budget");
 
-            RaiseEvent(new UserAccessAllowed(Guid.NewGuid(), DateTime.Now, new BudgetId(Id), allowedUserId));
+            RaiseEvent(new BudgetAccessAllowed(Guid.NewGuid(), DateTime.Now, new BudgetId(Id), allowedUserId));
         }
         //public void AllowWriteAccess(AccountId accountId)
         //{

@@ -60,6 +60,11 @@ namespace MyBudget.Projections
             _userNames[evnt.UserId.ToString()] = evnt.UserName;
         }
 
+        void When(BudgetAccessAllowed evnt)
+        {
+            _budgets[evnt.BudgetId.ToString()].Apply(evnt);
+        }
+
         public IEnumerable<Budget> GetBudgetsUserCanView(UserId userId)
         {
             return _budgets.Values.Where(b => b.CanRead(userId));
@@ -80,6 +85,8 @@ namespace MyBudget.Projections
         public string OwnerId { get; set; }
         public string OwnerUsername { get; set; }
 
+        List<string> _allowedUsers = new List<string>();
+
         internal void Apply(BudgetCreated evnt, string ownerUsername)
         {
             Id = evnt.BudgetId.ToString();
@@ -87,11 +94,20 @@ namespace MyBudget.Projections
             OwnerId = evnt.Owner.ToString();
             Created = evnt.Timestamp;
             OwnerUsername = ownerUsername;
+
+            _allowedUsers.Add(OwnerId);
+        }
+
+
+        internal void Apply(BudgetAccessAllowed evnt)
+        {
+            _allowedUsers.Add(evnt.AllowedUserId.ToString());
         }
 
         internal bool CanRead(UserId userId)
         {
-            return userId.ToString() == OwnerId;
+            return _allowedUsers.Contains(userId.ToString());
+           // return userId.ToString() == OwnerId;
         }
     }
 
