@@ -12,7 +12,14 @@ using System.Threading.Tasks;
 
 namespace MyBudget.Projections
 {
-    public class UsersListProjection : InMemoryProjection
+    public interface IUsersListProjection
+    {
+        User FindByLogin(string provider, string key);
+        User FindById(string userId);
+        Task<User> FindByIdAsync(string userId);
+    }
+
+    public class UsersListProjection : InMemoryProjection, IUsersListProjection
     {
         Dictionary<string, User> _users;
 
@@ -42,6 +49,7 @@ namespace MyBudget.Projections
             _users.Add(evnt.UserId.ToString(), s);
         }
 
+
         public User FindByLogin(string provider, string key)
         {
             var users = _users.Values.Where(r => r.Is(provider, key));
@@ -56,6 +64,7 @@ namespace MyBudget.Projections
             _users.TryGetValue(userId, out user);
             return user;
         }
+
         public async Task<User> FindByIdAsync(string userId)
         {
             while (HasLoaded == false)

@@ -12,16 +12,22 @@ using System.Threading.Tasks;
 
 namespace MyBudget.Projections
 {
-    public class BudgetsListProjection : InMemoryProjection
+    public interface IBudgetsListProjection
+    {
+        IEnumerable<Budget> GetBudgetsUserCanView(UserId userId);
+        Budget GetBudgetById(BudgetId budgetId);
+    }
+
+    public class BudgetsListProjection : InMemoryProjection, IBudgetsListProjection
     {
         Dictionary<string, Budget> _budgets = new Dictionary<string, Budget>();
         Dictionary<string, string> _userNames = new Dictionary<string, string>();
+
 
         public BudgetsListProjection(IPEndPoint endpoint, UserCredentials credentials, IAdaptEvents adapter, string streamName)
             : base(endpoint, credentials, adapter, streamName)
         {
         }
-
 
 
         protected override void Dispatch(dynamic evnt)
@@ -33,7 +39,8 @@ namespace MyBudget.Projections
             catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException) { }
         }
 
-        public void When(BudgetCreated evnt)
+
+        void When(BudgetCreated evnt)
         {
             if (_budgets.ContainsKey(evnt.BudgetId.ToString()))
                 return;
@@ -46,13 +53,12 @@ namespace MyBudget.Projections
             _budgets.Add(evnt.BudgetId.ToString(), s);
         }
 
-        public void When(UserCreated evnt)
+        void When(UserCreated evnt)
         {
             if (_userNames.ContainsKey(evnt.UserId.ToString()))
                 return;
             _userNames[evnt.UserId.ToString()] = evnt.UserName;
         }
-
 
         public IEnumerable<Budget> GetBudgetsUserCanView(UserId userId)
         {
@@ -74,7 +80,7 @@ namespace MyBudget.Projections
         public string OwnerId { get; set; }
         public string OwnerUsername { get; set; }
 
-        public void Apply(BudgetCreated evnt, string ownerUsername)
+        internal void Apply(BudgetCreated evnt, string ownerUsername)
         {
             Id = evnt.BudgetId.ToString();
             Name = evnt.Name;

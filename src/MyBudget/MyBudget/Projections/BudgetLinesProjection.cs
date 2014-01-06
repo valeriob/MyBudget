@@ -12,8 +12,16 @@ using System.Threading.Tasks;
 
 namespace MyBudget.Projections
 {
-    public class BudgetLinesProjection : InMemoryProjection
+    public interface IBudgetLinesProjection
     {
+        IEnumerable<BudgetLine> GetAllLines();
+        BudgetLine GetLine(string id);
+        IEnumerable<BudgetLine> GetAllLinesBetween(DateTime? from, DateTime? to);
+        PagedResult<BudgetLine> GetAllLinesPaged(int page, DateTime? from, DateTime? to, string category);
+    }
+    public class BudgetLinesProjection : InMemoryProjection, IBudgetLinesProjection
+    {
+        readonly static int _pageSize = 15;
         string _budget;
         List<BudgetLine> _lines = new List<BudgetLine>();
         public string BudgetId { get { return _budget; } }
@@ -54,6 +62,7 @@ namespace MyBudget.Projections
             line.When(evnt);
         }
 
+
         public IEnumerable<BudgetLine> GetAllLines()
         {
             return _lines.OrderBy(d => d.Date);
@@ -63,7 +72,6 @@ namespace MyBudget.Projections
         {
             return _lines.Single(l => l.Id == id);
         }
-
 
         public IEnumerable<BudgetLine> GetAllLinesBetween(DateTime? from, DateTime? to)
         {
@@ -75,7 +83,6 @@ namespace MyBudget.Projections
             return q.OrderBy(d => d.Date);
         }
 
-        readonly static int _pageSize = 15;
         public PagedResult<BudgetLine> GetAllLinesPaged(int page, DateTime? from, DateTime? to, string category)
         {
             var q = _lines.AsEnumerable();

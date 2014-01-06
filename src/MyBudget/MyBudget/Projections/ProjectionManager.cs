@@ -47,7 +47,13 @@ namespace MyBudget.Projections
             _categories.Start();
         }
 
-        public UsersListProjection GetUsersList()
+
+        public IEnumerable<dynamic> GetStreamEvents(string streamId)
+        {
+            return _adapter.GetStreamEvents(streamId);
+        }
+
+        public IUsersListProjection GetUsersList()
         {
             return _users;
         }
@@ -57,16 +63,17 @@ namespace MyBudget.Projections
             return _applicationUsers;
         }
 
-        public BudgetsListProjection GetBudgetsList()
+        public IBudgetsListProjection GetBudgetsList()
         {
             return _budgets;
         }
-        public CategoriesProjection GetCategories()
+
+        public ICategoriesProjection GetCategories()
         {
             return _categories;
         }
 
-        public BudgetLinesProjection GetBudgetLinesProjection(string budgetId)
+        public IBudgetLinesProjection GetBudgetLinesProjection(string budgetId)
         {
             BudgetLinesProjection blp = null;
 
@@ -79,14 +86,6 @@ namespace MyBudget.Projections
             return blp;
         }
 
-
-        public IEnumerable<dynamic> GetStreamEvents(string streamId)
-        {
-            return _adapter.GetStreamEvents(streamId);
-        }
     }
-
-   
-
 
 }

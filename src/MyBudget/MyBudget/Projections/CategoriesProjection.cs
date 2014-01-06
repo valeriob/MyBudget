@@ -13,7 +13,12 @@ using System.Threading.Tasks;
 
 namespace MyBudget.Projections
 {
-    public class CategoriesProjection : InMemoryProjection
+    public interface ICategoriesProjection
+    {
+        IEnumerable<string> GetBudgetsCategories(BudgetId budgetId);
+    }
+
+    public class CategoriesProjection : InMemoryProjection, ICategoriesProjection
     {
         Dictionary<string, List<string>> _categories = new Dictionary<string, List<string>>();
 

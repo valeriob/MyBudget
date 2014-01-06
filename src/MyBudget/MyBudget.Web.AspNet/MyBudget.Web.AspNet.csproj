@@ -192,7 +192,7 @@
     <Compile Include="BudgetStatsController.generated.cs">
       <DependentUpon>T4MVC.tt</DependentUpon>
     </Compile>
-    <Compile Include="Controllers\Account2Controller.cs" />
+    <Compile Include="Controllers\AccountController2.cs" />
     <None Include="Controllers\AccountController.cs_" />
     <Compile Include="Controllers\BudgetsController.cs" />
     <Compile Include="Controllers\BudgetStatsController.cs" />
@@ -200,6 +200,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LinesController.cs" />
     <Compile Include="Controllers\MyBudgetController.cs" />
+    <Compile Include="Controllers\MyBudgetUserManager.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
