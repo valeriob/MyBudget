@@ -26,7 +26,13 @@ namespace MyBudget.Domain.Budgets
             _owner = evnt.Owner;
         }
 
-        public bool CanRead(UserId userId)
+        public void Apply(UserAccessAllowed evnt)
+        {
+
+        }
+        
+
+        public bool CanAllowAccess(UserId userId)
         {
             return _owner.Equals(userId);
         }
@@ -47,7 +53,20 @@ namespace MyBudget.Domain.Budgets
             Name = name;
             Owner = owner;
         }
+    }
 
+    public class UserAccessAllowed : Event
+    {
+        public BudgetId BudgetId { get; private set; }
+        public UserId AllowedUserId { get; private set; }
+
+        public UserAccessAllowed(Guid id, DateTime timestamp, BudgetId budgetId, UserId allowedUserId)
+        {
+            Id = id;
+            Timestamp = timestamp;
+            BudgetId = budgetId;
+            AllowedUserId = allowedUserId;
+        }
     }
 
     public class BudgetId
@@ -102,18 +121,23 @@ namespace MyBudget.Domain.Budgets
             RaiseEvent(new BudgetCreated(Guid.NewGuid(), DateTime.Now, id, name, owner));
         }
 
-        public void AllowReadAccess(AccountId accountId)
+        public void AllowAccess(UserId fromUser, UserId allowedUserId)
         {
+            if (_state.CanAllowAccess(fromUser) == false)
+                throw new Exception("User cannot allow access to budget");
 
+            RaiseEvent(new UserAccessAllowed(Guid.NewGuid(), DateTime.Now, new BudgetId(Id), allowedUserId));
         }
-        public void AllowWriteAccess(AccountId accountId)
-        {
+        //public void AllowWriteAccess(AccountId accountId)
+        //{
 
-        }
+        //}
+
         protected override IMemento GetSnapshot()
         {
             return _state;
         }
+
     }
 
 }
