@@ -16,8 +16,8 @@ namespace HomeBudgetImporter
 {
     class Program
     {
-        static string budgetId = "Budgets-22d5c5d0_8eef_459a_8224_269292b55d2e";
-        static string userId = "Users-5e3191f5_bb94_4074_b46b_9d4f8e4461b2";
+        static string budgetId = "Budgets-89fb59a1_45ff_47d3_bf32_03b9005b73ca";
+        static string userId = "Users-3e0d7fe4_adf6_40fd_9f68_0949ba7cf52c";
 
         static string _cs = "Data Source=vborioni.cloudapp.net,1433;Initial Catalog=HomeBudget;Integrated Security=False;User ID=vborioni;Password=onit!2013;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False";
         static string query = @"select m.DateTime, m.Import, m.ShortDescription, c.Name from  Movements m

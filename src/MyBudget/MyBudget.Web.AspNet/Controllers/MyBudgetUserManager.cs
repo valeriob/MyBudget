@@ -39,7 +39,7 @@ namespace MyBudget.Web.AspNet.Controllers
         }
         public Task<ApplicationUser> FindAsync(Domain.ValueObjects.UserLoginInfo userLoginInfo)
         {
-            return _projection.FindAsync(userLoginInfo); //new Domain.ValueObjects.UserLoginInfo(userLoginInfo.LoginProvider, userLoginInfo.ProviderKey));
+            return _projection.FindAsync(userLoginInfo);
         }
         public List<Domain.ValueObjects.UserLoginInfo> GetLogins(string userId)
         {
@@ -154,5 +154,7 @@ namespace MyBudget.Web.AspNet.Controllers
                 return new IdentityResult(ex.Message);
             }
         }
+
     }
+
 }

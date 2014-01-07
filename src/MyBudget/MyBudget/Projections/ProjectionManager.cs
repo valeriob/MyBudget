@@ -12,7 +12,6 @@ namespace MyBudget.Projections
 {
     public class ProjectionManager
     {
-        IEventStoreConnection _connection;
         IPEndPoint _endpoint;
         ApplicationUserProjection _applicationUsers;
         UserCredentials _credentials;

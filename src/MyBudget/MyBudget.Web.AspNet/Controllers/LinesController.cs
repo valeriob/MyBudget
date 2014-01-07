@@ -26,6 +26,7 @@ namespace MyBudget.Web.AspNet.Controllers
         {
             DateTime? from = null;
             DateTime? to = null;
+            int _ciao = 0;
 
             if (string.IsNullOrEmpty(From) == false)
                 from = DateTime.Parse(From);

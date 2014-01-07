@@ -15,23 +15,17 @@ namespace MyBudget.Projections
 {
     public class InMemoryProjection : IDisposable
     {
-        static readonly string EventClrTypeHeader = "EventClrTypeName";
+        IAdaptEvents _adapter;
         UserCredentials _credentials;
-        string _streamName;
-        IEventStoreConnection _connection;
-
         IPEndPoint _endpoint;
+        string _streamName;
+
         Position? _checkPoint;
         int? _lastEventNumber;
+
         EventStoreCatchUpSubscription _subscription;
-        IAdaptEvents _adapter;
-
-        int _totalCount;
+        IEventStoreConnection _connection;
         int _succeded;
-        int _duplicates;
-        HashSet<Guid> ids = new HashSet<Guid>();
-        HashSet<RecordedEvent> events = new HashSet<RecordedEvent>();
-
         public bool HasLoaded { get; private set; }
 
 
@@ -59,13 +53,6 @@ namespace MyBudget.Projections
                 _subscription = _connection.SubscribeToAllFrom(_checkPoint, true, EventAppeared, Live, SubscriptionDropped, _credentials);
             else
                 _subscription = _connection.SubscribeToStreamFrom(_streamName, _lastEventNumber, true, EventAppeared, Live, SubscriptionDropped, _credentials);
-
-            //_subscription.Start();
-        }
-
-        void Live(EventStoreCatchUpSubscription obj)
-        {
-            HasLoaded = true;
         }
 
         public void Stop()
@@ -85,13 +72,9 @@ namespace MyBudget.Projections
 
         }
 
+
         void EventAppeared(EventStoreCatchUpSubscription sub, ResolvedEvent evnt)
         {
-            //if (ids.Contains(evnt.Event.EventId))
-            //    _duplicates++;
-            //ids.Add(evnt.Event.EventId);
-            //events.Add(evnt.Event);
-            //_totalCount++;
             if (evnt.OriginalStreamId.StartsWith("$"))
                 return;
     
@@ -116,12 +99,16 @@ namespace MyBudget.Projections
            
         }
 
-
-
         void SubscriptionDropped(EventStoreCatchUpSubscription sub, SubscriptionDropReason reason, Exception ex)
         {
             Start();
         }
+
+        void Live(EventStoreCatchUpSubscription obj)
+        {
+            HasLoaded = true;
+        }
+
 
         protected virtual void Dispatch(dynamic evnt)
         {
