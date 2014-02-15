@@ -1,4 +1,4 @@
-﻿@model MyBudget.Projections.Budget
+﻿@model MyBudget.Web.AspNet.Models.BudgetDetailsViewModel
 
 @{
     ViewBag.Title = "Details";
@@ -8,35 +8,48 @@
 
 <div>
     <h4>Budget</h4>
-	<hr />
+    <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Name)
+            @Html.DisplayNameFor(model => model.Budget.Name)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Name)
+            @Html.DisplayFor(model => model.Budget.Name)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Created)
+            @Html.DisplayNameFor(model => model.Budget.Created)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Created)
+            @Html.DisplayFor(model => model.Budget.Created)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.Owner)
+            @Html.DisplayNameFor(model => model.Budget.OwnerUsername)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Owner)
+            @Html.DisplayFor(model => model.Budget.OwnerUsername)
         </dd>
 
+        <dt>
+            Categories
+        </dt>
+        <dd>
+            @foreach (var category in Model.Categories)
+            {
+                <span><a href="@Url.Action(MVC.Category.Edit(Model.Budget.Id, category.Id))">@category.Name</a></span> 
+            }
+        </dd>
     </dl>
+
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Budget.Id }) |
+    @Html.ActionLink("Add Category", MVC.Category.Actions.Create(Model.Budget.Id)) |
     @Html.ActionLink("Back to List", "Index")
+
+
 </p>

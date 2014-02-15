@@ -23,7 +23,24 @@ namespace MyBudget.Commands
         public string UserIdAllowed { get; set; }
     }
 
-    class BudgetHandlers : Handle<CreateBudget>, Handle<AllowBudgetAccess>
+    public class CreateCategory : Command
+    {
+        public string UserId { get; set; }
+        public string BudgetId { get; set; }
+        public string CategoryId { get; set; }
+        public string CategoryName { get; set; }
+        public string CategoryDescription { get; set; }
+    }
+    public class UpdateCategory : Command
+    {
+        public string UserId { get; set; }
+        public string CategoryId { get; set; }
+        public string CategoryName { get; set; }
+        public string CategoryDescription { get; set; }
+    }
+
+
+    class BudgetHandlers : Handle<CreateBudget>, Handle<AllowBudgetAccess>, Handle<CreateCategory>, Handle<UpdateCategory>
     {
         IRepository _repository;
 
@@ -32,20 +49,35 @@ namespace MyBudget.Commands
             _repository = repository;
         }
 
+
         public void Handle(CreateBudget cmd)
         {
-            var user = _repository.GetById<Budget>(cmd.BudgetId);
-            user.Create(new BudgetId(cmd.BudgetId), cmd.BudgetName, new UserId(cmd.UserId));
-            _repository.Save(user, Guid.NewGuid(), cmd);
+            var budget = _repository.GetById<Budget>(cmd.BudgetId);
+            budget.Create(new BudgetId(cmd.BudgetId), cmd.BudgetName, new UserId(cmd.UserId));
+            _repository.Save(budget, Guid.NewGuid(), cmd);
         }
 
         public void Handle(AllowBudgetAccess cmd)
         {
-            var user = _repository.GetById<Budget>(cmd.BudgetId);
-            user.AllowAccess(new UserId(cmd.UserId), new UserId(cmd.UserIdAllowed));
-            _repository.Save(user, Guid.NewGuid(), cmd);
+            var budget = _repository.GetById<Budget>(cmd.BudgetId);
+            budget.AllowAccess(new UserId(cmd.UserId), new UserId(cmd.UserIdAllowed));
+            _repository.Save(budget, Guid.NewGuid(), cmd);
         }
 
+        public void Handle(CreateCategory cmd)
+        {
+            var category = _repository.GetById<Category>(cmd.CategoryId);
+            category.Create(cmd.BudgetId, cmd.CategoryId, cmd.CategoryName, cmd.CategoryDescription);
+            _repository.Save(category, Guid.NewGuid(), cmd);
+        }
+
+
+        public void Handle(UpdateCategory cmd)
+        {
+            var category = _repository.GetById<Category>(cmd.CategoryId);
+            category.Update(cmd.CategoryName, cmd.CategoryDescription);
+            _repository.Save(category, Guid.NewGuid(), cmd);
+        }
     }
 
 }

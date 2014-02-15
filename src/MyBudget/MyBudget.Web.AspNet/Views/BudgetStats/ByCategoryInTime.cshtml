@@ -35,7 +35,7 @@
 
             @foreach (var category in Model.Categories)
             {
-                <th style="white-space:pre;padding:10px"> @category</th>
+                <th style="white-space:pre;padding:10px"> @category.Name</th>
             }
         </tr>
     </thead>
@@ -49,7 +49,7 @@
 
                 @foreach (var category in Model.Categories)
                 {
-                    <td style="white-space:pre;padding:10px"> @group.OfCategory(category) </td>
+                    <td style="white-space:pre;padding:10px"> @group.OfCategory(category.Id) </td>
                 }
             </tr>
         }

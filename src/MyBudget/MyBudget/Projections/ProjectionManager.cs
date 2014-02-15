@@ -35,7 +35,7 @@ namespace MyBudget.Projections
             var usersStream = "categoria_Users";
             var budgetsStream = "categoria_Budgets";
             //var categoriesStream = "categoria_Budgets";
-            _applicationUsers = new ApplicationUserProjection(_endpoint, _credentials, _adapter, null);
+            _applicationUsers = new ApplicationUserProjection(_endpoint, _credentials, _adapter, usersStream);
             _users = new UsersListProjection(_endpoint, _credentials, _adapter, usersStream);
             _budgets = new BudgetsListProjection(_endpoint, _credentials, _adapter, budgetsStream);
             _categories = new CategoriesProjection(_endpoint, _credentials, _adapter, null);

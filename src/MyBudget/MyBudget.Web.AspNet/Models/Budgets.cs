@@ -25,4 +25,9 @@ namespace MyBudget.Web.AspNet.Models
     }
 
 
+    public class BudgetDetailsViewModel
+    {
+        public Budget Budget { get; set; }
+        public IEnumerable<Category> Categories { get; set; }
+    }
 }

@@ -40,7 +40,8 @@ namespace MyBudget.Web.AspNet.Controllers
             if (to == null)
                 to = lines.Select(s=>s.Date).DefaultIfEmpty(DateTime.MaxValue).Max(r => r.Date.Date);
 
-            var model = new BudgetStatsByCategoryViewModel(lines, budgetId, "NA", from, to);
+            var categories = ProjectionManager.GetCategories().GetBudgetsCategories(budgetId);
+            var model = new BudgetStatsByCategoryViewModel(categories, lines, budgetId, "NA", from, to);
 
             return View(model);
         }
@@ -71,7 +72,8 @@ namespace MyBudget.Web.AspNet.Controllers
                 from = lines.Select(s => s.Date).DefaultIfEmpty(DateTime.MinValue).Min(r => r.Date.Date);
             if (to == null)
                 to = lines.Select(s => s.Date).DefaultIfEmpty(DateTime.MaxValue).Max(r => r.Date.Date);
-            var model = new BudgetStatsByCategoryInTimeViewModel(lines, budgetId, "NA", from, to, groupBy);
+            var categories = ProjectionManager.GetCategories().GetBudgetsCategories(budgetId);
+            var model = new BudgetStatsByCategoryInTimeViewModel(categories, lines, budgetId, "NA", from, to, groupBy);
 
             return View(model);
         }
@@ -86,18 +88,18 @@ namespace MyBudget.Web.AspNet.Controllers
         public DateTime? To { get; set; }
 
         public IEnumerable<TimeGroup> TimeSerie { get; private set; }
-        public string[] Categories { get; private set; }
+        public IEnumerable<Category> Categories { get; private set; }
         public  GroupBy Grouping { get; private set; }
 
 
-        public BudgetStatsByCategoryInTimeViewModel(IEnumerable<Projections.BudgetLine> lines,
+        public BudgetStatsByCategoryInTimeViewModel(IEnumerable<Category> categories, IEnumerable<BudgetLine> lines,
             string budgetId, string budgetName, DateTime? from, DateTime? to, GroupBy grouping)
         {
             BudgetId = budgetId;
             BudgetName = budgetName;
             From = from;
             To = to;
-            Categories = lines.Select(s => s.Category).Distinct().ToArray();
+            Categories = categories;// lines.Select(s => s.Category).Distinct().ToArray();
             Grouping = grouping;
             TimeSerie = Group(lines, grouping);
         }
@@ -176,7 +178,7 @@ namespace MyBudget.Web.AspNet.Controllers
         {
             return lines.GroupBy(g => g.Category).Select(s => new CategoryStats
                 {
-                    Category = s.Key,
+                    Name = s.Key,
                     Amount = s.Select(r => r.Amount).Sum(),
                 }).ToList();
         }
@@ -195,7 +197,7 @@ namespace MyBudget.Web.AspNet.Controllers
         public TimeGroup(string group, IEnumerable<CategoryStats> categories)
         {
             Group = group;
-            _categories = categories.ToDictionary(d => d.Category, d => d.Amount);
+            _categories = categories.ToDictionary(d => d.Name, d => d.Amount);
 
             TotalAmount = categories.Select(s => s.Amount).Sum();
         }
@@ -220,18 +222,20 @@ namespace MyBudget.Web.AspNet.Controllers
         public IEnumerable<CategoryStats> Categories { get; private set; }
         public Amount TotalAmount { get; private set; }
 
-
-        public BudgetStatsByCategoryViewModel(IEnumerable<Projections.BudgetLine> lines, string budgetId, string budgetName, DateTime? from, DateTime? to)
+        Dictionary<string,Category> _categories;
+        public BudgetStatsByCategoryViewModel(IEnumerable<Category> categories, IEnumerable<BudgetLine> lines, string budgetId, string budgetName, DateTime? from, DateTime? to)
         {
             BudgetId = budgetId;
             BudgetName = budgetName;
             From = from;
             To = to;
+            _categories = categories.ToDictionary(d => d.Id);
 
             Categories = lines.GroupBy(g => g.Category)
                 .Select(s => new CategoryStats
                 {
-                    Category = s.Key,
+                    Id = s.Key,
+                    Name = _categories[s.Key].Name,
                     Amount = s.Select(r => r.Amount).Sum(),
                 }).OrderByDescending(d=> d.Amount)
                 .ToList();
@@ -253,12 +257,17 @@ namespace MyBudget.Web.AspNet.Controllers
             return To.Value.ToString("d");
         }
 
+        public string CategoryName(string categoryId)
+        {
+            return _categories[categoryId].Name;
+        }
     }
 
 
     public class CategoryStats
     {
-        public string Category { get; set; }
+        public string Name { get; set; }
+        public string Id { get; set; }
         public Amount Amount { get; set; }
     }
 

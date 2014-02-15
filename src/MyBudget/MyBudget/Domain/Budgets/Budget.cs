@@ -107,7 +107,7 @@ namespace MyBudget.Domain.Budgets
         public Budget(BudgetState state)
         {
             _state = state;
-            Register<BudgetCreated>(e => Id = e.BudgetId.ToString());
+            Register<BudgetCreated>(e => { Id = e.BudgetId.ToString(); _state.Apply(e); });
         }
 
 

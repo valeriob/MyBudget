@@ -141,6 +141,7 @@ namespace MyBudget.Projections
         public DateTime Date { get; private set; }
         public Amount Amount { get; private set; }
         public string Category { get; private set; }
+        //public string CategoryId { get; private set; }
         public string Description { get; private set; }
 
         public BudgetLine(LineCreated evnt)

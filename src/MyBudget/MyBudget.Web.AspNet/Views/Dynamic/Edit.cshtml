@@ -1,0 +1,17 @@
+﻿@model MyBudget.Web.AspNet.Controllers.DynamicViewModel
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm())
+{
+    foreach (var item in Model.Items)
+    {
+        @item.Render()
+    }
+    
+    <input type="submit" value="Edit" class="btn btn-default" />
+}

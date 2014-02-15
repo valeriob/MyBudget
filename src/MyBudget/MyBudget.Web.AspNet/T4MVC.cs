@@ -27,6 +27,8 @@ public static class MVC
     public static MyBudget.Web.AspNet.Controllers.AccountController Account = new MyBudget.Web.AspNet.Controllers.T4MVC_AccountController();
     public static MyBudget.Web.AspNet.Controllers.BudgetsController Budgets = new MyBudget.Web.AspNet.Controllers.T4MVC_BudgetsController();
     public static MyBudget.Web.AspNet.Controllers.BudgetStatsController BudgetStats = new MyBudget.Web.AspNet.Controllers.T4MVC_BudgetStatsController();
+    public static MyBudget.Web.AspNet.Controllers.CategoryController Category = new MyBudget.Web.AspNet.Controllers.T4MVC_CategoryController();
+    public static MyBudget.Web.AspNet.Controllers.DynamicController Dynamic = new MyBudget.Web.AspNet.Controllers.T4MVC_DynamicController();
     public static MyBudget.Web.AspNet.Controllers.HomeController Home = new MyBudget.Web.AspNet.Controllers.T4MVC_HomeController();
     public static MyBudget.Web.AspNet.Controllers.LinesController Lines = new MyBudget.Web.AspNet.Controllers.T4MVC_LinesController();
     public static MyBudget.Web.AspNet.Controllers.MyBudgetController MyBudget = new MyBudget.Web.AspNet.Controllers.T4MVC_MyBudgetController();

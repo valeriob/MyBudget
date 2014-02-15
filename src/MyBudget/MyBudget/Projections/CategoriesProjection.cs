@@ -15,12 +15,13 @@ namespace MyBudget.Projections
 {
     public interface ICategoriesProjection
     {
-        IEnumerable<string> GetBudgetsCategories(BudgetId budgetId);
+        IEnumerable<Category> GetBudgetsCategories(BudgetId budgetId);
+        IEnumerable<Category> GetBudgetsCategories(string budgetId);
     }
 
     public class CategoriesProjection : InMemoryProjection, ICategoriesProjection
     {
-        Dictionary<string, List<string>> _categories = new Dictionary<string, List<string>>();
+        Dictionary<string, List<Category>> _categories = new Dictionary<string, List<Category>>();
 
 
         public CategoriesProjection(IPEndPoint endpoint, UserCredentials credentials, IAdaptEvents adapter, string streamName)
@@ -39,35 +40,71 @@ namespace MyBudget.Projections
             catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException) { }
         }
 
-        void When(LineCreated evnt)
+        //void When(LineCreated evnt)
+        //{
+        //    AddCategory(evnt.BudgetId.ToString(), evnt.Category);
+        //}
+
+        //void When(LineExpenseChanged evnt)
+        //{
+        //    AddCategory(evnt.BudgetId.ToString(), evnt.Category);
+        //}
+
+        void When(CategoryCreated evnt)
         {
-            AddCategory(evnt.BudgetId.ToString(), evnt.Category);
+            AddCategory(evnt.BudgetId, evnt.CategoryId, evnt.Name, evnt.Description);
+        }
+        void When(CategoryUpdated evnt)
+        {
+            UpdateCategory(evnt.BudgetId, evnt.CategoryId, evnt.Name, evnt.Description);
         }
 
-        void When(LineExpenseChanged evnt)
+        void AddCategory(string budget, string id, string name, string description)
         {
-            AddCategory(evnt.BudgetId.ToString(), evnt.Category);
-        }
-
-        void AddCategory(string budget, string category)
-        {
-            if (string.IsNullOrWhiteSpace(category))
+            if (string.IsNullOrWhiteSpace(name))
                 return;
-            List<string> categories;
+            List<Category> categories;
             if (_categories.TryGetValue(budget, out categories) == false)
-                _categories[budget] = categories = new List<string>();
+                _categories[budget] = categories = new List<Category>();
 
-            if (categories.Any(c => string.Compare(c, category, true) == 0) == false)
-                categories.Add(category);
+            if (categories.Any(c => c.Id == id) == false)
+                categories.Add(new Category { Id = id, Name = name, Description = description });
         }
-
-        public IEnumerable<string> GetBudgetsCategories(BudgetId budgetId)
+        void UpdateCategory(string budget, string id, string name, string description)
         {
-            List<string> categories;
-            if (_categories.TryGetValue(budgetId.ToString(), out categories) == false)
-                _categories[budgetId.ToString()] = categories = new List<string>();
-            return categories.OrderBy(d => d);
+            if (string.IsNullOrWhiteSpace(name))
+                return;
+            List<Category> categories;
+            if (_categories.TryGetValue(budget, out categories) == false)
+                _categories[budget] = categories = new List<Category>();
+
+            var category = categories.Single(s => s.Id == id);
+            category.Name = name;
+            category.Description = description;
         }
 
+        public IEnumerable<Category> GetBudgetsCategories(BudgetId budgetId)
+        {
+            List<Category> categories;
+            if (_categories.TryGetValue(budgetId.ToString(), out categories) == false)
+                _categories[budgetId.ToString()] = categories = new List<Category>();
+            return categories.OrderBy(d => d.Name);
+        }
+
+        public IEnumerable<Category> GetBudgetsCategories(string budgetId)
+        {
+            List<Category> categories;
+            if (_categories.TryGetValue(budgetId.ToString(), out categories) == false)
+                _categories[budgetId] = categories = new List<Category>();
+            return categories.OrderBy(d => d.Name);
+        }
+
+    }
+
+    public class Category
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
     }
 }

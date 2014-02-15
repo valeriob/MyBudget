@@ -23,10 +23,16 @@ namespace MyBudget.Web.AspNet.Controllers
 
         public virtual ActionResult Details(string id)
         {
-            var readModel = ProjectionManager.GetBudgetsList();
-            var budget = readModel.GetBudgetById(new BudgetId(id));
-
-            return View(budget);
+            //var readModel = ProjectionManager.GetBudgetsList();
+            var budgetId = new BudgetId(id);
+            var budget = ProjectionManager.GetBudgetsList().GetBudgetById(budgetId);
+            var categories = ProjectionManager.GetCategories().GetBudgetsCategories(budgetId);
+            var model = new BudgetDetailsViewModel
+            {
+                Budget = budget,
+                Categories = categories
+            };
+            return View(model);
         }
 
 

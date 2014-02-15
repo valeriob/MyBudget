@@ -29,10 +29,10 @@ namespace MyBudget.Web.AspNet.Models
         public DateTime? To { get; private set; }
         public int PageIndex { get; private set; }
         public int TotalPages { get; private set; }
-        public IEnumerable<string> Categories { get; private set; }
+        public IEnumerable<Category> Categories { get; private set; }
         public string Category { get; private set; }
 
-        public BudgetLinesPagedViewModel(string budgetId, PagedResult<BudgetLine> lines, DateTime? from, DateTime? to, IEnumerable<string> categories, string category)
+        public BudgetLinesPagedViewModel(string budgetId, PagedResult<BudgetLine> lines, DateTime? from, DateTime? to, IEnumerable<Category> categories, string category)
         {
             From = from;
             To = to;
@@ -42,7 +42,7 @@ namespace MyBudget.Web.AspNet.Models
             TotalPages = lines.TotalPages();
 
             var c = categories.ToList();
-            c.Insert(0, "");
+            c.Insert(0, new Category());
 
             Categories = c;
             Category = category;
@@ -79,12 +79,26 @@ namespace MyBudget.Web.AspNet.Models
         {
             return Categories.Select(s => new System.Web.Mvc.SelectListItem
             {
-                Value = s,
-                Text = s,
-                Selected = s == Category
+                Value = s.Id,
+                Text = s.Name,
+                Selected = s.Id == Category
             });
         }
+
+        public string CategoryNameFor(BudgetLine line)
+        {
+            return Categories.Where(r => r.Id == line.Category).Select(s => s.Name).First();
+        }
     }
+    //public class BudgetLineViewModel
+    //{
+    //    public string Id { get; private set; }
+    //    public DateTime Timestamp { get; private set; }
+    //    public DateTime Date { get; private set; }
+    //    public Amount Amount { get; private set; }
+    //    public string Category { get; private set; }
+    //    public string Description { get; private set; }
+    //}
 
     public class EditBudgetLineViewModel
     {
@@ -98,7 +112,7 @@ namespace MyBudget.Web.AspNet.Models
         public string CurrencyISOCode { get; set; }
         public string BudgetName { get; set; }
 
-        IEnumerable<string> _categories;
+        IEnumerable<Category> _categories;
         IEnumerable<Currency> _currencies;
 
 
@@ -108,7 +122,7 @@ namespace MyBudget.Web.AspNet.Models
 
         }
 
-        public EditBudgetLineViewModel(string budgetName, string budgetId, IEnumerable<string> categories, IEnumerable<Currency> currencies)
+        public EditBudgetLineViewModel(string budgetName, string budgetId, IEnumerable<Category> categories, IEnumerable<Currency> currencies)
         {
             BudgetName = budgetName;
             _categories = categories.ToList();
@@ -120,7 +134,7 @@ namespace MyBudget.Web.AspNet.Models
             CurrencyISOCode = Currencies.Euro().IsoCode;
         }
 
-        public EditBudgetLineViewModel(string budgetName, IEnumerable<dynamic> events, IEnumerable<string> categories, IEnumerable<Currency> currencies)
+        public EditBudgetLineViewModel(string budgetName, IEnumerable<dynamic> events, IEnumerable<Category> categories, IEnumerable<Currency> currencies)
             : this(budgetName, "", categories, currencies)
         {
             EventHelper.Apply(events, this);
@@ -170,9 +184,9 @@ namespace MyBudget.Web.AspNet.Models
         {
             return _categories.Select(c => new System.Web.Mvc.SelectListItem
             {
-                Value = c,
-                Text = c,
-                Selected = string.Compare(c, Category, true) == 0
+                Value = c.Id,
+                Text = c.Name,
+                Selected = c.Id == Category
             }).ToList();
         }
 

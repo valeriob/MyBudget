@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\LinesHandlers.cs" />
+    <Compile Include="Domain\Budgets\Category.cs" />
     <Compile Include="Domain\Users\User.cs" />
     <Compile Include="Domain\Accounts\Account.cs" />
     <Compile Include="Domain\Budgets\Budget.cs" />
