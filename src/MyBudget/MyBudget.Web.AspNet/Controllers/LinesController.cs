@@ -69,7 +69,7 @@ namespace MyBudget.Web.AspNet.Controllers
                     LineId = model.LineId.ToString(),
                     Date = model.Date,
                     Amount = new Amount(Currencies.Parse(model.CurrencyISOCode), model.Amount),
-                    Category = model.Category,
+                    CategoryId = model.Category,
                     Description= model.Description,
 
                     Id = Guid.NewGuid(),

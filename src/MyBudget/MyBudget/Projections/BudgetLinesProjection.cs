@@ -150,14 +150,14 @@ namespace MyBudget.Projections
             Timestamp = evnt.Timestamp;
             Date = evnt.Date;
             Amount = evnt.Amount;
-            Category = evnt.Category;
+            Category = evnt.CategoryId;
             Description = evnt.Description;
         }
 
         internal void When(LineExpenseChanged evnt)
         {
             Amount = evnt.Amount;
-            Category = evnt.Category;
+            Category = evnt.CategoryId;
             Description = evnt.Description;
             Date = evnt.Date;
         }

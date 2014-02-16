@@ -17,6 +17,7 @@ namespace MyBudget.Projections
     {
         IEnumerable<Category> GetBudgetsCategories(BudgetId budgetId);
         IEnumerable<Category> GetBudgetsCategories(string budgetId);
+        Task<IEnumerable<Category>> GetBudgetsCategories(string budgetId, DateTime updated);
     }
 
     public class CategoriesProjection : InMemoryProjection, ICategoriesProjection
@@ -30,7 +31,6 @@ namespace MyBudget.Projections
         }
 
 
-
         protected override void Dispatch(dynamic evnt)
         {
             try
@@ -40,20 +40,12 @@ namespace MyBudget.Projections
             catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException) { }
         }
 
-        //void When(LineCreated evnt)
-        //{
-        //    AddCategory(evnt.BudgetId.ToString(), evnt.Category);
-        //}
-
-        //void When(LineExpenseChanged evnt)
-        //{
-        //    AddCategory(evnt.BudgetId.ToString(), evnt.Category);
-        //}
 
         void When(CategoryCreated evnt)
         {
             AddCategory(evnt.BudgetId, evnt.CategoryId, evnt.Name, evnt.Description);
         }
+
         void When(CategoryUpdated evnt)
         {
             UpdateCategory(evnt.BudgetId, evnt.CategoryId, evnt.Name, evnt.Description);
@@ -70,6 +62,7 @@ namespace MyBudget.Projections
             if (categories.Any(c => c.Id == id) == false)
                 categories.Add(new Category { Id = id, Name = name, Description = description });
         }
+
         void UpdateCategory(string budget, string id, string name, string description)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -83,8 +76,12 @@ namespace MyBudget.Projections
             category.Description = description;
         }
 
+
         public IEnumerable<Category> GetBudgetsCategories(BudgetId budgetId)
         {
+            if (HasLoaded == false)
+                throw new Exception("Not loaded");
+
             List<Category> categories;
             if (_categories.TryGetValue(budgetId.ToString(), out categories) == false)
                 _categories[budgetId.ToString()] = categories = new List<Category>();
@@ -93,12 +90,22 @@ namespace MyBudget.Projections
 
         public IEnumerable<Category> GetBudgetsCategories(string budgetId)
         {
+            if (HasLoaded == false)
+                throw new Exception("Not loaded");
+
             List<Category> categories;
             if (_categories.TryGetValue(budgetId.ToString(), out categories) == false)
                 _categories[budgetId] = categories = new List<Category>();
             return categories.OrderBy(d => d.Name);
         }
 
+        public async Task<IEnumerable<Category>> GetBudgetsCategories(string budgetId, DateTime updated)
+        {
+            while (LastUpdate < updated || HasLoaded == false)
+                await Task.Delay(100);
+
+            return GetBudgetsCategories(budgetId);
+        }
     }
 
     public class Category

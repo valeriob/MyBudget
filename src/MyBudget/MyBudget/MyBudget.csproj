@@ -62,6 +62,7 @@
     <Compile Include="Commands\BudgetHandlers.cs" />
     <Compile Include="Commands\UserHandlers.cs" />
     <Compile Include="CommonDomainExtensions.cs" />
+    <Compile Include="ImportManager.cs" />
     <Compile Include="Infrastructure\EventAdapter.cs" />
     <Compile Include="Infrastructure\EventHelper.cs" />
     <Compile Include="Infrastructure\GetEventStoreRepository.cs" />

@@ -205,7 +205,7 @@ namespace MyBudget.Web.AspNet.Models
             LineId = evnt.LineId.ToString();
             BudgetId = evnt.BudgetId.ToString();
             Date = evnt.Date;
-            Category = evnt.Category;
+            Category = evnt.CategoryId;
             Description = evnt.Description;
             Amount = evnt.Amount;
             CurrencyISOCode = evnt.Amount.GetCurrency().IsoCode;
@@ -214,7 +214,7 @@ namespace MyBudget.Web.AspNet.Models
         public void When(LineExpenseChanged evnt)
         {
             Date = evnt.Date;
-            Category = evnt.Category;
+            Category = evnt.CategoryId;
             Description = evnt.Description;
             Amount = evnt.Amount;
             CurrencyISOCode = evnt.Amount.GetCurrency().IsoCode;

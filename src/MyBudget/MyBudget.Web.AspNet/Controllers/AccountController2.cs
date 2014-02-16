@@ -264,7 +264,7 @@ namespace MyBudget.Web.AspNet.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
-                var user = new ApplicationUser() { UserName = model.UserName, Id = new MyBudget.Domain.Users.User().ToString() };
+                var user = new ApplicationUser() { UserName = model.UserName, Id = UserId.CreateNew().ToString() };
                 var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)
                 {

@@ -35,21 +35,27 @@ and Deleted = 0";
             var credentials = new EventStore.ClientAPI.SystemData.UserCredentials("admin", "changeit");
 
             var cm = new CommandManager(esCon);
-            
+            var pm = new MyBudget.Projections.ProjectionManager(endpoint, credentials, new MyBudget.Infrastructure.EventStoreAdapter(endpoint, credentials));
+            pm.Run();
+
             using (var con = new System.Data.SqlClient.SqlConnection(_cs))
             {
                 con.Open();
                 var movements = LoadMovements(con);
 
+                var importer = new ImportManager(cm, pm);
+                importer.ImportCategoriesByName(movements.Select(s => s.Category.Trim().Replace((char)160, ' ')).Distinct().ToList(), budgetId, userId);
+
+                var categories = pm.GetCategories().GetBudgetsCategories(budgetId);
+
                 var handler = cm.Create<CreateLine>();
                 foreach (var m in movements)
-                    handler.Handle(m.ToCreateLine(new BudgetId(budgetId), userId));
+                    handler.Handle(m.ToCreateLine(new BudgetId(budgetId), userId, categories));
             }
         }
 
         static IEnumerable<Movement> LoadMovements(IDbConnection con)
         {
-
             var result = new List<Movement>();
             using (var cmd = Prepare(con, query))
             using (var reader = cmd.ExecuteReader())
@@ -92,15 +98,18 @@ and Deleted = 0";
             };
         }
 
-        public static CreateLine ToCreateLine(this Movement mov, BudgetId budgetId, string userId)
+        public static CreateLine ToCreateLine(this Movement mov, BudgetId budgetId, string userId, IEnumerable<MyBudget.Projections.Category> categories)
         {
+            var category = mov.Category.Trim().Replace((char)160, ' ');
+            var categoryId = categories.FirstOrDefault(d => string.Compare(d.Name, category, true) == 0).Id;
+
             return new CreateLine
             {
                 Id = Guid.NewGuid(),
                 Timestamp = DateTime.Now,
                 Amount = new Amount(Currencies.Euro(), Convert.ToDecimal(mov.Import)),
                 BudgetId = budgetId.ToString(),
-                Category = mov.Category,
+                CategoryId = mov.Category,
                 Date = mov.DateTime,
                 Description = mov.ShortDescription,
                 LineId = LineId.Create(budgetId).ToString(),

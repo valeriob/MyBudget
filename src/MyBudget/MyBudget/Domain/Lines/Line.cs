@@ -47,12 +47,12 @@ namespace MyBudget.Domain.Lines
         public BudgetId BudgetId { get; private set; }
         public Amount Amount { get; private set; }
         public DateTime Date { get; private set; }
-        public string Category { get; private set; }
+        public string CategoryId { get; private set; }
         public string Description { get; private set; }
         public UserId CreatedBy { get; private set; }
         public string[] Tags { get; private set; }
 
-        public LineCreated(Guid id, DateTime timestamp, LineId lineId, BudgetId budgetId, Amount amount, DateTime date, string category, string description, 
+        public LineCreated(Guid id, DateTime timestamp, LineId lineId, BudgetId budgetId, Amount amount, DateTime date, string categoryId, string description, 
             string[] tags, UserId createdBy)
         {
             Id = id;
@@ -62,7 +62,7 @@ namespace MyBudget.Domain.Lines
             BudgetId = budgetId;
             Date = date;
             Amount = amount;
-            Category = category;
+            CategoryId = categoryId;
             Description = description;
             CreatedBy = createdBy;
             Tags = tags;
@@ -75,12 +75,12 @@ namespace MyBudget.Domain.Lines
         public BudgetId BudgetId { get; private set; }
         public Amount Amount { get; private set; }
         public DateTime Date { get; private set; }
-        public string Category { get; private set; }
+        public string CategoryId { get; private set; }
         public string Description { get; private set; }
         public UserId UpdatedBy { get; private set; }
 
 
-        public LineExpenseChanged(Guid id, DateTime timestamp, LineId lineId, BudgetId budgetId, Amount amount, DateTime date, string category, string description, UserId updatedBy)
+        public LineExpenseChanged(Guid id, DateTime timestamp, LineId lineId, BudgetId budgetId, Amount amount, DateTime date, string categoryId, string description, UserId updatedBy)
         {
             Id = id;
             Date = timestamp;
@@ -88,7 +88,7 @@ namespace MyBudget.Domain.Lines
             BudgetId = budgetId;
             Date = date;
             Amount = amount;
-            Category = category;
+            CategoryId = categoryId;
             Description = description;
             UpdatedBy = updatedBy;
         }

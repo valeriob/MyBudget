@@ -27,7 +27,7 @@ namespace MyBudget.Projections
         IEventStoreConnection _connection;
         int _succeded;
         public bool HasLoaded { get; private set; }
-
+        public DateTime LastUpdate { get; private set; }
 
         public InMemoryProjection(UserCredentials credentials, IAdaptEvents adapter)
         {
@@ -90,6 +90,7 @@ namespace MyBudget.Projections
                     _succeded++;
                     _checkPoint = evnt.OriginalPosition.GetValueOrDefault();
                     _lastEventNumber = evnt.OriginalEventNumber;
+                    LastUpdate = ev.Timestamp;
                 }
             }
             catch (Exception)

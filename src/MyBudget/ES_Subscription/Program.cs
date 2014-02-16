@@ -78,7 +78,7 @@ namespace ES_Subscription
                     UserId = userId,
                     BudgetId = budgetId.ToString(),
                     Amount = new Amount(currency, random.Next(100)),
-                    Category = categories[random.Next(categories.Length)],
+                    CategoryId = categories[random.Next(categories.Length)],
                     Date = mindate.AddDays(random.Next(365 * 3)),
                     Description = "nothing special",
                     LineId = MyBudget.Domain.Lines.LineId.Create(budgetId).ToString(),
