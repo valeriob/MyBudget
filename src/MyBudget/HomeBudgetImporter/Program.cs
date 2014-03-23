@@ -10,6 +10,7 @@ using System.Data;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace HomeBudgetImporter
@@ -28,6 +29,7 @@ and Deleted = 0";
 
         static void Main(string[] args)
         {
+            Thread.CurrentThread.CurrentCulture = Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("it-IT");
             var endpoint = new IPEndPoint(IPAddress.Loopback, 1113);
             var esCon = EventStoreConnection.Create(endpoint);
             esCon.Connect();
@@ -38,19 +40,30 @@ and Deleted = 0";
             var pm = new MyBudget.Projections.ProjectionManager(endpoint, credentials, new MyBudget.Infrastructure.EventStoreAdapter(endpoint, credentials));
             pm.Run();
 
+            var tu = pm.GetUsersList().AllUsers();
+            tu.Wait();
+            userId = tu.Result.Select(s => s.Id).FirstOrDefault();
+            budgetId = pm.GetBudgetsList().GetBudgetsUserCanView(new MyBudget.Domain.Users.UserId(userId)).Select(s => s.Id).FirstOrDefault();
+
             using (var con = new System.Data.SqlClient.SqlConnection(_cs))
             {
                 con.Open();
                 var movements = LoadMovements(con);
 
+                foreach (var anno in movements.GroupBy(g=> g.DateTime.Year))
+                {
+                    
+                    var str = ServiceStack.Text.CsvSerializer.SerializeToCsv(anno.OrderBy(d=> d.DateTime));
+                    System.IO.File.WriteAllText(@"c:\temp\Year_"+anno.Key + ".csv", str);
+                }
                 var importer = new ImportManager(cm, pm);
-                importer.ImportCategoriesByName(movements.Select(s => s.Category.Trim().Replace((char)160, ' ')).Distinct().ToList(), budgetId, userId);
+                importer.ImportCategoriesByName(movements.Select(s => s.Category), budgetId, userId);
 
                 var categories = pm.GetCategories().GetBudgetsCategories(budgetId);
 
                 var handler = cm.Create<CreateLine>();
                 foreach (var m in movements)
-                    handler.Handle(m.ToCreateLine(new BudgetId(budgetId), userId, categories));
+                    handler(m.ToCreateLine(new BudgetId(budgetId), userId, categories));
             }
         }
 
@@ -91,7 +104,8 @@ and Deleted = 0";
         {
             return new Movement
             {
-                DateTime = reader.GetDateTime(0),
+                DateTime = reader.GetDateTime(0).Date,
+                FormattedDate = reader.GetDateTime(0).Date.ToString("dd/MM/yyyy"),
                 Import = reader.GetDouble(1),
                 ShortDescription = reader.GetString(2),
                 Category = reader.GetString(3)
@@ -109,7 +123,7 @@ and Deleted = 0";
                 Timestamp = DateTime.Now,
                 Amount = new Amount(Currencies.Euro(), Convert.ToDecimal(mov.Import)),
                 BudgetId = budgetId.ToString(),
-                CategoryId = mov.Category,
+                CategoryId = categoryId,
                 Date = mov.DateTime,
                 Description = mov.ShortDescription,
                 LineId = LineId.Create(budgetId).ToString(),
@@ -124,6 +138,7 @@ and Deleted = 0";
         public DateTime DateTime { get; set; }
         public string ShortDescription { get; set; }
         public string Category { get; set; }
+        public string FormattedDate { get; set; }
     }
 
 }

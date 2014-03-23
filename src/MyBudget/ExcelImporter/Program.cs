@@ -22,10 +22,27 @@ namespace ExcelImporter
 
         static void Main(string[] args)
         {
-            var excel = new ExcelQueryFactory(@"C:\Users\Valerio\Downloads\TEMP.xlsx");
-            var query = from c in excel.Worksheet<Movement>()
-                        select c;
-            var movements = query.ToList();
+            //var excel = new ExcelQueryFactory(@"C:\Users\Valerio\Downloads\TEMP.xlsx");
+            //var query = from c in excel.Worksheet<Movement>()
+            //            where c.Date != DateTime.MinValue
+            //            select c;
+
+            var excel = new ExcelQueryFactory(@"C:\Users\Valerio\Downloads\spese.xlsx");
+            var anni = new[] {2011, 2012, 2013, 2014 };
+            var movements = new List<Movement>();
+            foreach(var anno in anni )
+            {
+                movements.AddRange(excel.Worksheet<Movement>(anno + "").Where(r => r.Data != DateTime.MinValue));
+            }
+   
+         
+            //var query2013 = from c in excel.Worksheet<Movement>("2013")
+            //            select c;
+
+            //var query2014 = from c in excel.Worksheet<Movement>("2014")
+            //            select c;
+            //var movements = query2013.ToList().Concat(query2014.ToList()).Where(r => r.Data != DateTime.MinValue).ToList();
+          //  var movements = query.ToList();
 
             Console.ReadLine();
 
@@ -44,42 +61,54 @@ namespace ExcelImporter
             userId = tu.Result.Select(s => s.Id).FirstOrDefault();
             budgetId = pm.GetBudgetsList().GetBudgetsUserCanView(new MyBudget.Domain.Users.UserId(userId)).Select(s => s.Id).FirstOrDefault();
 
+            //if (string.IsNullOrEmpty(userId))
+            //{
+            //    var addUser = cm.Create<AddUser>();
+            //    addUser.Handle(new AddUser { });
+            //}
             var importer = new ImportManager(cm, pm);
-            importer.ImportCategoriesByName(movements.Select(s => s.Category.Trim().Replace((char)160, ' ')).Distinct().ToList(), budgetId, userId);
+            importer.ImportCategoriesByName(movements.Select(s => s.Categoria), budgetId, userId);
 
             var categories = pm.GetCategories().GetBudgetsCategories(budgetId);
 
-            var mh = cm.Create<CreateLine>();
+            var createLine = cm.Create<CreateLine>();
             foreach (var m in movements)
-                mh.Handle(m.ToCreateLine(new BudgetId(budgetId), userId, categories));
+                createLine(m.ToCreateLine(new BudgetId(budgetId), userId, categories));
 
         }
+
+
     }
 
     public class Movement
     {
-        public DateTime Date { get; set; }
-        public string Category { get; set; }
-        public string Description { get; set; }
-        public decimal Amount { get; set; }
+        public DateTime Data { get; set; }
+        public string Categoria { get; set; }
+        public string Descrizione { get; set; }
+        public decimal Spesa { get; set; }
 
         public CreateLine ToCreateLine(BudgetId budgetId, string userId, IEnumerable<MyBudget.Projections.Category> categories)
         {
-            var category =  Category.Trim().Replace((char)160, ' ');
+            var category =  Categoria.Trim().Replace((char)160, ' ');
             var categoryId = categories.FirstOrDefault(d => string.Compare(d.Name, category, true) == 0).Id;
 
             return new CreateLine
             {
                 Id = Guid.NewGuid(),
                 Timestamp = DateTime.Now,
-                Amount = new Amount(Currencies.Euro(), Convert.ToDecimal(Amount)),
+                Amount = new Amount(Currencies.Euro(), Convert.ToDecimal(Spesa)),
                 BudgetId = budgetId.ToString(),
                 CategoryId = categoryId,
-                Date = Date,
-                Description = Description,
+                Date = Data,
+                Description = Descrizione,
                 LineId = LineId.Create(budgetId).ToString(),
                 UserId = userId,
             };
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{3} il {0:d} : {1} - {2}", Data, Categoria, Descrizione, Spesa);
         }
     }
 }

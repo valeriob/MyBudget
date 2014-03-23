@@ -23,15 +23,19 @@ namespace MyBudget
         public void ImportCategoriesByName(IEnumerable<string> categoryNames, string budgetId, string userId)
         {
             var cp = _projectionManager.GetCategories();
-            var ch = _commandManager.Create<CreateCategory>();
+            var createCategory = _commandManager.Create<CreateCategory>();
 
             DateTime lastUpdate = DateTime.MinValue;
-            foreach (var categoryName in categoryNames.Distinct())
+            var cleaned = categoryNames.Select(s => s.Trim().Replace((char)160, ' ')).Distinct(StringComparer.CurrentCultureIgnoreCase)
+                .OrderBy(d=> d)
+                .ToList();
+
+            foreach (var categoryName in cleaned)
             {
                 var task = cp.GetBudgetsCategories(budgetId, lastUpdate);
                 task.Wait();
                 if (task.Result.Any(r => string.Compare(r.Name, categoryName, true) == 0) == false)
-                    ch.Handle(new CreateCategory
+                    createCategory(new CreateCategory
                     {
                         Id = Guid.NewGuid(),
                         Timestamp = lastUpdate = DateTime.Now,
@@ -43,7 +47,7 @@ namespace MyBudget
                     });
             }
 
-            cp.GetBudgetsCategories(budgetId, lastUpdate).Wait();
+            //cp.GetBudgetsCategories(budgetId, lastUpdate).Wait();
         }
     }
 }

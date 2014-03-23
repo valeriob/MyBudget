@@ -73,7 +73,7 @@ namespace ES_Subscription
             Parallel.For(0, numberOfLines,po, i =>
             //for (int i = 0; i < numberOfLines; i++)
             {
-                cl.Handle(new CreateLine
+                cl(new CreateLine
                 {
                     UserId = userId,
                     BudgetId = budgetId.ToString(),

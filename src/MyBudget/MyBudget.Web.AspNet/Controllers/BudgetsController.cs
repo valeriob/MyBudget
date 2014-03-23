@@ -52,7 +52,7 @@ namespace MyBudget.Web.AspNet.Controllers
             try
             {
                 var handler = CommandManager.Create<CreateBudget>();
-                handler.Handle(new CreateBudget
+                handler(new CreateBudget
                 {
                     UserId = GetCurrentUserId().ToString(),
                     BudgetName = model.Name,

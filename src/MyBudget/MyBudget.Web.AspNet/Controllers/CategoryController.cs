@@ -47,7 +47,7 @@ namespace MyBudget.Web.AspNet.Controllers
             try
             {
                 var handler = CommandManager.Create<CreateCategory>();
-                handler.Handle(new CreateCategory
+                handler(new CreateCategory
                 {
                     UserId = GetCurrentUserId().ToString(),
                     BudgetId = model.BudgetId,
@@ -90,7 +90,7 @@ namespace MyBudget.Web.AspNet.Controllers
             try
             {
                 var handler = CommandManager.Create<UpdateCategory>();
-                handler.Handle(new UpdateCategory
+                handler(new UpdateCategory
                 {
                     UserId = GetCurrentUserId().ToString(),
                     CategoryName = model.Name,

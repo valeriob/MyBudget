@@ -62,7 +62,7 @@ namespace MyBudget.Web.AspNet.Controllers
             try
             {
                 var handler = CommandManager.Create<CreateLine>();
-                handler.Handle(new CreateLine
+                handler(new CreateLine
                 {
                     UserId = GetCurrentUserId().ToString(),
                     BudgetId = model.BudgetId.ToString(),
@@ -99,7 +99,7 @@ namespace MyBudget.Web.AspNet.Controllers
             try
             {
                 var handler = CommandManager.Create<UpdateLine>();
-                handler.Handle(new UpdateLine
+                handler(new UpdateLine
                 {
                     UserId = GetCurrentUserId().ToString(),
                     BudgetId = model.BudgetId.ToString(),

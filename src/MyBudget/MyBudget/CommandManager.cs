@@ -25,10 +25,16 @@ namespace MyBudget
             _connection = connection;
         }
 
-        public Handle<T> Create<T>()
+        //public Handle<T> Create<T>()
+        //{
+        //    var handler = BuildHandler(typeof(T));
+        //    return handler as Handle<T>;
+        //}
+
+        public Action<T> Create<T>()
         {
             var handler = BuildHandler(typeof(T));
-            return handler as Handle<T>;
+            return cmd => ((Handle<T>)handler).Handle(cmd);
         }
 
 
