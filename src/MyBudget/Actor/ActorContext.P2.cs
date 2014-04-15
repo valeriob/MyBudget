@@ -55,28 +55,6 @@ namespace Actor.P2
         }
     }
 
-    public class ActorRef
-    {
-        string _id;
-        public ActorRef(string id)
-        {
-            _id = id;
-        }
-
-        public void Enqueue(Message msg, IEventStoreConnection connection)
-        {
-            //todo
-            var evnt = new EventData(msg.Id, "type", true, null, null);
-            connection.AppendToStream(InputQueue(), ExpectedVersion.Any, evnt);
-        }
-
-        string InputQueue()
-        {
-            return _id + "-Input";
-        }
-    }
-
-
     public class ActorContext
     {
         IEventStoreConnection _connection;
@@ -100,13 +78,8 @@ namespace Actor.P2
 
         public void Deliver(Message msg)
         {
-            var actorRef = GetRef(msg.ActorId);
-            actorRef.Enqueue(msg, _connection);
-        }
-
-        ActorRef GetRef(string id)
-        {
-            return new ActorRef(id);
+            var evnt = new EventData(msg.Id, "type", true, null, null);
+            _connection.AppendToStream(msg.ActorId + "-input", ExpectedVersion.Any, evnt);
         }
 
         void EventAppeared(EventStoreCatchUpSubscription sub, ResolvedEvent evnt)
@@ -131,10 +104,12 @@ namespace Actor.P2
         BlockingCollection<string> _queue;
         bool _running;
         IEventStoreConnection _connection;
+        int _maxCapacity;
 
         public ActorWorker(IEventStoreConnection connection)
         {
-            _queue = new BlockingCollection<string>(new ConcurrentQueue<string>());
+            _maxCapacity = 1000;
+            _queue = new BlockingCollection<string>(new ConcurrentQueue<string>(), _maxCapacity);
             _connection = connection;
             _running = true;
             ThreadPool.QueueUserWorkItem(Run);
@@ -155,7 +130,8 @@ namespace Actor.P2
                 {
                     Kick(actorId);
                 }
-                Thread.Sleep(1);
+                else
+                    Thread.Sleep(1);
             }
         }
 
@@ -164,12 +140,15 @@ namespace Actor.P2
         {
             var actor = FindActor(actorId);
             var command = GetInputMessage(actorId, actor.InputVersion);
-
+            
+            // deserialize
+            Message msg = null;
+            
             try
             {
-                // deserialize
-                Message msg = null; 
                 actor.Handle(msg, command.Event.EventNumber);
+
+                SaveActor(actor);
             }
             catch(OptimisticConcurrencyException)
             {
@@ -177,10 +156,9 @@ namespace Actor.P2
             }
             catch
             {
-
+                Dead(msg);
             }
-
-            SaveActor(actor);
+           
         }
 
         BaseActor FindActor(string actorId)
@@ -216,13 +194,5 @@ namespace Actor.P2
             return slice.Events.Single();
         }
     }
-
-
-
-    public class MessageEnvelope
-    {
-        public Message Message { get; set; }
-    }
-
     
 }
