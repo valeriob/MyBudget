@@ -19,7 +19,7 @@ namespace MyBudget.Commands
 
         public Amount Amount { get; set; }
         public DateTime Date { get; set; }
-        public string Category { get; set; }
+        public string CategoryId { get; set; }
         public string Description { get; set; }
         public string[] Tags { get; set; }
     }
@@ -56,7 +56,7 @@ namespace MyBudget.Commands
 
         public void Handle(CreateLine cmd)
         {
-            var expense = new Expense(cmd.Amount, cmd.Date, cmd.Category, cmd.Description);
+            var expense = new Expense(cmd.Amount, cmd.Date, cmd.CategoryId, cmd.Description);
 
             var line = _repository.GetById<Line>(cmd.LineId);
             line.Create(new LineId(cmd.LineId), new BudgetId(cmd.BudgetId), expense, new UserId(cmd.UserId), cmd.Tags);

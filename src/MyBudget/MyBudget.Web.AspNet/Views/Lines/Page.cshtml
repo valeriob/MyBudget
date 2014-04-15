@@ -12,14 +12,26 @@
     {
         <a id="linkFirst" onclick='return goToPage(0)'>First</a>
     }
+    @*else
+    {
+         <a id="linkFirst">First</a>
+    }*@
     @if (Model.PrevLinkVisible())
     {
         <a id="linkPrev" onclick='return goToPage(@(Model.PageIndex - 1))'>Prev</a>
     }
+    @*else
+    {
+        <a id="linkPrev">Prev</a>
+    }*@
     @if (Model.NextLinkVisible())
     {
         <a id="linkNext" onclick='return goToPage(@(Model.PageIndex + 1))'>Next</a>
     }
+    @*else
+    {
+        <a id="linkNext">Next</a>
+    }*@
 </p>
 
 <div>
@@ -34,8 +46,8 @@
             <span class="add-on">to</span>
             <input type="text" class="input-small" name="to" id="To" value="@Model.GetFormattedTo()" />
         </div>
-        @Html.DropDownListFor(c=> c.Category, Model.GetCategories())
-        
+        @Html.DropDownListFor(c => c.Category, Model.GetCategories())
+
         <input type="submit" value="Search" class="btn btn-default" />
     }
 

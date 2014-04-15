@@ -55,7 +55,7 @@ namespace MyBudget.Web.AspNet.Controllers
         public async Task<IdentityResult> CreateAsync(ApplicationUser user, string password)
         {
             var h = MvcApplication.CommandManager.Create<AddUser>();
-            return TryExecute(() => h.Handle(new AddUser
+            return TryExecute(() => h(new AddUser
             {
                 Id = Guid.NewGuid(),
                 Timestamp = DateTime.Now,
@@ -68,7 +68,7 @@ namespace MyBudget.Web.AspNet.Controllers
         public async Task<IdentityResult> CreateAsync(ApplicationUser user)
         {
             var h = MvcApplication.CommandManager.Create<AddUser>();
-            return TryExecute(() => h.Handle(new AddUser
+            return TryExecute(() => h(new AddUser
             {
                 Id = Guid.NewGuid(),
                 Timestamp = DateTime.Now,
@@ -80,7 +80,7 @@ namespace MyBudget.Web.AspNet.Controllers
         public async Task<IdentityResult> AddLoginAsync(string userId, UserLoginInfo userLoginInfo)
         {
             var h = MvcApplication.CommandManager.Create<AddUserLogin>();
-            return TryExecute(() => h.Handle(new AddUserLogin
+            return TryExecute(() => h(new AddUserLogin
             {
                 Id = Guid.NewGuid(),
                 Timestamp = DateTime.Now,
@@ -91,7 +91,7 @@ namespace MyBudget.Web.AspNet.Controllers
         public async Task<IdentityResult> RemoveLoginAsync(string userId, UserLoginInfo userLoginInfo)
         {
             var h = MvcApplication.CommandManager.Create<RemoveUserLogin>();
-            return TryExecute(() => h.Handle(new RemoveUserLogin
+            return TryExecute(() => h(new RemoveUserLogin
             {
                 Id = Guid.NewGuid(),
                 Timestamp = DateTime.Now,
@@ -103,7 +103,7 @@ namespace MyBudget.Web.AspNet.Controllers
         public async Task<IdentityResult> ChangePasswordAsync(string userId, string oldPassword, string newPassword)
         {
             var h = MvcApplication.CommandManager.Create<ChangeUserPassword>();
-            return TryExecute(() => h.Handle(new ChangeUserPassword
+            return TryExecute(() => h(new ChangeUserPassword
             {
                 Id = Guid.NewGuid(),
                 Timestamp = DateTime.Now,
@@ -116,7 +116,7 @@ namespace MyBudget.Web.AspNet.Controllers
         public async Task<IdentityResult> AddPasswordAsync(string userId, string newPassword)
         {
             var h = MvcApplication.CommandManager.Create<AddUserPassword>();
-            return TryExecute(() => h.Handle(new AddUserPassword
+            return TryExecute(() => h(new AddUserPassword
             {
                 Id = Guid.NewGuid(),
                 Timestamp = DateTime.Now,

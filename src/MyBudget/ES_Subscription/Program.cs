@@ -73,12 +73,12 @@ namespace ES_Subscription
             Parallel.For(0, numberOfLines,po, i =>
             //for (int i = 0; i < numberOfLines; i++)
             {
-                cl.Handle(new CreateLine
+                cl(new CreateLine
                 {
                     UserId = userId,
                     BudgetId = budgetId.ToString(),
                     Amount = new Amount(currency, random.Next(100)),
-                    Category = categories[random.Next(categories.Length)],
+                    CategoryId = categories[random.Next(categories.Length)],
                     Date = mindate.AddDays(random.Next(365 * 3)),
                     Description = "nothing special",
                     LineId = MyBudget.Domain.Lines.LineId.Create(budgetId).ToString(),

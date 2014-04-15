@@ -17,6 +17,7 @@ namespace MyBudget.Projections
         User FindByLogin(string provider, string key);
         User FindById(string userId);
         Task<User> FindByIdAsync(string userId);
+        Task<IEnumerable<User>> AllUsers();
     }
 
     public class UsersListProjection : InMemoryProjection, IUsersListProjection
@@ -70,6 +71,13 @@ namespace MyBudget.Projections
             while (HasLoaded == false)
                 await Task.Delay(100);
             return _users[userId];
+        }
+
+        public async Task<IEnumerable<User>> AllUsers()
+        {
+            while (HasLoaded == false)
+                await Task.Delay(10);
+            return _users.Values;
         }
     }
 

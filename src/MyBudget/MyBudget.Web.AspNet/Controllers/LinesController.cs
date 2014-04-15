@@ -62,14 +62,14 @@ namespace MyBudget.Web.AspNet.Controllers
             try
             {
                 var handler = CommandManager.Create<CreateLine>();
-                handler.Handle(new CreateLine
+                handler(new CreateLine
                 {
                     UserId = GetCurrentUserId().ToString(),
                     BudgetId = model.BudgetId.ToString(),
                     LineId = model.LineId.ToString(),
                     Date = model.Date,
                     Amount = new Amount(Currencies.Parse(model.CurrencyISOCode), model.Amount),
-                    Category = model.Category,
+                    CategoryId = model.Category,
                     Description= model.Description,
 
                     Id = Guid.NewGuid(),
@@ -99,7 +99,7 @@ namespace MyBudget.Web.AspNet.Controllers
             try
             {
                 var handler = CommandManager.Create<UpdateLine>();
-                handler.Handle(new UpdateLine
+                handler(new UpdateLine
                 {
                     UserId = GetCurrentUserId().ToString(),
                     BudgetId = model.BudgetId.ToString(),
