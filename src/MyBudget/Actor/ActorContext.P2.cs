@@ -20,7 +20,8 @@ namespace Actor.P2
     }
     public class Event : Message
     {
-
+        public int InputVersion { get; set; }
+        public int Version { get; set; }
     }
 
     //public class Command : Message
