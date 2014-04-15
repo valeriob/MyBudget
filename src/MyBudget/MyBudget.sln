@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelImporter", "ExcelImpor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeBudgetImporter", "HomeBudgetImporter\HomeBudgetImporter.csproj", "{8380AA62-98C2-4CCD-9A7E-0B16F02E61C9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Actor", "Actor\Actor.csproj", "{166188E1-4FF8-47EE-A50E-6A50B5DDE93F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,6 +68,10 @@ Global
 		{8380AA62-98C2-4CCD-9A7E-0B16F02E61C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8380AA62-98C2-4CCD-9A7E-0B16F02E61C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8380AA62-98C2-4CCD-9A7E-0B16F02E61C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{166188E1-4FF8-47EE-A50E-6A50B5DDE93F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{166188E1-4FF8-47EE-A50E-6A50B5DDE93F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{166188E1-4FF8-47EE-A50E-6A50B5DDE93F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{166188E1-4FF8-47EE-A50E-6A50B5DDE93F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
