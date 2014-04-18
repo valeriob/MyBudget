@@ -183,48 +183,5 @@ namespace CommonDomain.Persistence.GetEventStore
             return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(eventHeaders, SerializerSettings));
         }
 
-        /*
-        private class JsonAggregateEvent : IEvent
-        {
-            public Guid EventId { get; private set; }
-            public string Type { get; private set; }
-            public bool IsJson { get; private set; }
-            public byte[] Data { get; private set; }
-            public byte[] Metadata { get; private set; }
-
-            private static readonly JsonSerializerSettings SerializerSettings;
-
-            public JsonAggregateEvent(Guid eventId, object evnt, IDictionary<string, object> headers)
-            {
-                EventId = eventId;
-                Type = evnt.GetType().Name;
-                IsJson = true;
-                Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(evnt, SerializerSettings));
-                Metadata = AddEventClrTypeHeaderAndSerializeMetadata(evnt, headers);
-            }
-
-            private static byte[] AddEventClrTypeHeaderAndSerializeMetadata(object evnt, IDictionary<string, object> headers)
-            {
-                var eventHeaders = new Dictionary<string, object>(headers)
-                    {
-                        {EventClrTypeHeader, evnt.GetType().AssemblyQualifiedName}
-                    };
-
-                return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(eventHeaders, SerializerSettings));
-            }
-
-            static JsonAggregateEvent()
-            {
-                SerializerSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None };
-            }
-        }
-         
-         */
-
-
-        public IAggregate TryGetById(string actorId)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

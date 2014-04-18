@@ -98,7 +98,6 @@ namespace CommonDomain.Persistence.GetEventStore
             expectedVersion--;
 
             var transaction = _eventStoreConnection.StartTransaction(streamName, expectedVersion);
-
             var preparedEvents = PrepareEvents(newEvents, commitHeaders).ToList();
 
             var position = 0;
@@ -127,7 +126,6 @@ namespace CommonDomain.Persistence.GetEventStore
                 var metadata = AddEventClrTypeHeaderAndSerializeMetadata(evnt, commitHeaders);
                 yield return new EventData(Guid.NewGuid(), evnt.GetType().FullName, true, data, metadata);
             }
-            //return events.Select(e => new JsonAggregateEvent(Guid.NewGuid(), e, commitHeaders));
         }
 
         static TAggregate ConstructAggregate<TAggregate>()
@@ -179,44 +177,6 @@ namespace CommonDomain.Persistence.GetEventStore
             return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(eventHeaders, SerializerSettings));
         }
 
-        /*
-        private class JsonAggregateEvent : IEvent
-        {
-            public Guid EventId { get; private set; }
-            public string Type { get; private set; }
-            public bool IsJson { get; private set; }
-            public byte[] Data { get; private set; }
-            public byte[] Metadata { get; private set; }
-
-            private static readonly JsonSerializerSettings SerializerSettings;
-
-            public JsonAggregateEvent(Guid eventId, object evnt, IDictionary<string, object> headers)
-            {
-                EventId = eventId;
-                Type = evnt.GetType().Name;
-                IsJson = true;
-                Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(evnt, SerializerSettings));
-                Metadata = AddEventClrTypeHeaderAndSerializeMetadata(evnt, headers);
-            }
-
-            private static byte[] AddEventClrTypeHeaderAndSerializeMetadata(object evnt, IDictionary<string, object> headers)
-            {
-                var eventHeaders = new Dictionary<string, object>(headers)
-                    {
-                        {EventClrTypeHeader, evnt.GetType().AssemblyQualifiedName}
-                    };
-
-                return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(eventHeaders, SerializerSettings));
-            }
-
-            static JsonAggregateEvent()
-            {
-                SerializerSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None };
-            }
-        }
-         
-         */
-
         public IAggregate TryGetById(string streamName)
         {
             EnsureConnected();
@@ -229,13 +189,6 @@ namespace CommonDomain.Persistence.GetEventStore
             {
                 currentSlice = _eventStoreConnection.ReadStreamEventsForward(streamName, nextSliceStart, ReadPageSize, true);
                 nextSliceStart = currentSlice.NextEventNumber;
-
-                //if (aggregate == null && currentSlice.Events.Count() >  0)
-                //{
-                //    var meta = currentSlice.Events.First().Event.Metadata;
-                //    var aggregateType = GetAggregateType(meta);
-                //    aggregate = (IAggregate)Activator.CreateInstance(aggregateType, true);
-                //}
 
                 foreach (var evnt in currentSlice.Events)
                     aggregate.ApplyEvent(DeserializeEvent(evnt.Event.Metadata, evnt.Event.Data));
@@ -259,7 +212,6 @@ namespace CommonDomain.Persistence.GetEventStore
         {
             var aggregateClrTypeName = JObject.Parse(Encoding.UTF8.GetString(metadata)).Property(AggregateClrTypeHeader).Value;
             return Type.GetType((string)aggregateClrTypeName);
-            //return JsonConvert.DeserializeObject(Encoding.UTF8.GetString(data), );
         }
     }
 }
