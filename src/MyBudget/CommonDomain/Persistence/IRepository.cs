@@ -9,5 +9,7 @@ namespace CommonDomain.Persistence
         //TAggregate GetById<TAggregate>(string id, int version) where TAggregate : class, IAggregate;
 		//void Save(IAggregate aggregate, Guid commitId, Action<IDictionary<string, object>> updateHeaders);
         void Save(IAggregate aggregate, Guid commitId, object command);
+
+        IAggregate TryGetById(string actorId);
     }
 }

@@ -74,7 +74,7 @@ namespace CommonDomain.Persistence.GetEventStore
             return aggregate;
         }
 
-        public object DeserializeEvent(byte[] metadata, byte[] data)
+        object DeserializeEvent(byte[] metadata, byte[] data)
         {
             var eventClrTypeName = JObject.Parse(Encoding.UTF8.GetString(metadata)).Property(EventClrTypeHeader).Value;
             return JsonConvert.DeserializeObject(Encoding.UTF8.GetString(data), Type.GetType((string)eventClrTypeName));
@@ -216,5 +216,50 @@ namespace CommonDomain.Persistence.GetEventStore
         }
          
          */
+
+        public IAggregate TryGetById(string streamName)
+        {
+            EnsureConnected();
+
+            IAggregate aggregate = BuildAggregate(streamName);
+
+            StreamEventsSlice currentSlice;
+            var nextSliceStart = 0;
+            do
+            {
+                currentSlice = _eventStoreConnection.ReadStreamEventsForward(streamName, nextSliceStart, ReadPageSize, true);
+                nextSliceStart = currentSlice.NextEventNumber;
+
+                //if (aggregate == null && currentSlice.Events.Count() >  0)
+                //{
+                //    var meta = currentSlice.Events.First().Event.Metadata;
+                //    var aggregateType = GetAggregateType(meta);
+                //    aggregate = (IAggregate)Activator.CreateInstance(aggregateType, true);
+                //}
+
+                foreach (var evnt in currentSlice.Events)
+                    aggregate.ApplyEvent(DeserializeEvent(evnt.Event.Metadata, evnt.Event.Data));
+            } while (!currentSlice.IsEndOfStream);
+
+
+            return aggregate;
+        }
+
+
+        IAggregate BuildAggregate(string streamName)
+        {
+            var actorType = streamName.Split('-').First();
+            var asm = typeof(Actor.P2.BaseActor);
+            //var type = Type.GetType(actorType, an => asm,(a,t,b)=> a.GetType(actorType) );
+            var type = asm.Assembly.GetType(typeof(Actor.P2.BaseActor).Namespace + "."+ actorType);
+            return (IAggregate)Activator.CreateInstance(type, false);
+        }
+
+        public Type GetAggregateType(byte[] metadata)
+        {
+            var aggregateClrTypeName = JObject.Parse(Encoding.UTF8.GetString(metadata)).Property(AggregateClrTypeHeader).Value;
+            return Type.GetType((string)aggregateClrTypeName);
+            //return JsonConvert.DeserializeObject(Encoding.UTF8.GetString(data), );
+        }
     }
 }

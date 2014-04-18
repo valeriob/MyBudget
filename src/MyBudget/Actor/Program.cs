@@ -12,7 +12,7 @@ namespace Actor
     {
         public static void Main(string[] args)
         {
-            string actor1 = "actor1";
+            string actor1 = "TestActor-actor2";
             string queue = "mainQueue";
             var address = new IPEndPoint(IPAddress.Loopback, 1113);
 

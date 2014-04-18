@@ -106,17 +106,37 @@ namespace Actor.P2
             _subscription.Start();
         }
 
+        const string AggregateClrTypeHeader = "AggregateClrTypeName";
         public void Deliver(Message msg)
         {
             var actorId = msg.ActorId;
 
             var json = _serializer.Serialize(msg);
             var data = UTF8Encoding.Default.GetBytes(json);
-            var evnt = new EventData(msg.Id, msg.GetType().FullName, true, data, null);
+
+            var meta = BuildMetadataFor(msg);
+
+            var evnt = new EventData(msg.Id, msg.GetType().FullName, true, data, meta);
             _connection.AppendToStream(actorId + "-input", ExpectedVersion.Any, evnt);
 
             var worker = FindWorker(actorId);
             worker.EnqueueKick(actorId);
+        }
+
+        //public void Subscribe<TActor, TEvent>(string actorId)
+        //{
+
+        //}
+
+        byte[] BuildMetadataFor(Message msg)
+        {
+            var actorType = msg.ActorId.Split('-').First();
+            var commitHeaders = new Dictionary<string, object>
+            {
+                {AggregateClrTypeHeader, actorType} //typeof(TActor).AssemblyQualifiedName}
+            };
+
+            return Encoding.UTF8.GetBytes(_serializer.Serialize(commitHeaders));
         }
 
         void EventAppeared(EventStoreCatchUpSubscription sub, ResolvedEvent evnt)
@@ -181,7 +201,9 @@ namespace Actor.P2
 
         void Kick(string actorId)
         {
-            var actor = _repository.GetById<TestActor>(actorId);
+            BaseActor actor = (BaseActor)_repository.TryGetById(actorId);
+
+            object actore = _repository.TryGetById(actorId);
             var command = GetInputMessage(actorId, actor.InputVersion);
 
             var type = Type.GetType(command.Event.EventType);
@@ -246,6 +268,7 @@ namespace Actor.P2
             var slice = _connection.ReadStreamEventsForward(actorId + "-input", minVersion, 1, true);
             return slice.Events.Single();
         }
+
     }
     
 }
