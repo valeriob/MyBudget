@@ -1,0 +1,11 @@
+fromAll().whenAny(
+       function (s, e) {
+           var category = e.streamId.substring(0, e.streamId.indexOf('-'));
+           if (e.streamId.indexOf("$") == -1 && category.length > 0) {
+               var streamId = 'categoria_' + category;
+               if (streamId.indexOf("$") == -1) {
+                   linkTo(streamId, e);
+               }
+           }
+           return null;
+       });

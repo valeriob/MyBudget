@@ -28,13 +28,14 @@ namespace ExcelImporter
             //            select c;
 
             var excel = new ExcelQueryFactory(@"C:\Users\Valerio\Downloads\spese.xlsx");
+            excel = new ExcelQueryFactory(@"c:\Users\vborioni.ONIT\Downloads\spese.xlsx");
             var anni = new[] {2011, 2012, 2013, 2014 };
             var movements = new List<Movement>();
             foreach(var anno in anni )
             {
                 movements.AddRange(excel.Worksheet<Movement>(anno + "").Where(r => r.Data != DateTime.MinValue));
             }
-   
+            movements = movements.OrderBy(d => d.Data).ToList();
          
             //var query2013 = from c in excel.Worksheet<Movement>("2013")
             //            select c;

@@ -1,0 +1,6 @@
+fromStream('categoria_Lines')
+   .whenAny(function (s, e) {
+       var budget = e.body.BudgetId._id;
+       linkTo('lines_of_' + budget, e);
+       return null;
+   });
