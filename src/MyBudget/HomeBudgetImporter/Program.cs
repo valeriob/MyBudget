@@ -117,17 +117,17 @@ and Deleted = 0";
             var category = mov.Category.Trim().Replace((char)160, ' ');
             var categoryId = categories.FirstOrDefault(d => string.Compare(d.Name, category, true) == 0).Id;
 
+            var expense = new Expense(new Amount(Currencies.Euro(), Convert.ToDecimal(mov.Import)), mov.DateTime, categoryId, mov.ShortDescription);
+
+
             return new CreateLine
             {
                 Id = Guid.NewGuid(),
                 Timestamp = DateTime.Now,
-                Amount = new Amount(Currencies.Euro(), Convert.ToDecimal(mov.Import)),
                 BudgetId = budgetId.ToString(),
-                CategoryId = categoryId,
-                Date = mov.DateTime,
-                Description = mov.ShortDescription,
                 LineId = LineId.Create(budgetId).ToString(),
                 UserId = userId,
+                Expense = expense,
             };
         }
     }

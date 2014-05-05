@@ -6,21 +6,21 @@ namespace CommonDomain.Core
 
     public abstract class AggregateBase : IAggregate, IEquatable<IAggregate>
     {
-        private readonly ICollection<object> uncommittedEvents = new LinkedList<object>();
+        readonly ICollection<object> uncommittedEvents = new LinkedList<object>();
 
-        private IRouteEvents registeredRoutes;
+        IRouteEvents registeredRoutes;
 
-        protected AggregateBase()
-            : this(null)
+        protected AggregateBase(): this(null)
         {
         }
 
         protected AggregateBase(IRouteEvents handler)
         {
-            if (handler == null) return;
+            if (handler == null) 
+                return;
 
-            this.RegisteredRoutes = handler;
-            this.RegisteredRoutes.Register(this);
+            RegisteredRoutes = handler;
+            RegisteredRoutes.Register(this);
         }
 
         public string Id { get; protected set; }
@@ -43,18 +43,18 @@ namespace CommonDomain.Core
 
         protected void Register<T>(Action<T> route)
         {
-            this.RegisteredRoutes.Register(route);
+            RegisteredRoutes.Register(route);
         }
 
         protected void RaiseEvent(object @event)
         {
             ((IAggregate)this).ApplyEvent(@event);
-            this.uncommittedEvents.Add(@event);
+            uncommittedEvents.Add(@event);
         }
         void IAggregate.ApplyEvent(object @event)
         {
-            this.RegisteredRoutes.Dispatch(@event);
-            this.Version++;
+            RegisteredRoutes.Dispatch(@event);
+            Version++;
         }
         ICollection IAggregate.GetUncommittedEvents()
         {
@@ -62,7 +62,7 @@ namespace CommonDomain.Core
         }
         void IAggregate.ClearUncommittedEvents()
         {
-            this.uncommittedEvents.Clear();
+            uncommittedEvents.Clear();
         }
 
         IMemento IAggregate.GetSnapshot()

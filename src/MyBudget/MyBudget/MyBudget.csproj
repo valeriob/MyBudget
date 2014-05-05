@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\LinesHandlers.cs" />
+    <Compile Include="Domain\Budgets\DistributionKey.cs" />
     <Compile Include="Domain\Budgets\Category.cs" />
     <Compile Include="Domain\Users\User.cs" />
     <Compile Include="Domain\Accounts\Account.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="Infrastructure\ISerialize.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="Projections\BudgetLinesProjection.cs" />
+    <Compile Include="Projections\DistributionKeysProjection.cs" />
     <Compile Include="Projections\CategoriesProjection.cs" />
     <Compile Include="Projections\ProjectionManager.cs" />
     <Compile Include="Projections\ApplicationUserProjection.cs" />

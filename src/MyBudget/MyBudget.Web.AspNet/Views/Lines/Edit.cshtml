@@ -1,8 +1,8 @@
 ﻿@model MyBudget.Web.AspNet.Models.EditBudgetLineViewModel
 
 @*@{
-    ViewBag.Title = "Edit";
-}*@
+        ViewBag.Title = "Edit";
+    }*@
 
 <h2>Edit</h2>
 
@@ -28,6 +28,7 @@
             </div>
         </div>
 
+
         <div class="form-group">
             @Html.LabelFor(model => model.Category, new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -36,15 +37,34 @@
                 @*<input class="text-box single-line" id="Category" name="Category" type="text" value="asd">*@
 
                 <select id="Category" name="Category">
-                    @foreach(var category in Model.GetCategories())
-                    { 
-                        @:<option value="@(category.Value)" @(category.Selected? "selected=selected" :"") >@(category.Text)</option>
+                    @foreach (var category in Model.GetCategories())
+                    {
+                        @:
+                        <option value="@(category.Value)" @(category.Selected ? "selected=selected" : "")>@(category.Text)</option>
                     }
                 </select>
 
                 @Html.ValidationMessageFor(model => model.Category)
             </div>
         </div>
+
+        @if (Model.GetDistributionKeys().Any())
+        {
+            <div class="form-group">
+                @Html.LabelFor(model => model.DistributionKey, new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    <select id="DistributionKey" name="DistributionKey">
+                        @foreach (var dk in Model.GetDistributionKeys())
+                        {
+                            @:
+                            <option value="@(dk.Value)" @(dk.Selected ? "selected=selected" : "")>@(dk.Text)</option>
+                        }
+                    </select>
+
+                    @Html.ValidationMessageFor(model => model.DistributionKey)
+                </div>
+            </div>
+        }
 
         <div class="form-group">
             @Html.LabelFor(model => model.Description, new { @class = "control-label col-md-2" })
@@ -107,7 +127,7 @@
 
         });
 
-       $('#Date').datepicker();
+        $('#Date').datepicker();
     </script>
     @*<script type="text/javascript">
             var currencies = @Html.Raw(Model.GetJsonCurrencies());

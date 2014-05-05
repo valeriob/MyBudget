@@ -91,18 +91,16 @@ namespace ExcelImporter
         {
             var category =  Categoria.Trim().Replace((char)160, ' ');
             var categoryId = categories.FirstOrDefault(d => string.Compare(d.Name, category, true) == 0).Id;
+            var expense = new Expense(new Amount(Currencies.Euro(), Convert.ToDecimal(Spesa)), Data, categoryId, Descrizione);
 
             return new CreateLine
             {
                 Id = Guid.NewGuid(),
                 Timestamp = DateTime.Now,
-                Amount = new Amount(Currencies.Euro(), Convert.ToDecimal(Spesa)),
                 BudgetId = budgetId.ToString(),
-                CategoryId = categoryId,
-                Date = Data,
-                Description = Descrizione,
                 LineId = LineId.Create(budgetId).ToString(),
                 UserId = userId,
+                Expense = expense,
             };
         }
 

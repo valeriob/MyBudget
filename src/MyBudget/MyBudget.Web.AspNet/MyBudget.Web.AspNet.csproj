@@ -199,6 +199,7 @@
     <None Include="Controllers\AccountController.cs_" />
     <Compile Include="Controllers\BudgetsController.cs" />
     <Compile Include="Controllers\BudgetStatsController.cs" />
+    <Compile Include="Controllers\DistributionKeyController.cs" />
     <Compile Include="Controllers\CategoryController.cs" />
     <Compile Include="Controllers\DefaultModelBinder.cs" />
     <Compile Include="Controllers\DynamicController.cs" />
@@ -206,6 +207,9 @@
     <Compile Include="Controllers\LinesController.cs" />
     <Compile Include="Controllers\MyBudgetController.cs" />
     <Compile Include="Controllers\MyBudgetUserManager.cs" />
+    <Compile Include="DistributionKeyController.generated.cs">
+      <DependentUpon>T4MVC.tt</DependentUpon>
+    </Compile>
     <Compile Include="DynamicController.generated.cs">
       <DependentUpon>T4MVC.tt</DependentUpon>
     </Compile>
@@ -240,6 +244,8 @@
     <Content Include="Views\Category\Create.cshtml" />
     <Content Include="Views\Category\Index.cshtml" />
     <Content Include="Views\Category\Edit.cshtml" />
+    <Content Include="Views\DistributionKey\Edit.cshtml" />
+    <Content Include="Views\DistributionKey\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-datepicker.css" />
@@ -399,7 +405,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>51123</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:51123/</IISUrl>
+          <IISUrl>http://localhost:51124/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

@@ -18,6 +18,7 @@ namespace MyBudget.Domain.Budgets
         BudgetId _id;
         string _name;
         UserId _owner;
+        HashSet<string> _keys = new HashSet<string>();
 
         public void Apply(BudgetCreated evnt)
         {
@@ -30,7 +31,16 @@ namespace MyBudget.Domain.Budgets
         {
 
         }
-        
+
+        public void Apply(BudgetDistributionKeyCreated evnt)
+        {
+            _keys.Add(evnt.Name);
+        }
+
+        public bool KeyDoesNotExists(string name)
+        {
+            return _keys.Contains(name) == false;
+        }
 
         public bool CanAllowAccess(UserId userId)
         {
@@ -52,6 +62,20 @@ namespace MyBudget.Domain.Budgets
             BudgetId = budgetId;
             Name = name;
             Owner = owner;
+        }
+    }
+
+    public class BudgetDistributionKeyCreated : Event
+    {
+        public BudgetId BudgetId { get; private set; }
+        public string Name { get; private set; }
+
+        public BudgetDistributionKeyCreated(Guid id, DateTime timestamp, BudgetId budgetId, string name)
+        {
+            Id = id;
+            Timestamp = timestamp;
+            BudgetId = budgetId;
+            Name = name;
         }
     }
 
@@ -128,6 +152,13 @@ namespace MyBudget.Domain.Budgets
 
             RaiseEvent(new BudgetAccessAllowed(Guid.NewGuid(), DateTime.Now, new BudgetId(Id), allowedUserId));
         }
+
+        public void AddDistributionKey(string name)
+        {
+            if(_state.KeyDoesNotExists(name))
+                RaiseEvent(new BudgetDistributionKeyCreated(Guid.NewGuid(), DateTime.Now, new BudgetId(Id), name));
+        }
+
         //public void AllowWriteAccess(AccountId accountId)
         //{
 

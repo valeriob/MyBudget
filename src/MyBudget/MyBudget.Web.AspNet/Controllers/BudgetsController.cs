@@ -13,8 +13,7 @@ namespace MyBudget.Web.AspNet.Controllers
     {
         public virtual ActionResult Index()
         {
-            var readModel = ProjectionManager.GetBudgetsList();
-            var budgets = readModel.GetBudgetsUserCanView(GetCurrentUserId());
+            var budgets = ProjectionManager.GetBudgetsList().GetBudgetsUserCanView(GetCurrentUserId());
 
             var model = new BudgetListViewModel(budgets);
 
@@ -23,14 +22,15 @@ namespace MyBudget.Web.AspNet.Controllers
 
         public virtual ActionResult Details(string id)
         {
-            //var readModel = ProjectionManager.GetBudgetsList();
             var budgetId = new BudgetId(id);
             var budget = ProjectionManager.GetBudgetsList().GetBudgetById(budgetId);
             var categories = ProjectionManager.GetCategories().GetBudgetsCategories(budgetId);
+           
             var model = new BudgetDetailsViewModel
             {
                 Budget = budget,
-                Categories = categories
+                Categories = categories,
+                DistributionKeys = budget.GetDistributionKeys(),
             };
             return View(model);
         }

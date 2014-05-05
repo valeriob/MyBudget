@@ -65,6 +65,12 @@ namespace MyBudget.Projections
             _budgets[evnt.BudgetId.ToString()].Apply(evnt);
         }
 
+        void When(BudgetDistributionKeyCreated evnt)
+        {
+            _budgets[evnt.BudgetId.ToString()].Apply(evnt);
+        }
+
+
         public IEnumerable<Budget> GetBudgetsUserCanView(UserId userId)
         {
             return _budgets.Values.Where(b => b.CanRead(userId));
@@ -85,7 +91,8 @@ namespace MyBudget.Projections
         public string OwnerId { get; set; }
         public string OwnerUsername { get; set; }
 
-        List<string> _allowedUsers = new List<string>();
+        HashSet<string> _allowedUsers = new HashSet<string>();
+        HashSet<string> _keys = new HashSet<string>();
 
         internal void Apply(BudgetCreated evnt, string ownerUsername)
         {
@@ -107,7 +114,16 @@ namespace MyBudget.Projections
         internal bool CanRead(UserId userId)
         {
             return _allowedUsers.Contains(userId.ToString());
-           // return userId.ToString() == OwnerId;
+        }
+
+        internal void Apply(BudgetDistributionKeyCreated evnt)
+        {
+            _keys.Add(evnt.Name);
+        }
+
+        public IEnumerable<string> GetDistributionKeys()
+        {
+            return _keys;
         }
     }
 

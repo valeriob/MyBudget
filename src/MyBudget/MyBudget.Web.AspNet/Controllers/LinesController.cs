@@ -26,18 +26,18 @@ namespace MyBudget.Web.AspNet.Controllers
         {
             DateTime? from = null;
             DateTime? to = null;
-            int _ciao = 0;
 
             if (string.IsNullOrEmpty(From) == false)
                 from = DateTime.Parse(From);
-            //from = From;
+
             if (string.IsNullOrEmpty(To) == false)
                 to = DateTime.Parse(To);
 
-            var catReadModel = ProjectionManager.GetCategories();
+            var categories = ProjectionManager.GetCategories().GetBudgetsCategories(new Domain.Budgets.BudgetId(id));
             var readModel = ProjectionManager.GetBudgetLinesProjection(id);
             var lines = readModel.GetAllLinesPaged(pageIndex.GetValueOrDefault(), from, to, category);
-            var model = new BudgetLinesPagedViewModel(id, lines, from, to, catReadModel.GetBudgetsCategories(new Domain.Budgets.BudgetId(id)), category);
+
+            var model = new BudgetLinesPagedViewModel(id, lines, from, to, categories, category);
 
             return View(model);
         }
@@ -50,8 +50,9 @@ namespace MyBudget.Web.AspNet.Controllers
         public virtual ActionResult Create(string id)
         {
             var categories = ProjectionManager.GetCategories().GetBudgetsCategories(new Domain.Budgets.BudgetId(id));
-            var budgetName = ProjectionManager.GetBudgetsList().GetBudgetById(new Domain.Budgets.BudgetId(id)).Name;
-            var model = new EditBudgetLineViewModel(budgetName, id, categories, Currencies.GetAll());
+            var budget = ProjectionManager.GetBudgetsList().GetBudgetById(new Domain.Budgets.BudgetId(id));
+
+            var model = new EditBudgetLineViewModel(budget.Name, id, categories, budget.GetDistributionKeys(), Currencies.GetAll());
             
             return View(Views.Edit, model);
         }
@@ -61,19 +62,17 @@ namespace MyBudget.Web.AspNet.Controllers
         {
             try
             {
+                var expense = new Expense(new Amount(Currencies.Parse(model.CurrencyISOCode), model.Amount), model.Date, model.Category, model.Description);
+
                 var handler = CommandManager.Create<CreateLine>();
                 handler(new CreateLine
                 {
                     UserId = GetCurrentUserId().ToString(),
                     BudgetId = model.BudgetId.ToString(),
                     LineId = model.LineId.ToString(),
-                    Date = model.Date,
-                    Amount = new Amount(Currencies.Parse(model.CurrencyISOCode), model.Amount),
-                    CategoryId = model.Category,
-                    Description= model.Description,
-
                     Id = Guid.NewGuid(),
                     Timestamp = DateTime.Now,
+                    Expense = expense,
                 });
 
                 return RedirectToAction(Actions.Index(model.BudgetId));
@@ -87,8 +86,9 @@ namespace MyBudget.Web.AspNet.Controllers
         public virtual ActionResult Edit(string budgetId, string lineId)
         {
             var categories = ProjectionManager.GetCategories().GetBudgetsCategories(new Domain.Budgets.BudgetId(budgetId));
-            var budgetName = ProjectionManager.GetBudgetsList().GetBudgetById(new Domain.Budgets.BudgetId(budgetId)).Name;
-            var model = new EditBudgetLineViewModel(budgetName, ProjectionManager.GetStreamEvents(lineId), categories, Currencies.GetAll());
+            var budget = ProjectionManager.GetBudgetsList().GetBudgetById(new Domain.Budgets.BudgetId(budgetId));
+
+            var model = new EditBudgetLineViewModel(budget.Name, ProjectionManager.GetStreamEvents(lineId), categories, budget.GetDistributionKeys(), Currencies.GetAll());
 
             return View(model);
         }
@@ -98,17 +98,16 @@ namespace MyBudget.Web.AspNet.Controllers
         {
             try
             {
+                var expense = new Expense(new Amount(Currencies.Parse(model.CurrencyISOCode), model.Amount), model.Date, model.Category, model.Description);
+
+
                 var handler = CommandManager.Create<UpdateLine>();
                 handler(new UpdateLine
                 {
                     UserId = GetCurrentUserId().ToString(),
                     BudgetId = model.BudgetId.ToString(),
                     LineId = model.LineId.ToString(),
-
-                    Date = model.Date,
-                    Amount = new Amount(Currencies.Parse(model.CurrencyISOCode), model.Amount),
-                    Category = model.Category,
-                    Description = model.Description,
+                    Expense = expense,
 
                     Id = Guid.NewGuid(),
                     Timestamp = DateTime.Now,

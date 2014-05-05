@@ -19,6 +19,8 @@ namespace MyBudget.Projections
         IEnumerable<BudgetLine> GetAllLinesBetween(DateTime? from, DateTime? to);
         PagedResult<BudgetLine> GetAllLinesPaged(int page, DateTime? from, DateTime? to, string category);
     }
+
+
     public class BudgetLinesProjection : InMemoryProjection, IBudgetLinesProjection
     {
         readonly static int _pageSize = 15;
@@ -141,25 +143,29 @@ namespace MyBudget.Projections
         public DateTime Date { get; private set; }
         public Amount Amount { get; private set; }
         public string Category { get; private set; }
-        //public string CategoryId { get; private set; }
         public string Description { get; private set; }
+        public string DistributionKey { get; set; }
+        public string[] Tags { get; set; }
 
         public BudgetLine(LineCreated evnt)
         {
             Id = evnt.LineId.ToString();
             Timestamp = evnt.Timestamp;
-            Date = evnt.Date;
-            Amount = evnt.Amount;
-            Category = evnt.CategoryId;
-            Description = evnt.Description;
+            Date = evnt.Expense.Date;
+            Amount = evnt.Expense.Amount;
+            Category = evnt.Expense.Category;
+            Description = evnt.Expense.Description;
+            Tags = evnt.Expense.Tags;
         }
 
         internal void When(LineExpenseChanged evnt)
         {
-            Amount = evnt.Amount;
-            Category = evnt.CategoryId;
-            Description = evnt.Description;
-            Date = evnt.Date;
+            Amount = evnt.Expense.Amount;
+            Category = evnt.Expense.Category;
+            Description = evnt.Expense.Description;
+            Date = evnt.Expense.Date;
+            DistributionKey = evnt.Expense.DistributionKey;
+            Tags = evnt.Expense.Tags;
         }
     }
 }

@@ -8,7 +8,7 @@ namespace CommonDomain
 		string Id { get; }
 		int Version { get; }
 
-		void ApplyEvent(object @event);
+		void ApplyEvent(object evnt);
 		ICollection GetUncommittedEvents();
 		void ClearUncommittedEvents();
 

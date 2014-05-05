@@ -1,4 +1,4 @@
-﻿@model MyBudget.Web.AspNet.Models.CreateBudgetLineViewModel
+﻿@model MyBudget.Web.AspNet.Models.EditBudgetLineViewModel
 
 @{
     ViewBag.Title = "Create";
@@ -47,6 +47,14 @@
                 @Html.ValidationMessageFor(model => model.Category)
             </div>
         </div>
+
+        @*<div class="form-group">
+            @Html.LabelFor(model => model.DistributionKey, new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.DistributionKey)
+                @Html.ValidationMessageFor(model => model.DistributionKey)
+            </div>
+        </div>*@
 
         <div class="form-group">
             @Html.LabelFor(model => model.Description, new { @class = "control-label col-md-2" })

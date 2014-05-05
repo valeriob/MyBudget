@@ -1,11 +1,12 @@
-﻿@model MyBudget.Web.AspNet.Models.CategoryViewModel
+﻿
+@model MyBudget.Web.AspNet.Models.CategoryViewModel
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Edit Category";
 }
 
-<h2>New Category</h2>
+<h2>Edit Category</h2>
 
-@using (Html.BeginForm("Create", "Category", FormMethod.Post))
+@using (Html.BeginForm("Edit", "Category", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
 
@@ -32,7 +33,6 @@
 
         <input hidden id="Id" name="Id" value="@Model.Id" />
         <input hidden id="BudgetId" name="BudgetId" value="@Model.BudgetId" />
-
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Create" class="btn btn-default" />

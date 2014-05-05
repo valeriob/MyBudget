@@ -20,9 +20,6 @@ namespace MyBudget.Web.AspNet.Controllers
 
         public virtual ActionResult Details(string id)
         {
-            // var readModel = ProjectionManager.GetCategories();
-            // var budget = readModel.GetBudgetsCategories()
-            //return View(budget);
             return View();
         }
 

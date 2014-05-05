@@ -29,5 +29,6 @@ namespace MyBudget.Web.AspNet.Models
     {
         public Budget Budget { get; set; }
         public IEnumerable<Category> Categories { get; set; }
+        public IEnumerable<string> DistributionKeys { get; set; }
     }
 }

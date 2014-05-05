@@ -40,7 +40,16 @@
         <dd>
             @foreach (var category in Model.Categories)
             {
-                <span><a href="@Url.Action(MVC.Category.Edit(Model.Budget.Id, category.Id))">@category.Name</a></span> 
+                <span><a href="@Url.Action(MVC.Category.Edit(Model.Budget.Id, category.Id))">@category.Name</a></span>
+            }
+        </dd>
+        <dt>
+            DistributionKeys
+        </dt>
+        <dd>
+            @foreach (var dk in Model.DistributionKeys)
+            {
+                <span><a >@dk</a></span>
             }
         </dd>
     </dl>
@@ -49,6 +58,9 @@
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Budget.Id }) |
     @Html.ActionLink("Add Category", MVC.Category.Actions.Create(Model.Budget.Id)) |
+    @Html.ActionLink("Add Distribution Key", MVC.DistributionKey.Actions.Create(Model.Budget.Id,
+    Url.Action(MVC.Budgets.Details(Model.Budget.Id)))) |
+
     @Html.ActionLink("Back to List", "Index")
 
 

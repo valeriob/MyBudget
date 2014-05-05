@@ -1,11 +1,12 @@
-﻿@model MyBudget.Web.AspNet.Models.CategoryViewModel
+﻿@model MyBudget.Web.AspNet.Controllers.DistributionKeyViewModel
 @{
     ViewBag.Title = "Create";
 }
 
-<h2>New Category</h2>
+<h2>New Distribution Key</h2>
 
-@using (Html.BeginForm("Create", "Category", FormMethod.Post))
+
+@using (Html.BeginForm(MVC.DistributionKey.Create(), FormMethod.Post))
 {
     @Html.AntiForgeryToken()
 
@@ -22,17 +23,15 @@
             </div>
         </div>
 
-        <div class="form-group">
+        @*<div class="form-group">
             <label class="control-label col-md-2" for="Name">Description</label>
             <div class="col-md-10">
                 <input name="Description" class="text-box single-line" id="Description" type="text" value="@Model.Description">
                 <span class="field-validation-valid" data-valmsg-replace="true" data-valmsg-for="Description"></span>
             </div>
-        </div>
-
-        <input hidden id="Id" name="Id" value="@Model.Id" />
+        </div>*@
+        <input hidden id="ReturnUrl" name="ReturnUrl" value="@Model.ReturnUrl" />
         <input hidden id="BudgetId" name="BudgetId" value="@Model.BudgetId" />
-
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Create" class="btn btn-default" />
