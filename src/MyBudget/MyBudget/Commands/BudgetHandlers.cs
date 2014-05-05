@@ -14,6 +14,8 @@ namespace MyBudget.Commands
         public string UserId { get; set; }
         public string BudgetId { get; set; }
         public string BudgetName { get; set; }
+
+        public string CurrencyISOCode { get; set; }
     }
 
     public class AllowBudgetAccess : Command
@@ -60,7 +62,7 @@ namespace MyBudget.Commands
         public void Handle(CreateBudget cmd)
         {
             var budget = _repository.GetById<Budget>(cmd.BudgetId);
-            budget.Create(new BudgetId(cmd.BudgetId), cmd.BudgetName, new UserId(cmd.UserId));
+            budget.Create(new BudgetId(cmd.BudgetId), cmd.BudgetName, new UserId(cmd.UserId), cmd.CurrencyISOCode);
             _repository.Save(budget, Guid.NewGuid(), cmd);
         }
 

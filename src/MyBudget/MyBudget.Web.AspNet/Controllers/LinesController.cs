@@ -52,7 +52,8 @@ namespace MyBudget.Web.AspNet.Controllers
             var categories = ProjectionManager.GetCategories().GetBudgetsCategories(new Domain.Budgets.BudgetId(id));
             var budget = ProjectionManager.GetBudgetsList().GetBudgetById(new Domain.Budgets.BudgetId(id));
 
-            var model = new EditBudgetLineViewModel(budget.Name, id, categories, budget.GetDistributionKeys(), Currencies.GetAll());
+            var model = new EditBudgetLineViewModel(budget.Name, id, budget.CurrencyISOCode, categories, budget.GetDistributionKeys(), 
+                Currencies.GetAll());
             
             return View(Views.Edit, model);
         }
@@ -88,7 +89,7 @@ namespace MyBudget.Web.AspNet.Controllers
             var categories = ProjectionManager.GetCategories().GetBudgetsCategories(new Domain.Budgets.BudgetId(budgetId));
             var budget = ProjectionManager.GetBudgetsList().GetBudgetById(new Domain.Budgets.BudgetId(budgetId));
 
-            var model = new EditBudgetLineViewModel(budget.Name, ProjectionManager.GetStreamEvents(lineId), categories, budget.GetDistributionKeys(), Currencies.GetAll());
+            var model = new EditBudgetLineViewModel(budget.Name, budget.Id, budget.CurrencyISOCode, ProjectionManager.GetStreamEvents(lineId), categories, budget.GetDistributionKeys(), Currencies.GetAll());
 
             return View(model);
         }

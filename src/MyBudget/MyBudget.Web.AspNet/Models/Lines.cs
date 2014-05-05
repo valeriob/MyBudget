@@ -123,7 +123,7 @@ namespace MyBudget.Web.AspNet.Models
 
         }
 
-        public EditBudgetLineViewModel(string budgetName, string budgetId, IEnumerable<Category> categories, IEnumerable<string> distributionKeys, IEnumerable<Currency> currencies)
+        public EditBudgetLineViewModel(string budgetName, string budgetId, string currencyISOCode, IEnumerable<Category> categories, IEnumerable<string> distributionKeys, IEnumerable<Currency> currencies)
         {
             BudgetName = budgetName;
             _categories = categories.ToList();
@@ -132,12 +132,12 @@ namespace MyBudget.Web.AspNet.Models
             BudgetId = budgetId;
             LineId = MyBudget.Domain.Lines.LineId.Create(new MyBudget.Domain.Budgets.BudgetId(budgetId)).ToString();
             Date = DateTime.Now;
-            CurrencyISOCode = Currencies.Euro().IsoCode;
+            CurrencyISOCode = currencyISOCode;
             _keys = distributionKeys;
         }
 
-        public EditBudgetLineViewModel(string budgetName, IEnumerable<dynamic> events, IEnumerable<Category> categories, IEnumerable<string> distributionKeys, IEnumerable<Currency> currencies)
-            : this(budgetName, "", categories, distributionKeys, currencies)
+        public EditBudgetLineViewModel(string budgetName, string budgetId, string currencyISOCode, IEnumerable<dynamic> events, IEnumerable<Category> categories, IEnumerable<string> distributionKeys, IEnumerable<Currency> currencies)
+            : this(budgetName, budgetId, currencyISOCode, categories, distributionKeys, currencies)
         {
             EventHelper.Apply(events, this);
         }

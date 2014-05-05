@@ -90,6 +90,7 @@ namespace MyBudget.Projections
         public DateTime Created { get; set; }
         public string OwnerId { get; set; }
         public string OwnerUsername { get; set; }
+        public string CurrencyISOCode { get; set; }
 
         HashSet<string> _allowedUsers = new HashSet<string>();
         HashSet<string> _keys = new HashSet<string>();
@@ -101,6 +102,7 @@ namespace MyBudget.Projections
             OwnerId = evnt.Owner.ToString();
             Created = evnt.Timestamp;
             OwnerUsername = ownerUsername;
+            CurrencyISOCode = evnt.CurrencyISOCode;
 
             _allowedUsers.Add(OwnerId);
         }

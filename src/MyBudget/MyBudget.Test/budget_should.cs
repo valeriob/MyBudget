@@ -8,6 +8,7 @@ using MyBudget.Infrastructure;
 using MyBudget.Domain.Budgets;
 using MyBudget.Domain.Accounts;
 using MyBudget.Domain.Users;
+using MyBudget.Domain.ValueObjects;
 
 namespace MyBudget.Tests
 {
@@ -21,7 +22,7 @@ namespace MyBudget.Tests
             var ownerId = UserId.CreateNew();
             var budget = new Budget();
 
-            budget.Create(budgetId, "name", ownerId);
+            budget.Create(budgetId, "name", ownerId, Currencies.Euro().IsoCode);
 
             var events = budget.GetUncommittedEvents();
 

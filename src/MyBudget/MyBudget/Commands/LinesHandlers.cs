@@ -55,6 +55,9 @@ namespace MyBudget.Commands
 
         public void Handle(CreateLine cmd)
         {
+            var budget = _repository.GetById<Budget>(cmd.BudgetId);
+            budget.EnsureCurrencyIsCorrect(cmd.Expense.Amount.GetCurrency().IsoCode);
+
             var line = _repository.GetById<Line>(cmd.LineId);
             line.Create(new LineId(cmd.LineId), new BudgetId(cmd.BudgetId), cmd.Expense, new UserId(cmd.UserId));
             _repository.Save(line, Guid.NewGuid(), cmd);

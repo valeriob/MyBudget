@@ -42,6 +42,7 @@ namespace MyBudget.Web.AspNet.Controllers
             {
                 Id = BudgetId.Create().ToString(),
                 Name = "New Budget",
+                Currencies = MyBudget.Domain.ValueObjects.Currencies.GetAll(),
             };
             return View(model);
         }
@@ -57,6 +58,8 @@ namespace MyBudget.Web.AspNet.Controllers
                     UserId = GetCurrentUserId().ToString(),
                     BudgetName = model.Name,
                     BudgetId = BudgetId.Create().ToString(),
+                    CurrencyISOCode = model.CurrencyISOCode,
+
                     Id = Guid.NewGuid(),
                     Timestamp = DateTime.Now,
                 });

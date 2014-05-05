@@ -19,12 +19,15 @@ namespace MyBudget.Domain.Budgets
         string _name;
         UserId _owner;
         HashSet<string> _keys = new HashSet<string>();
+        string _currencyISOCode;
+
 
         public void Apply(BudgetCreated evnt)
         {
             _id = evnt.BudgetId;
             _name = evnt.Name;
             _owner = evnt.Owner;
+            _currencyISOCode = evnt.CurrencyISOCode;
         }
 
         public void Apply(BudgetAccessAllowed evnt)
@@ -47,6 +50,11 @@ namespace MyBudget.Domain.Budgets
             return _owner.Equals(userId);
         }
 
+        public string GetCurrencyCode()
+        {
+            return _currencyISOCode;
+        }
+
     }
 
     public class BudgetCreated : Event
@@ -54,14 +62,16 @@ namespace MyBudget.Domain.Budgets
         public BudgetId BudgetId { get; private set; }
         public string Name { get; private set; }
         public UserId Owner { get; private set; }
+        public string CurrencyISOCode { get; set; }
 
-        public BudgetCreated(Guid id, DateTime timestamp, BudgetId budgetId, string name, UserId owner)
+        public BudgetCreated(Guid id, DateTime timestamp, BudgetId budgetId, string name, UserId owner, string currencyISOCode)
         {
             Id = id;
             Timestamp = timestamp;
             BudgetId = budgetId;
             Name = name;
             Owner = owner;
+            CurrencyISOCode = currencyISOCode;
         }
     }
 
@@ -140,9 +150,9 @@ namespace MyBudget.Domain.Budgets
 
         }
 
-        public void Create(BudgetId id, string name, UserId owner)
+        public void Create(BudgetId id, string name, UserId owner, string currencyISOCode)
         {
-            RaiseEvent(new BudgetCreated(Guid.NewGuid(), DateTime.Now, id, name, owner));
+            RaiseEvent(new BudgetCreated(Guid.NewGuid(), DateTime.Now, id, name, owner, currencyISOCode));
         }
 
         public void AllowAccess(UserId fromUser, UserId allowedUserId)
@@ -169,6 +179,12 @@ namespace MyBudget.Domain.Budgets
             return _state;
         }
 
+
+        internal void EnsureCurrencyIsCorrect(string currencyISOCode)
+        {
+            if (_state.GetCurrencyCode() != currencyISOCode)
+                throw new Exception("Budget is in " + _state.GetCurrencyCode());
+        }
     }
 
 }
