@@ -78,9 +78,10 @@ namespace MyBudget.Web.AspNet.Controllers
 
                 return RedirectToAction(Actions.Index(model.BudgetId));
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                ModelState.AddModelError("Global", ex);
+                return View(Views.Edit, model);
             }
         }
 
@@ -101,7 +102,6 @@ namespace MyBudget.Web.AspNet.Controllers
             {
                 var expense = new Expense(new Amount(Currencies.Parse(model.CurrencyISOCode), model.Amount), model.Date, model.Category, model.Description);
 
-
                 var handler = CommandManager.Create<UpdateLine>();
                 handler(new UpdateLine
                 {
@@ -116,9 +116,10 @@ namespace MyBudget.Web.AspNet.Controllers
 
                 return RedirectToAction(Actions.Index(model.BudgetId));
             }
-            catch
+            catch(Exception ex)
             {
-                return View();
+                ModelState.AddModelError("Global", ex);
+                return View(model);
             }
         }
 
