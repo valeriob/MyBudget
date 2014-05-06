@@ -249,6 +249,35 @@ namespace MyBudget.Web.AspNet.Models
             CurrencyISOCode = evnt.Expense.Amount.GetCurrency().IsoCode;
         }
 
+
+        public MyBudget.Commands.CreateLine PrepareCreateLine(string userId)
+        {
+             var expense = new Expense(new Amount(Currencies.Parse(CurrencyISOCode), Amount), Date, Category, Description);
+             return new MyBudget.Commands.CreateLine
+             {
+                 UserId = userId,
+                 BudgetId = BudgetId.ToString(),
+                 LineId = LineId.ToString(),
+                 Id = Guid.NewGuid(),
+                 Timestamp = DateTime.Now,
+                 Expense = expense,
+             };
+        }
+
+
+        public MyBudget.Commands.UpdateLine PrepareUpdateLine(string userId)
+        {
+            var expense = new Expense(new Amount(Currencies.Parse(CurrencyISOCode), Amount), Date, Category, Description);
+            return new MyBudget.Commands.UpdateLine
+            {
+                UserId = userId,
+                BudgetId = BudgetId.ToString(),
+                LineId = LineId.ToString(),
+                Id = Guid.NewGuid(),
+                Timestamp = DateTime.Now,
+                Expense = expense,
+            };
+        }
     }
 
 }

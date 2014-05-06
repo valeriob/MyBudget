@@ -49,11 +49,7 @@ namespace MyBudget.Web.AspNet.Controllers
 
         public virtual ActionResult Create(string id)
         {
-            var categories = ProjectionManager.GetCategories().GetBudgetsCategories(new Domain.Budgets.BudgetId(id));
-            var budget = ProjectionManager.GetBudgetsList().GetBudgetById(new Domain.Budgets.BudgetId(id));
-
-            var model = new EditBudgetLineViewModel(budget.Name, id, budget.CurrencyISOCode, categories, budget.GetDistributionKeys(), 
-                Currencies.GetAll());
+            var model = Prepare_EditBudgetLineViewModel(id);
             
             return View(Views.Edit, model);
         }
@@ -65,25 +61,12 @@ namespace MyBudget.Web.AspNet.Controllers
             {
                 try
                 {
-                    var expense = new Expense(new Amount(Currencies.Parse(model.CurrencyISOCode), model.Amount), model.Date, model.Category, model.Description);
-
                     var handler = CommandManager.Create<CreateLine>();
-                    handler(new CreateLine
-                    {
-                        UserId = GetCurrentUserId().ToString(),
-                        BudgetId = model.BudgetId.ToString(),
-                        LineId = model.LineId.ToString(),
-                        Id = Guid.NewGuid(),
-                        Timestamp = DateTime.Now,
-                        Expense = expense,
-                    });
-
-                    return RedirectToAction(Actions.Index(model.BudgetId));
+                    handler(model.PrepareCreateLine(GetCurrentUserId().ToString()));
                 }
                 catch (Exception ex)
                 {
                     ModelState.AddModelError("CurrencyISOCode", ex.Message);
-                    //ModelState.AddModelError("", ex.Message);
                 }
             }
 
@@ -93,17 +76,22 @@ namespace MyBudget.Web.AspNet.Controllers
             }
             else
             {
-                var id = model.BudgetId;
-                var categories = ProjectionManager.GetCategories().GetBudgetsCategories(new Domain.Budgets.BudgetId(id));
-                var budget = ProjectionManager.GetBudgetsList().GetBudgetById(new Domain.Budgets.BudgetId(id));
-
-                var newmodel = new EditBudgetLineViewModel(budget.Name, id, budget.CurrencyISOCode, categories, budget.GetDistributionKeys(),
-                    Currencies.GetAll());
-
+                var newmodel = Prepare_EditBudgetLineViewModel(model.BudgetId);
+  
                 newmodel.LoadUserInputFrom(model);
 
                 return View(Views.Edit, newmodel);
             }
+        }
+
+        EditBudgetLineViewModel Prepare_EditBudgetLineViewModel(string id)
+        {
+            var categories = ProjectionManager.GetCategories().GetBudgetsCategories(new Domain.Budgets.BudgetId(id));
+            var budget = ProjectionManager.GetBudgetsList().GetBudgetById(new Domain.Budgets.BudgetId(id));
+
+            var model = new EditBudgetLineViewModel(budget.Name, id, budget.CurrencyISOCode, categories, budget.GetDistributionKeys(),
+                Currencies.GetAll());
+            return model;
         }
 
         public virtual ActionResult Edit(string budgetId, string lineId)
@@ -119,27 +107,25 @@ namespace MyBudget.Web.AspNet.Controllers
         [HttpPost]
         public virtual ActionResult Edit(EditBudgetLineViewModel model)
         {
-            try
+            if (ModelState.IsValid)
             {
-                var expense = new Expense(new Amount(Currencies.Parse(model.CurrencyISOCode), model.Amount), model.Date, model.Category, model.Description);
-
-                var handler = CommandManager.Create<UpdateLine>();
-                handler(new UpdateLine
+                try
                 {
-                    UserId = GetCurrentUserId().ToString(),
-                    BudgetId = model.BudgetId.ToString(),
-                    LineId = model.LineId.ToString(),
-                    Expense = expense,
+                    var handler = CommandManager.Create<UpdateLine>();
+                    handler(model.PrepareUpdateLine(GetCurrentUserId().ToString()));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
+            }
 
-                    Id = Guid.NewGuid(),
-                    Timestamp = DateTime.Now,
-                });
-
+            if (ModelState.IsValid)
+            {
                 return RedirectToAction(Actions.Index(model.BudgetId));
             }
-            catch(Exception ex)
+            else
             {
-                ModelState.AddModelError("Global", ex);
                 return View(model);
             }
         }
