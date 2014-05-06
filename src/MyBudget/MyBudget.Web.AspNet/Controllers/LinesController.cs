@@ -61,27 +61,48 @@ namespace MyBudget.Web.AspNet.Controllers
         [HttpPost]
         public virtual ActionResult Create(EditBudgetLineViewModel model)
         {
-            try
+            if (ModelState.IsValid)
             {
-                var expense = new Expense(new Amount(Currencies.Parse(model.CurrencyISOCode), model.Amount), model.Date, model.Category, model.Description);
-
-                var handler = CommandManager.Create<CreateLine>();
-                handler(new CreateLine
+                try
                 {
-                    UserId = GetCurrentUserId().ToString(),
-                    BudgetId = model.BudgetId.ToString(),
-                    LineId = model.LineId.ToString(),
-                    Id = Guid.NewGuid(),
-                    Timestamp = DateTime.Now,
-                    Expense = expense,
-                });
+                    var expense = new Expense(new Amount(Currencies.Parse(model.CurrencyISOCode), model.Amount), model.Date, model.Category, model.Description);
 
+                    var handler = CommandManager.Create<CreateLine>();
+                    handler(new CreateLine
+                    {
+                        UserId = GetCurrentUserId().ToString(),
+                        BudgetId = model.BudgetId.ToString(),
+                        LineId = model.LineId.ToString(),
+                        Id = Guid.NewGuid(),
+                        Timestamp = DateTime.Now,
+                        Expense = expense,
+                    });
+
+                    return RedirectToAction(Actions.Index(model.BudgetId));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("CurrencyISOCode", ex.Message);
+                    //ModelState.AddModelError("", ex.Message);
+                }
+            }
+
+            if (ModelState.IsValid)
+            {
                 return RedirectToAction(Actions.Index(model.BudgetId));
             }
-            catch (Exception ex)
+            else
             {
-                ModelState.AddModelError("Global", ex);
-                return View(Views.Edit, model);
+                var id = model.BudgetId;
+                var categories = ProjectionManager.GetCategories().GetBudgetsCategories(new Domain.Budgets.BudgetId(id));
+                var budget = ProjectionManager.GetBudgetsList().GetBudgetById(new Domain.Budgets.BudgetId(id));
+
+                var newmodel = new EditBudgetLineViewModel(budget.Name, id, budget.CurrencyISOCode, categories, budget.GetDistributionKeys(),
+                    Currencies.GetAll());
+
+                newmodel.LoadUserInputFrom(model);
+
+                return View(Views.Edit, newmodel);
             }
         }
 

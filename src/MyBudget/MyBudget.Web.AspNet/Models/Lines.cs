@@ -4,6 +4,7 @@ using MyBudget.Infrastructure;
 using MyBudget.Projections;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -102,14 +103,20 @@ namespace MyBudget.Web.AspNet.Models
 
     public class EditBudgetLineViewModel
     {
+        [Required]
         public string LineId { get; set; }
+        [Required]
         public string BudgetId { get; set; }
-
+        [Required]
         public DateTime Date { get; set; }
+        [Required]
         public string Category { get; set; }
         public string DistributionKey { get; set; }
         public string Description { get; set; }
+
+        [Required]
         public decimal Amount { get; set; }
+        [Required]
         public string CurrencyISOCode { get; set; }
         public string BudgetName { get; set; }
 
@@ -140,6 +147,16 @@ namespace MyBudget.Web.AspNet.Models
             : this(budgetName, budgetId, currencyISOCode, categories, distributionKeys, currencies)
         {
             EventHelper.Apply(events, this);
+        }
+
+
+        internal void LoadUserInputFrom(EditBudgetLineViewModel model)
+        {
+            BudgetName = model.BudgetName;
+            BudgetId = model.BudgetId;
+            LineId = model.LineId;
+            Date = model.Date;
+            CurrencyISOCode = model.CurrencyISOCode;
         }
 
         /*
@@ -231,6 +248,7 @@ namespace MyBudget.Web.AspNet.Models
             Amount = evnt.Expense.Amount;
             CurrencyISOCode = evnt.Expense.Amount.GetCurrency().IsoCode;
         }
+
     }
 
 }
