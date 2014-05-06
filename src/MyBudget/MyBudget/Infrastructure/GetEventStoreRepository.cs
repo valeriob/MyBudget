@@ -14,6 +14,7 @@ namespace CommonDomain.Persistence.GetEventStore
     {
         static string CommandHeader = "Command";
         const string EventClrTypeHeader = "EventClrTypeName";
+        //const string EventClrTypeHeader = "AggregateClrTypeName";
         const string AggregateClrTypeHeader = "AggregateClrTypeName";
         const string CommitIdHeader = "CommitId";
         const int WritePageSize = 500;
@@ -50,6 +51,8 @@ namespace CommonDomain.Persistence.GetEventStore
             return aggregate;
         }
 
+     
+
         public TAggregate GetById<TAggregate>(string streamName, int version) where TAggregate : class, IAggregate
         {
             EnsureConnected();
@@ -79,6 +82,7 @@ namespace CommonDomain.Persistence.GetEventStore
             var eventClrTypeName = JObject.Parse(Encoding.UTF8.GetString(metadata)).Property(EventClrTypeHeader).Value;
             return JsonConvert.DeserializeObject(Encoding.UTF8.GetString(data), Type.GetType((string)eventClrTypeName));
         }
+  
 
         public void Save(IAggregate aggregate, Guid commitId, Action<IDictionary<string, object>> updateHeaders)
         {
@@ -179,42 +183,5 @@ namespace CommonDomain.Persistence.GetEventStore
             return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(eventHeaders, SerializerSettings));
         }
 
-        /*
-        private class JsonAggregateEvent : IEvent
-        {
-            public Guid EventId { get; private set; }
-            public string Type { get; private set; }
-            public bool IsJson { get; private set; }
-            public byte[] Data { get; private set; }
-            public byte[] Metadata { get; private set; }
-
-            private static readonly JsonSerializerSettings SerializerSettings;
-
-            public JsonAggregateEvent(Guid eventId, object evnt, IDictionary<string, object> headers)
-            {
-                EventId = eventId;
-                Type = evnt.GetType().Name;
-                IsJson = true;
-                Data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(evnt, SerializerSettings));
-                Metadata = AddEventClrTypeHeaderAndSerializeMetadata(evnt, headers);
-            }
-
-            private static byte[] AddEventClrTypeHeaderAndSerializeMetadata(object evnt, IDictionary<string, object> headers)
-            {
-                var eventHeaders = new Dictionary<string, object>(headers)
-                    {
-                        {EventClrTypeHeader, evnt.GetType().AssemblyQualifiedName}
-                    };
-
-                return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(eventHeaders, SerializerSettings));
-            }
-
-            static JsonAggregateEvent()
-            {
-                SerializerSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None };
-            }
-        }
-         
-         */
     }
 }

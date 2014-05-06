@@ -22,12 +22,12 @@ namespace MyBudget.Domain.Lines
         public void Apply(LineCreated evnt)
         {
             _creation = evnt;
-            _amount = evnt.Amount;
+            _amount = evnt.Expense.Amount;
         }
 
         public void Apply(LineExpenseChanged evnt)
         {
-            _amount = evnt.Amount;
+            _amount = evnt.Expense.Amount;
         }
 
         public LineId GetLineId()
@@ -45,27 +45,18 @@ namespace MyBudget.Domain.Lines
     {
         public LineId LineId { get; private set; }
         public BudgetId BudgetId { get; private set; }
-        public Amount Amount { get; private set; }
-        public DateTime Date { get; private set; }
-        public string CategoryId { get; private set; }
-        public string Description { get; private set; }
         public UserId CreatedBy { get; private set; }
-        public string[] Tags { get; private set; }
+        public Expense Expense { get; private set; }
 
-        public LineCreated(Guid id, DateTime timestamp, LineId lineId, BudgetId budgetId, Amount amount, DateTime date, string categoryId, string description, 
-            string[] tags, UserId createdBy)
+        public LineCreated(Guid id, DateTime timestamp, LineId lineId, BudgetId budgetId, UserId createdBy, Expense expense)
         {
             Id = id;
             Timestamp = timestamp;
 
             LineId = lineId;
             BudgetId = budgetId;
-            Date = date;
-            Amount = amount;
-            CategoryId = categoryId;
-            Description = description;
+            Expense = expense;
             CreatedBy = createdBy;
-            Tags = tags;
         }
     }
 
@@ -73,24 +64,18 @@ namespace MyBudget.Domain.Lines
     {
         public LineId LineId { get; private set; }
         public BudgetId BudgetId { get; private set; }
-        public Amount Amount { get; private set; }
-        public DateTime Date { get; private set; }
-        public string CategoryId { get; private set; }
-        public string Description { get; private set; }
         public UserId UpdatedBy { get; private set; }
+        public Expense Expense { get; private set; }    
 
 
-        public LineExpenseChanged(Guid id, DateTime timestamp, LineId lineId, BudgetId budgetId, Amount amount, DateTime date, string categoryId, string description, UserId updatedBy)
+        public LineExpenseChanged(Guid id, DateTime timestamp, LineId lineId, BudgetId budgetId, UserId updatedBy, Expense expense)
         {
             Id = id;
-            Date = timestamp;
+            Timestamp = timestamp;
             LineId = lineId;
             BudgetId = budgetId;
-            Date = date;
-            Amount = amount;
-            CategoryId = categoryId;
-            Description = description;
             UpdatedBy = updatedBy;
+            Expense = expense;
         }
     }
 
@@ -158,12 +143,12 @@ namespace MyBudget.Domain.Lines
         {
         }
 
-        public void Create(LineId id, BudgetId budgetId, Expense expense, UserId createdBy, string[] tags)
+        public void Create(LineId id, BudgetId budgetId, Expense expense, UserId createdBy)
         {
             if (string.IsNullOrEmpty(Id) == false)
                 throw new Exception("line already exists");
 
-            RaiseEvent(new LineCreated(Guid.NewGuid(), DateTime.Now, id, budgetId, expense.Amount, expense.Timestamp, expense.Category, expense.Description, tags, createdBy));
+            RaiseEvent(new LineCreated(Guid.NewGuid(), DateTime.Now, id, budgetId, createdBy, expense));
         }
 
         public void Update(Expense expense, UserId updatedBy)
@@ -171,7 +156,7 @@ namespace MyBudget.Domain.Lines
             if (string.IsNullOrEmpty(Id))
                 throw new Exception("line does not exists");
 
-            RaiseEvent(new LineExpenseChanged(Guid.NewGuid(), DateTime.Now, _state.GetLineId(), _state.GetBudgetId(), expense.Amount, expense.Timestamp, expense.Category, expense.Description, updatedBy));
+            RaiseEvent(new LineExpenseChanged(Guid.NewGuid(), DateTime.Now, _state.GetLineId(), _state.GetBudgetId(), updatedBy, expense));
         }
 
         public void MarkObsolete(UserId userId, LineId obsoletedFor)

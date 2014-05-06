@@ -26,18 +26,18 @@ namespace MyBudget.Web.AspNet.Controllers
         {
             DateTime? from = null;
             DateTime? to = null;
-            int _ciao = 0;
 
             if (string.IsNullOrEmpty(From) == false)
                 from = DateTime.Parse(From);
-            //from = From;
+
             if (string.IsNullOrEmpty(To) == false)
                 to = DateTime.Parse(To);
 
-            var catReadModel = ProjectionManager.GetCategories();
+            var categories = ProjectionManager.GetCategories().GetBudgetsCategories(new Domain.Budgets.BudgetId(id));
             var readModel = ProjectionManager.GetBudgetLinesProjection(id);
             var lines = readModel.GetAllLinesPaged(pageIndex.GetValueOrDefault(), from, to, category);
-            var model = new BudgetLinesPagedViewModel(id, lines, from, to, catReadModel.GetBudgetsCategories(new Domain.Budgets.BudgetId(id)), category);
+
+            var model = new BudgetLinesPagedViewModel(id, lines, from, to, categories, category);
 
             return View(model);
         }
@@ -49,9 +49,7 @@ namespace MyBudget.Web.AspNet.Controllers
 
         public virtual ActionResult Create(string id)
         {
-            var categories = ProjectionManager.GetCategories().GetBudgetsCategories(new Domain.Budgets.BudgetId(id));
-            var budgetName = ProjectionManager.GetBudgetsList().GetBudgetById(new Domain.Budgets.BudgetId(id)).Name;
-            var model = new EditBudgetLineViewModel(budgetName, id, categories, Currencies.GetAll());
+            var model = Prepare_EditBudgetLineViewModel(id);
             
             return View(Views.Edit, model);
         }
@@ -59,36 +57,49 @@ namespace MyBudget.Web.AspNet.Controllers
         [HttpPost]
         public virtual ActionResult Create(EditBudgetLineViewModel model)
         {
-            try
+            if (ModelState.IsValid)
             {
-                var handler = CommandManager.Create<CreateLine>();
-                handler(new CreateLine
+                try
                 {
-                    UserId = GetCurrentUserId().ToString(),
-                    BudgetId = model.BudgetId.ToString(),
-                    LineId = model.LineId.ToString(),
-                    Date = model.Date,
-                    Amount = new Amount(Currencies.Parse(model.CurrencyISOCode), model.Amount),
-                    CategoryId = model.Category,
-                    Description= model.Description,
+                    var handler = CommandManager.Create<CreateLine>();
+                    handler(model.PrepareCreateLine(GetCurrentUserId().ToString()));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("CurrencyISOCode", ex.Message);
+                }
+            }
 
-                    Id = Guid.NewGuid(),
-                    Timestamp = DateTime.Now,
-                });
-
+            if (ModelState.IsValid)
+            {
                 return RedirectToAction(Actions.Index(model.BudgetId));
             }
-            catch
+            else
             {
-                return View();
+                var newmodel = Prepare_EditBudgetLineViewModel(model.BudgetId);
+  
+                newmodel.LoadUserInputFrom(model);
+
+                return View(Views.Edit, newmodel);
             }
+        }
+
+        EditBudgetLineViewModel Prepare_EditBudgetLineViewModel(string id)
+        {
+            var categories = ProjectionManager.GetCategories().GetBudgetsCategories(new Domain.Budgets.BudgetId(id));
+            var budget = ProjectionManager.GetBudgetsList().GetBudgetById(new Domain.Budgets.BudgetId(id));
+
+            var model = new EditBudgetLineViewModel(budget.Name, id, budget.CurrencyISOCode, categories, budget.GetDistributionKeys(),
+                Currencies.GetAll());
+            return model;
         }
 
         public virtual ActionResult Edit(string budgetId, string lineId)
         {
             var categories = ProjectionManager.GetCategories().GetBudgetsCategories(new Domain.Budgets.BudgetId(budgetId));
-            var budgetName = ProjectionManager.GetBudgetsList().GetBudgetById(new Domain.Budgets.BudgetId(budgetId)).Name;
-            var model = new EditBudgetLineViewModel(budgetName, ProjectionManager.GetStreamEvents(lineId), categories, Currencies.GetAll());
+            var budget = ProjectionManager.GetBudgetsList().GetBudgetById(new Domain.Budgets.BudgetId(budgetId));
+
+            var model = new EditBudgetLineViewModel(budget.Name, budget.Id, budget.CurrencyISOCode, ProjectionManager.GetStreamEvents(lineId), categories, budget.GetDistributionKeys(), Currencies.GetAll());
 
             return View(model);
         }
@@ -96,29 +107,26 @@ namespace MyBudget.Web.AspNet.Controllers
         [HttpPost]
         public virtual ActionResult Edit(EditBudgetLineViewModel model)
         {
-            try
+            if (ModelState.IsValid)
             {
-                var handler = CommandManager.Create<UpdateLine>();
-                handler(new UpdateLine
+                try
                 {
-                    UserId = GetCurrentUserId().ToString(),
-                    BudgetId = model.BudgetId.ToString(),
-                    LineId = model.LineId.ToString(),
+                    var handler = CommandManager.Create<UpdateLine>();
+                    handler(model.PrepareUpdateLine(GetCurrentUserId().ToString()));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", ex.Message);
+                }
+            }
 
-                    Date = model.Date,
-                    Amount = new Amount(Currencies.Parse(model.CurrencyISOCode), model.Amount),
-                    Category = model.Category,
-                    Description = model.Description,
-
-                    Id = Guid.NewGuid(),
-                    Timestamp = DateTime.Now,
-                });
-
+            if (ModelState.IsValid)
+            {
                 return RedirectToAction(Actions.Index(model.BudgetId));
             }
-            catch
+            else
             {
-                return View();
+                return View(model);
             }
         }
 

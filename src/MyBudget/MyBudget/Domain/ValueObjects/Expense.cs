@@ -9,15 +9,19 @@ namespace MyBudget.Domain.ValueObjects
     public class Expense
     {
         public Amount Amount { get; private set; }
-        public DateTime Timestamp { get; private set; }
+        public DateTime Date { get; private set; }
         public string Category { get; private set; }
         public string Description { get; private set; }
+        public string DistributionKey { get; private set; }
+        public string[] Tags { get; private set; }
 
-        public Expense(Amount amount, DateTime timestamp, string category, string description)
+        public Expense(Amount amount, DateTime date, string category, string description, string distributionKey = null, string[] tags = null)
         {
             Amount = amount;
-            Timestamp = timestamp;
+            Date = date;
             Category = category;
+            DistributionKey = distributionKey;
+            Tags = tags;
             Description = description;
         }
     }

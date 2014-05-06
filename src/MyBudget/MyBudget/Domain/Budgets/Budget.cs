@@ -18,23 +18,41 @@ namespace MyBudget.Domain.Budgets
         BudgetId _id;
         string _name;
         UserId _owner;
+        HashSet<string> _keys = new HashSet<string>();
+        string _currencyISOCode;
+
 
         public void Apply(BudgetCreated evnt)
         {
             _id = evnt.BudgetId;
             _name = evnt.Name;
             _owner = evnt.Owner;
+            _currencyISOCode = evnt.CurrencyISOCode;
         }
 
         public void Apply(BudgetAccessAllowed evnt)
         {
 
         }
-        
+
+        public void Apply(BudgetDistributionKeyCreated evnt)
+        {
+            _keys.Add(evnt.Name);
+        }
+
+        public bool KeyDoesNotExists(string name)
+        {
+            return _keys.Contains(name) == false;
+        }
 
         public bool CanAllowAccess(UserId userId)
         {
             return _owner.Equals(userId);
+        }
+
+        public string GetCurrencyCode()
+        {
+            return _currencyISOCode;
         }
 
     }
@@ -44,14 +62,30 @@ namespace MyBudget.Domain.Budgets
         public BudgetId BudgetId { get; private set; }
         public string Name { get; private set; }
         public UserId Owner { get; private set; }
+        public string CurrencyISOCode { get; set; }
 
-        public BudgetCreated(Guid id, DateTime timestamp, BudgetId budgetId, string name, UserId owner)
+        public BudgetCreated(Guid id, DateTime timestamp, BudgetId budgetId, string name, UserId owner, string currencyISOCode)
         {
             Id = id;
             Timestamp = timestamp;
             BudgetId = budgetId;
             Name = name;
             Owner = owner;
+            CurrencyISOCode = currencyISOCode;
+        }
+    }
+
+    public class BudgetDistributionKeyCreated : Event
+    {
+        public BudgetId BudgetId { get; private set; }
+        public string Name { get; private set; }
+
+        public BudgetDistributionKeyCreated(Guid id, DateTime timestamp, BudgetId budgetId, string name)
+        {
+            Id = id;
+            Timestamp = timestamp;
+            BudgetId = budgetId;
+            Name = name;
         }
     }
 
@@ -116,9 +150,9 @@ namespace MyBudget.Domain.Budgets
 
         }
 
-        public void Create(BudgetId id, string name, UserId owner)
+        public void Create(BudgetId id, string name, UserId owner, string currencyISOCode)
         {
-            RaiseEvent(new BudgetCreated(Guid.NewGuid(), DateTime.Now, id, name, owner));
+            RaiseEvent(new BudgetCreated(Guid.NewGuid(), DateTime.Now, id, name, owner, currencyISOCode));
         }
 
         public void AllowAccess(UserId fromUser, UserId allowedUserId)
@@ -128,6 +162,13 @@ namespace MyBudget.Domain.Budgets
 
             RaiseEvent(new BudgetAccessAllowed(Guid.NewGuid(), DateTime.Now, new BudgetId(Id), allowedUserId));
         }
+
+        public void AddDistributionKey(string name)
+        {
+            if(_state.KeyDoesNotExists(name))
+                RaiseEvent(new BudgetDistributionKeyCreated(Guid.NewGuid(), DateTime.Now, new BudgetId(Id), name));
+        }
+
         //public void AllowWriteAccess(AccountId accountId)
         //{
 
@@ -138,6 +179,12 @@ namespace MyBudget.Domain.Budgets
             return _state;
         }
 
+
+        internal void EnsureCurrencyIsCorrect(string currencyISOCode)
+        {
+            if (_state.GetCurrencyCode() != currencyISOCode)
+                throw new Exception("Budget is in " + _state.GetCurrencyCode());
+        }
     }
 
 }

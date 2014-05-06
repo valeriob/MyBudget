@@ -77,10 +77,11 @@ namespace ES_Subscription
                 {
                     UserId = userId,
                     BudgetId = budgetId.ToString(),
-                    Amount = new Amount(currency, random.Next(100)),
-                    CategoryId = categories[random.Next(categories.Length)],
-                    Date = mindate.AddDays(random.Next(365 * 3)),
-                    Description = "nothing special",
+                    Expense = new Expense(
+                        new Amount(currency, random.Next(100)), 
+                        mindate.AddDays(random.Next(365 * 3)),
+                        categories[random.Next(categories.Length)], "nothing special" ),
+
                     LineId = MyBudget.Domain.Lines.LineId.Create(budgetId).ToString(),
                 });
             }

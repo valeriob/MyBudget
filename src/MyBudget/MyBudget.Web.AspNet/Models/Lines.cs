@@ -4,6 +4,7 @@ using MyBudget.Infrastructure;
 using MyBudget.Projections;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -102,19 +103,26 @@ namespace MyBudget.Web.AspNet.Models
 
     public class EditBudgetLineViewModel
     {
+        [Required]
         public string LineId { get; set; }
+        [Required]
         public string BudgetId { get; set; }
-
+        [Required]
         public DateTime Date { get; set; }
+        [Required]
         public string Category { get; set; }
+        public string DistributionKey { get; set; }
         public string Description { get; set; }
+
+        [Required]
         public decimal Amount { get; set; }
+        [Required]
         public string CurrencyISOCode { get; set; }
         public string BudgetName { get; set; }
 
         IEnumerable<Category> _categories;
         IEnumerable<Currency> _currencies;
-
+        IEnumerable<string> _keys;
 
         [Obsolete("Serialization", true)]
         public EditBudgetLineViewModel()
@@ -122,7 +130,7 @@ namespace MyBudget.Web.AspNet.Models
 
         }
 
-        public EditBudgetLineViewModel(string budgetName, string budgetId, IEnumerable<Category> categories, IEnumerable<Currency> currencies)
+        public EditBudgetLineViewModel(string budgetName, string budgetId, string currencyISOCode, IEnumerable<Category> categories, IEnumerable<string> distributionKeys, IEnumerable<Currency> currencies)
         {
             BudgetName = budgetName;
             _categories = categories.ToList();
@@ -131,13 +139,24 @@ namespace MyBudget.Web.AspNet.Models
             BudgetId = budgetId;
             LineId = MyBudget.Domain.Lines.LineId.Create(new MyBudget.Domain.Budgets.BudgetId(budgetId)).ToString();
             Date = DateTime.Now;
-            CurrencyISOCode = Currencies.Euro().IsoCode;
+            CurrencyISOCode = currencyISOCode;
+            _keys = distributionKeys;
         }
 
-        public EditBudgetLineViewModel(string budgetName, IEnumerable<dynamic> events, IEnumerable<Category> categories, IEnumerable<Currency> currencies)
-            : this(budgetName, "", categories, currencies)
+        public EditBudgetLineViewModel(string budgetName, string budgetId, string currencyISOCode, IEnumerable<dynamic> events, IEnumerable<Category> categories, IEnumerable<string> distributionKeys, IEnumerable<Currency> currencies)
+            : this(budgetName, budgetId, currencyISOCode, categories, distributionKeys, currencies)
         {
             EventHelper.Apply(events, this);
+        }
+
+
+        internal void LoadUserInputFrom(EditBudgetLineViewModel model)
+        {
+            BudgetName = model.BudgetName;
+            BudgetId = model.BudgetId;
+            LineId = model.LineId;
+            Date = model.Date;
+            CurrencyISOCode = model.CurrencyISOCode;
         }
 
         /*
@@ -200,24 +219,64 @@ namespace MyBudget.Web.AspNet.Models
             }).ToList();
         }
 
+        public IEnumerable<System.Web.Mvc.SelectListItem> GetDistributionKeys()
+        {
+            return _keys.Select(c => new System.Web.Mvc.SelectListItem
+            {
+                Value = c,
+                Text = c,
+                Selected = c == DistributionKey
+            }).ToList();
+        }
+
         public void When(LineCreated evnt)
         {
             LineId = evnt.LineId.ToString();
             BudgetId = evnt.BudgetId.ToString();
-            Date = evnt.Date;
-            Category = evnt.CategoryId;
-            Description = evnt.Description;
-            Amount = evnt.Amount;
-            CurrencyISOCode = evnt.Amount.GetCurrency().IsoCode;
+            Date = evnt.Expense.Date;
+            Category = evnt.Expense.Category;
+            Description = evnt.Expense.Description;
+            Amount = evnt.Expense.Amount;
+            CurrencyISOCode = evnt.Expense.Amount.GetCurrency().IsoCode;
         }
 
         public void When(LineExpenseChanged evnt)
         {
-            Date = evnt.Date;
-            Category = evnt.CategoryId;
-            Description = evnt.Description;
-            Amount = evnt.Amount;
-            CurrencyISOCode = evnt.Amount.GetCurrency().IsoCode;
+            Date = evnt.Expense.Date;
+            Category = evnt.Expense.Category;
+            Description = evnt.Expense.Description;
+            Amount = evnt.Expense.Amount;
+            CurrencyISOCode = evnt.Expense.Amount.GetCurrency().IsoCode;
+        }
+
+
+        public MyBudget.Commands.CreateLine PrepareCreateLine(string userId)
+        {
+             var expense = new Expense(new Amount(Currencies.Parse(CurrencyISOCode), Amount), Date, Category, Description);
+             return new MyBudget.Commands.CreateLine
+             {
+                 UserId = userId,
+                 BudgetId = BudgetId.ToString(),
+                 LineId = LineId.ToString(),
+                 Id = Guid.NewGuid(),
+                 Timestamp = DateTime.Now,
+                 Expense = expense,
+             };
+        }
+
+
+        public MyBudget.Commands.UpdateLine PrepareUpdateLine(string userId)
+        {
+            var expense = new Expense(new Amount(Currencies.Parse(CurrencyISOCode), Amount), Date, Category, Description);
+            return new MyBudget.Commands.UpdateLine
+            {
+                UserId = userId,
+                BudgetId = BudgetId.ToString(),
+                LineId = LineId.ToString(),
+                Id = Guid.NewGuid(),
+                Timestamp = DateTime.Now,
+                Expense = expense,
+            };
         }
     }
 

@@ -31,9 +31,9 @@ namespace Actor
             var address = new IPEndPoint(IPAddress.Loopback, 1113);
             var connection = EventStore.ClientAPI.EventStoreConnection.Create(address);
 
-            var ctx = new ActorContext(connection);
-            ctx.Start();
-            ctx.Deliver(new Message { Id = Guid.NewGuid(), ActorId = actor1 });
+            //var ctx = new ActorContext(connection,);
+            //ctx.Start();
+            //ctx.Deliver(new Message { Id = Guid.NewGuid(), ActorId = actor1 });
 
             Console.ReadLine();
         }

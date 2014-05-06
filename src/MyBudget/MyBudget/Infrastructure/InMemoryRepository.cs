@@ -16,5 +16,12 @@ namespace MyBudget.Infrastructure
         {
             throw new NotImplementedException();
         }
+
+
+
+        public IAggregate TryGetById(string actorId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
