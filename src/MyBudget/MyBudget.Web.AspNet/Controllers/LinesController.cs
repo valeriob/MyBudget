@@ -126,7 +126,11 @@ namespace MyBudget.Web.AspNet.Controllers
             }
             else
             {
-                return View(model);
+                var newmodel = Prepare_EditBudgetLineViewModel(model.BudgetId);
+
+                newmodel.LoadUserInputFrom(model);
+
+                return View(newmodel);
             }
         }
 

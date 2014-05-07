@@ -1,0 +1,79 @@
+﻿@model MyBudget.Web.AspNet.Controllers.DistributionTimeViewModel
+@{
+    ViewBag.Title = "ByCategory";
+}
+
+<h2>ByCategory</h2>
+
+
+<div>
+    @using (Html.BeginForm(MVC.BudgetStats.ByCategoryInTime(), FormMethod.Get))
+    {
+        @Html.HiddenFor(b => b.BudgetId);
+
+        <div class="input-daterange" id="datepicker">
+            <input type="text" class="input-small" name="from" id="From" value="@Model.GetFormattedFrom()" />
+            <span class="add-on">to</span>
+            <input type="text" class="input-small" name="to" id="To" value="@Model.GetFormattedTo()" />
+        </div>
+
+        <select name="groupBy" id="groupBy">
+            @foreach (var o in Model.GetGroupings())
+            {
+                <option value="@o" @Model.GetIsSelected(o)> @o</option>
+            }
+        </select>
+        <input type="submit" value="Search" class="btn btn-default" />
+    }
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th> </th>
+            <th> Total </th>
+
+            @foreach (var category in Model.Categories)
+            {
+                <th style="white-space:pre;padding:10px"> @category.Name</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var group in Model.TimeSerie)
+        {
+            <tr>
+                <td style="white-space:pre;padding:10px"> @group.Group </td>
+
+                <td style="white-space:pre;padding:10px"> @group.TotalAmount </td>
+
+                @foreach (var category in Model.Categories)
+                {
+                    <td style="white-space:pre;padding:10px"> @group.OfCategory(category.Id) </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script type="text/javascript">
+        ////$('#From').datepicker();
+        //$('#From').datepicker({
+        //    format: "dd/mm/yyyy",
+        //    //language: "it"
+        //});
+        ////$('#To').datepicker();
+        //$('#To').datepicker({
+        //    format: "dd/mm/yyyy",
+        //    // language: "it"
+        //});
+
+        $('#datepicker').datepicker({
+            format: "dd/mm/yyyy",
+            // language: "it",
+            autoclose: true,
+            todayHighlight: true
+        });
+    </script>
+}

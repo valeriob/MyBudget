@@ -28,17 +28,17 @@ namespace MyBudget.Web.AspNet.Controllers
 
             if (From != null)
                 from = DateTime.Parse(From);
-                //from = From;
+            //from = From;
             if (To != null)
                 to = DateTime.Parse(To);
-                //to = To;
+            //to = To;
 
             var projection = ProjectionManager.GetBudgetLinesProjection(budgetId);
             IEnumerable<BudgetLine> lines = projection.GetAllLinesBetween(from, to);
             if (from == null)
-                from = lines.Select(s=>s.Date).DefaultIfEmpty(DateTime.MinValue).Min(r => r.Date.Date);
+                from = lines.Select(s => s.Date).DefaultIfEmpty(DateTime.MinValue).Min(r => r.Date.Date);
             if (to == null)
-                to = lines.Select(s=>s.Date).DefaultIfEmpty(DateTime.MaxValue).Max(r => r.Date.Date);
+                to = lines.Select(s => s.Date).DefaultIfEmpty(DateTime.MaxValue).Max(r => r.Date.Date);
 
             var categories = ProjectionManager.GetCategories().GetBudgetsCategories(budgetId);
             var model = new BudgetStatsByCategoryViewModel(categories, lines, budgetId, "NA", from, to);
@@ -89,7 +89,7 @@ namespace MyBudget.Web.AspNet.Controllers
 
         public IEnumerable<TimeGroup> TimeSerie { get; private set; }
         public IEnumerable<Category> Categories { get; private set; }
-        public  GroupBy Grouping { get; private set; }
+        public GroupBy Grouping { get; private set; }
 
 
         public BudgetStatsByCategoryInTimeViewModel(IEnumerable<Category> categories, IEnumerable<BudgetLine> lines,
@@ -107,26 +107,26 @@ namespace MyBudget.Web.AspNet.Controllers
 
         IEnumerable<TimeGroup> Group(IEnumerable<Projections.BudgetLine> lines, GroupBy grouping)
         {
-            switch(grouping)
+            switch (grouping)
             {
-                case  GroupBy.Year:
+                case GroupBy.Year:
                     return lines.GroupBy(g => g.Date.Year)
                         .Select(s => new TimeGroup(s.Key + "", s.ToCategoryStats())).ToList();
 
                 case GroupBy.Month:
                     return lines.GroupBy(g => new { g.Date.Year, g.Date.Month })
-                        .Select(s => new TimeGroup(CultureInfo.CurrentCulture.DateTimeFormat.MonthNames[s.Key.Month - 1] + " " + s.Key.Year , s.ToCategoryStats())).ToList();
+                        .Select(s => new TimeGroup(CultureInfo.CurrentCulture.DateTimeFormat.MonthNames[s.Key.Month - 1] + " " + s.Key.Year, s.ToCategoryStats())).ToList();
 
                 case GroupBy.Week:
                     return lines.GroupBy(g => new { g.Date.Year, Week = GetIso8601WeekOfYear(g.Date) })
-                        .Select(s => new TimeGroup(s.Key.Year % 100 +" #"+s.Key.Week , s.ToCategoryStats())).ToList();
+                        .Select(s => new TimeGroup(s.Key.Year % 100 + " #" + s.Key.Week, s.ToCategoryStats())).ToList();
                 case GroupBy.Day:
                     return lines.GroupBy(g => g.Date)
                       .Select(s => new TimeGroup(s.Key.ToString("d"), s.ToCategoryStats())).ToList();
-                default : 
+                default:
                     throw new NotImplementedException();
             }
-           
+
         }
 
         static int GetIso8601WeekOfYear(DateTime time)
@@ -222,7 +222,7 @@ namespace MyBudget.Web.AspNet.Controllers
         public IEnumerable<CategoryStats> Categories { get; private set; }
         public Amount TotalAmount { get; private set; }
 
-        Dictionary<string,Category> _categories;
+        Dictionary<string, Category> _categories;
         public BudgetStatsByCategoryViewModel(IEnumerable<Category> categories, IEnumerable<BudgetLine> lines, string budgetId, string budgetName, DateTime? from, DateTime? to)
         {
             BudgetId = budgetId;
@@ -237,7 +237,7 @@ namespace MyBudget.Web.AspNet.Controllers
                     Id = s.Key,
                     Name = _categories[s.Key].Name,
                     Amount = s.Select(r => r.Amount).Sum(),
-                }).OrderByDescending(d=> d.Amount)
+                }).OrderByDescending(d => d.Amount)
                 .ToList();
 
             TotalAmount = Categories.Select(s => s.Amount).Sum();
@@ -269,6 +269,103 @@ namespace MyBudget.Web.AspNet.Controllers
         public string Name { get; set; }
         public string Id { get; set; }
         public Amount Amount { get; set; }
+    }
+
+
+
+
+
+
+    public class DistributionTimeViewModel
+    {
+        public string BudgetId { get; set; }
+        public string BudgetName { get; set; }
+
+
+        public IEnumerable<CheckPointGroup> CheckPointsGroups { get; private set; }
+        public IEnumerable<Category> Categories { get; private set; }
+        IEnumerable<CheckPoint> _checkPoints;
+
+
+        public DistributionTimeViewModel(IEnumerable<Category> categories, IEnumerable<BudgetLine> lines, IEnumerable<CheckPoint> checkPoints,
+            string budgetId, string budgetName)
+        {
+            BudgetId = budgetId;
+            BudgetName = budgetName;
+            Categories = categories;
+            _checkPoints = checkPoints;
+            CheckPointsGroups = Group(lines);
+        }
+
+
+        IEnumerable<CheckPointGroup> Group(IEnumerable<Projections.BudgetLine> lines)
+        {
+            var grps = _checkPoints.Select(s => new CheckPointGroup
+            {
+                Id = s.Id,
+                Date = s.Date,
+                Name = s.Name,
+            }).ToList();
+
+            foreach(var line in lines)
+            {
+                //var grp = FindGroupFor(line, grps);
+                //grp.Distributions.Add(new )
+            }
+            return grps;
+        }
+
+        //CheckPointGroup FindGroupFor(BudgetLine line, IEnumerable<CheckPointGroup> grps)
+        //{
+
+        //}
+
+    }
+
+    public class CheckPoint
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public DateTime Date { get; set; }
+    }
+
+    public class CheckPointGroup
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public DateTime Date { get; set; }
+
+        public IList<DistributionCheckpoint> Distributions { get; private set; }
+
+        public CheckPointGroup()
+        {
+            Distributions = new List<DistributionCheckpoint>();
+        }
+    }
+
+    public class DistributionCheckpoint
+    {
+        public string Name { get; private set; }
+        public Amount TotalAmount { get; private set; }
+
+        Dictionary<string, Amount> _categories;
+
+        public DistributionCheckpoint(string name, IEnumerable<CategoryStats> categories)
+        {
+            Name = name;
+            _categories = categories.ToDictionary(d => d.Name, d => d.Amount);
+
+            TotalAmount = categories.Select(s => s.Amount).Sum();
+        }
+
+        public Amount OfCategory(string category)
+        {
+            Amount result = null;
+            if (_categories.TryGetValue(category, out result))
+                return result;
+
+            return Amount.Zero(TotalAmount.GetCurrency());
+        }
     }
 
 }
