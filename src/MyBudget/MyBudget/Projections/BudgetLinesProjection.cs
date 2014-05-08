@@ -155,6 +155,7 @@ namespace MyBudget.Projections
             Amount = evnt.Expense.Amount;
             Category = evnt.Expense.Category;
             Description = evnt.Expense.Description;
+            DistributionKey = evnt.Expense.DistributionKey;
             Tags = evnt.Expense.Tags;
         }
 

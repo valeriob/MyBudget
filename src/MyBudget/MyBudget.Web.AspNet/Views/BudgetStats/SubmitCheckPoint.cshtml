@@ -1,0 +1,30 @@
+﻿@model MyBudget.Web.AspNet.Models.SubmitCheckPoint
+
+@using (Html.BeginForm(MVC.Budgets.SubmitCheckPoint(), FormMethod.Post))
+{
+    @*<label>@a.DistributionKey</label>
+        <input value="@a.Amount" ></input>*@
+
+    @*foreach (var a in Model.SubmitCheckPoint.Amounts)
+        {
+
+            @Html.LabelFor(r=> a.DistributionKey)
+            @Html.EditorFor(r=> a.Amount)
+        }*@
+
+
+    @*for (var i = 0; i < Model.SubmitCheckPoint.Amounts.Count; i++)
+        {
+            <tr>
+                <td>
+                    @Html.EditorFor(x => x.SubmitCheckPoint.Amounts[i].DistributionKey)
+                </td>
+                <td>
+                    @Html.EditorFor(x => x.SubmitCheckPoint.Amounts[i].Amount)
+                </td>
+            </tr>
+        }*@
+
+    @Html.EditorFor(r => r.Amounts)
+    <input type="submit" value="CheckPoint" class="btn btn-default" />
+}

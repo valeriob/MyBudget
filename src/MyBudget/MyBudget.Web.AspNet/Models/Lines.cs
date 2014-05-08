@@ -221,12 +221,15 @@ namespace MyBudget.Web.AspNet.Models
 
         public IEnumerable<System.Web.Mvc.SelectListItem> GetDistributionKeys()
         {
-            return _keys.Select(c => new System.Web.Mvc.SelectListItem
+            var result =  _keys.Select(c => new System.Web.Mvc.SelectListItem
             {
                 Value = c,
                 Text = c,
                 Selected = c == DistributionKey
             }).ToList();
+
+            result.Insert(0, new System.Web.Mvc.SelectListItem { Selected = true });
+            return result;
         }
 
         public void When(LineCreated evnt)
@@ -235,6 +238,7 @@ namespace MyBudget.Web.AspNet.Models
             BudgetId = evnt.BudgetId.ToString();
             Date = evnt.Expense.Date;
             Category = evnt.Expense.Category;
+            DistributionKey = evnt.Expense.DistributionKey;
             Description = evnt.Expense.Description;
             Amount = evnt.Expense.Amount;
             CurrencyISOCode = evnt.Expense.Amount.GetCurrency().IsoCode;
@@ -247,12 +251,13 @@ namespace MyBudget.Web.AspNet.Models
             Description = evnt.Expense.Description;
             Amount = evnt.Expense.Amount;
             CurrencyISOCode = evnt.Expense.Amount.GetCurrency().IsoCode;
+            DistributionKey = evnt.Expense.DistributionKey;
         }
 
 
         public MyBudget.Commands.CreateLine PrepareCreateLine(string userId)
         {
-             var expense = new Expense(new Amount(Currencies.Parse(CurrencyISOCode), Amount), Date, Category, Description);
+             var expense = new Expense(new Amount(Currencies.Parse(CurrencyISOCode), Amount), Date, Category, Description, DistributionKey);
              return new MyBudget.Commands.CreateLine
              {
                  UserId = userId,
@@ -267,7 +272,7 @@ namespace MyBudget.Web.AspNet.Models
 
         public MyBudget.Commands.UpdateLine PrepareUpdateLine(string userId)
         {
-            var expense = new Expense(new Amount(Currencies.Parse(CurrencyISOCode), Amount), Date, Category, Description);
+            var expense = new Expense(new Amount(Currencies.Parse(CurrencyISOCode), Amount), Date, Category, Description, DistributionKey);
             return new MyBudget.Commands.UpdateLine
             {
                 UserId = userId,

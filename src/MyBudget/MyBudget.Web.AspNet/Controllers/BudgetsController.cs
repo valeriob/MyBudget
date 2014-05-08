@@ -118,6 +118,17 @@ namespace MyBudget.Web.AspNet.Controllers
             }
         }
 
+        [HttpPost]
+        public virtual ActionResult SubmitCheckPoint(SubmitCheckPoint model)
+        {
+            
+
+            return RedirectToAction(MVC.BudgetStats.ByDistribution(model.BudgetId));
+            //if (ModelState.IsValid)
+            //    return RedirectToAction(MVC.BudgetStats.ByDistribution(model.BudgetId));
+            //else
+            //    return View();
+        }
     }
 
 }

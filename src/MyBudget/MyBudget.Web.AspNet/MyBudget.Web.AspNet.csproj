@@ -246,7 +246,9 @@
     <Content Include="Views\Category\Edit.cshtml" />
     <Content Include="Views\DistributionKey\Edit.cshtml" />
     <Content Include="Views\DistributionKey\Create.cshtml" />
-    <Content Include="Views\BudgetStats\Distribution.cshtml" />
+    <Content Include="Views\BudgetStats\ByDistribution.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\KeyAmount.cshtml" />
+    <Content Include="Views\BudgetStats\SubmitCheckPoint.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-datepicker.css" />

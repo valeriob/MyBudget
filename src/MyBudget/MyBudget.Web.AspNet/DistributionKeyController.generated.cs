@@ -114,8 +114,10 @@ namespace MyBudget.Web.AspNet.Controllers
             public _ViewNamesClass ViewNames { get { return s_ViewNames; } }
             public class _ViewNamesClass
             {
+                public readonly string Create = "Create";
                 public readonly string Edit = "Edit";
             }
+            public readonly string Create = "~/Views/DistributionKey/Create.cshtml";
             public readonly string Edit = "~/Views/DistributionKey/Edit.cshtml";
         }
     }

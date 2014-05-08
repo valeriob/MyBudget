@@ -62,6 +62,12 @@ namespace MyBudget.Web.AspNet.Controllers
         {
             return new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.ByCategoryInTime);
         }
+        [NonAction]
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public virtual System.Web.Mvc.ActionResult ByDistribution()
+        {
+            return new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.ByDistribution);
+        }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public BudgetStatsController Actions { get { return MVC.BudgetStats; } }
@@ -81,6 +87,7 @@ namespace MyBudget.Web.AspNet.Controllers
             public readonly string Index = "Index";
             public readonly string ByCategory = "ByCategory";
             public readonly string ByCategoryInTime = "ByCategoryInTime";
+            public readonly string ByDistribution = "ByDistribution";
         }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -89,6 +96,7 @@ namespace MyBudget.Web.AspNet.Controllers
             public const string Index = "Index";
             public const string ByCategory = "ByCategory";
             public const string ByCategoryInTime = "ByCategoryInTime";
+            public const string ByDistribution = "ByDistribution";
         }
 
 
@@ -121,6 +129,14 @@ namespace MyBudget.Web.AspNet.Controllers
             public readonly string To = "To";
             public readonly string GroupBy = "GroupBy";
         }
+        static readonly ActionParamsClass_ByDistribution s_params_ByDistribution = new ActionParamsClass_ByDistribution();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_ByDistribution ByDistributionParams { get { return s_params_ByDistribution; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_ByDistribution
+        {
+            public readonly string budgetId = "budgetId";
+        }
         static readonly ViewsClass s_views = new ViewsClass();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public ViewsClass Views { get { return s_views; } }
@@ -133,11 +149,15 @@ namespace MyBudget.Web.AspNet.Controllers
             {
                 public readonly string ByCategory = "ByCategory";
                 public readonly string ByCategoryInTime = "ByCategoryInTime";
+                public readonly string ByDistribution = "ByDistribution";
                 public readonly string Index = "Index";
+                public readonly string SubmitCheckPoint = "SubmitCheckPoint";
             }
             public readonly string ByCategory = "~/Views/BudgetStats/ByCategory.cshtml";
             public readonly string ByCategoryInTime = "~/Views/BudgetStats/ByCategoryInTime.cshtml";
+            public readonly string ByDistribution = "~/Views/BudgetStats/ByDistribution.cshtml";
             public readonly string Index = "~/Views/BudgetStats/Index.cshtml";
+            public readonly string SubmitCheckPoint = "~/Views/BudgetStats/SubmitCheckPoint.cshtml";
         }
     }
 
@@ -178,6 +198,16 @@ namespace MyBudget.Web.AspNet.Controllers
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "To", To);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "GroupBy", GroupBy);
             ByCategoryInTimeOverride(callInfo, budgetId, From, To, GroupBy);
+            return callInfo;
+        }
+
+        partial void ByDistributionOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string budgetId);
+
+        public override System.Web.Mvc.ActionResult ByDistribution(string budgetId)
+        {
+            var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.ByDistribution);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "budgetId", budgetId);
+            ByDistributionOverride(callInfo, budgetId);
             return callInfo;
         }
 

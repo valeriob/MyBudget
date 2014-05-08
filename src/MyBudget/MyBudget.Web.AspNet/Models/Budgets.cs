@@ -46,4 +46,20 @@ namespace MyBudget.Web.AspNet.Models
         public IEnumerable<string> DistributionKeys { get; set; }
  
     }
+
+    public class SubmitCheckPoint
+    {
+        public string BudgetId { get; set; }
+        public string CheckPointId { get; set; }
+        public DateTime Date { get; set; }
+        public List<KeyAmount> Amounts { get; set; }
+
+    }
+
+    public class KeyAmount
+    {
+        public string DistributionKey { get; set; }
+        public decimal Amount { get; set; }
+    }
+
 }

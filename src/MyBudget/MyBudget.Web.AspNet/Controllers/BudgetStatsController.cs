@@ -28,10 +28,8 @@ namespace MyBudget.Web.AspNet.Controllers
 
             if (From != null)
                 from = DateTime.Parse(From);
-            //from = From;
             if (To != null)
                 to = DateTime.Parse(To);
-            //to = To;
 
             var projection = ProjectionManager.GetBudgetLinesProjection(budgetId);
             IEnumerable<BudgetLine> lines = projection.GetAllLinesBetween(from, to);
@@ -53,10 +51,8 @@ namespace MyBudget.Web.AspNet.Controllers
 
             if (From != null)
                 from = DateTime.Parse(From);
-            //from = From;
             if (To != null)
                 to = DateTime.Parse(To);
-            //to = To;
 
             GroupBy groupBy = MyBudget.Web.AspNet.Controllers.GroupBy.Year;
 
@@ -78,6 +74,21 @@ namespace MyBudget.Web.AspNet.Controllers
             return View(model);
         }
 
+        public virtual ActionResult ByDistribution(string budgetId)
+        {
+            var budget = ProjectionManager.GetBudgetsList().GetBudgetById(new MyBudget.Domain.Budgets.BudgetId(budgetId));
+            var linesPrj = ProjectionManager.GetBudgetLinesProjection(budgetId);
+            var lines = linesPrj.GetAllLines();
+
+            IEnumerable<CheckPoint> checkPoints = Enumerable.Empty<CheckPoint>();
+
+            var cp = new MyBudget.Web.AspNet.Models.SubmitCheckPoint();
+
+            var categories = ProjectionManager.GetCategories().GetBudgetsCategories(budgetId);
+            var model = new DistributionTimeViewModel(categories, lines, checkPoints, budgetId, "NA");
+
+            return View(model);
+        }
     }
 
     public class BudgetStatsByCategoryInTimeViewModel
@@ -282,9 +293,11 @@ namespace MyBudget.Web.AspNet.Controllers
         public string BudgetName { get; set; }
 
 
-        public IEnumerable<CheckPointGroup> CheckPointsGroups { get; private set; }
+        public IEnumerable<CheckPointSlice> CheckPointsSlices { get; private set; }
         public IEnumerable<Category> Categories { get; private set; }
         IEnumerable<CheckPoint> _checkPoints;
+
+        public MyBudget.Web.AspNet.Models.SubmitCheckPoint SubmitCheckPoint { get; private set; }
 
 
         public DistributionTimeViewModel(IEnumerable<Category> categories, IEnumerable<BudgetLine> lines, IEnumerable<CheckPoint> checkPoints,
@@ -294,11 +307,31 @@ namespace MyBudget.Web.AspNet.Controllers
             BudgetName = budgetName;
             Categories = categories;
             _checkPoints = checkPoints;
-            CheckPointsGroups = Group(lines);
+
+            CheckPointsSlices = Group(lines);
+
+            var lastLine = lines.Select(s=> s.Date).DefaultIfEmpty(DateTime.MinValue).Max();
+            var currentSlide = CheckPointsSlices.First();
+
+            var sharingGroups = currentSlide.Groups.Where(g => g.Name != null);
+
+            var totalForEach = sharingGroups.Select(r => r.TotalAmount).Sum() / sharingGroups.Count();
+
+            SubmitCheckPoint = new Models.SubmitCheckPoint 
+            {
+                BudgetId = budgetId,
+                CheckPointId = Guid.NewGuid() + "",
+                Date = lastLine,
+                Amounts = sharingGroups.Select(s => new MyBudget.Web.AspNet.Models.KeyAmount
+                {
+                    DistributionKey = s.Name,
+                    Amount = totalForEach - s.TotalAmount,
+                }).ToList(),
+            };
         }
 
 
-        IEnumerable<CheckPointGroup> Group(IEnumerable<Projections.BudgetLine> lines)
+        IEnumerable<CheckPointSlice> Group(IEnumerable<Projections.BudgetLine> lines)
         {
             var sch = _checkPoints.OrderBy(d => d.Date)
                 .Select(s => new CheckPointLines { Id = s.Id, Date = s.Date, Name = s.Name })
@@ -321,25 +354,35 @@ namespace MyBudget.Web.AspNet.Controllers
                 }
             }
 
-            var grps = sch.Select(s => new CheckPointGroup
+            var grps = sch.Select(s => new CheckPointSlice
             {
                 Id = s.Id,
                 Date = s.Date,
                 Name = s.Name,
-                Distributions = s.Lines.GroupBy(d => d.DistributionKey)
-                    .Select(c => new DistributionCheckpoint(c.Key,
+                Groups = s.Lines.GroupBy(d => d.DistributionKey)
+                    .Select(c => new DistributionGroups(c.Key,
                                     c.GroupBy(r => r.Category).Select(u => new IdNameAmount { Id = u.Key, Name = u.Key, Amount = u.Select(o => o.Amount).Sum() })))
+                                    .OrderByDescending(d=> d.Name)
                                     .ToList(),
-
+                TotalAmount = s.Lines.Select(r=> r.Amount).Sum(),
             });
 
-            return grps.ToList();
+            return grps.OrderByDescending(d=> d.Date).ToList();
         }
 
-        //CheckPointGroup FindGroupFor(BudgetLine line, IEnumerable<CheckPointGroup> grps)
-        //{
 
-        //}
+        class CheckPointLines
+        {
+            public string Id { get; set; }
+            public string Name { get; set; }
+            public DateTime Date { get; set; }
+            public List<BudgetLine> Lines { get; set; }
+
+            public CheckPointLines()
+            {
+                Lines = new List<BudgetLine>();
+            }
+        }
 
     }
 
@@ -349,42 +392,34 @@ namespace MyBudget.Web.AspNet.Controllers
         public string Name { get; set; }
         public DateTime Date { get; set; }
     }
-    public class CheckPointLines
+   
+
+    public class CheckPointSlice
     {
         public string Id { get; set; }
         public string Name { get; set; }
         public DateTime Date { get; set; }
-        public List<BudgetLine> Lines { get; set; }
+        public Amount TotalAmount { get; set; }
 
-        public CheckPointLines()
+        public IEnumerable<DistributionGroups> Groups { get; set; }
+
+        public CheckPointSlice()
         {
-            Lines = new List<BudgetLine>();
+            Groups = new List<DistributionGroups>();
         }
-    }
 
-    public class CheckPointGroup
-    {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public DateTime Date { get; set; }
-
-        public IEnumerable<DistributionCheckpoint> Distributions { get; set; }
-
-        public CheckPointGroup()
-        {
-            Distributions = new List<DistributionCheckpoint>();
-        }
+        
     }
 
 
-    public class DistributionCheckpoint
+    public class DistributionGroups
     {
         public string Name { get; private set; }
         public Amount TotalAmount { get; private set; }
 
         Dictionary<string, Amount> _categories;
 
-        public DistributionCheckpoint(string name, IEnumerable<IdNameAmount> categories)
+        public DistributionGroups(string name, IEnumerable<IdNameAmount> categories)
         {
             Name = name;
             _categories = categories.ToDictionary(d => d.Name, d => d.Amount);
