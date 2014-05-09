@@ -25,6 +25,7 @@ using T4MVC;
 public static class MVC
 {
     public static MyBudget.Web.AspNet.Controllers.AccountController Account = new MyBudget.Web.AspNet.Controllers.T4MVC_AccountController();
+    public static MyBudget.Web.AspNet.Controllers.BudgetDistributionController BudgetDistribution = new MyBudget.Web.AspNet.Controllers.T4MVC_BudgetDistributionController();
     public static MyBudget.Web.AspNet.Controllers.BudgetsController Budgets = new MyBudget.Web.AspNet.Controllers.T4MVC_BudgetsController();
     public static MyBudget.Web.AspNet.Controllers.BudgetStatsController BudgetStats = new MyBudget.Web.AspNet.Controllers.T4MVC_BudgetStatsController();
     public static MyBudget.Web.AspNet.Controllers.CategoryController Category = new MyBudget.Web.AspNet.Controllers.T4MVC_CategoryController();

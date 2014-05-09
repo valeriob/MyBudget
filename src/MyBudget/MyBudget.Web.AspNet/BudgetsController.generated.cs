@@ -62,12 +62,6 @@ namespace MyBudget.Web.AspNet.Controllers
         {
             return new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Delete);
         }
-        [NonAction]
-        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public virtual System.Web.Mvc.ActionResult SubmitCheckPoint()
-        {
-            return new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.SubmitCheckPoint);
-        }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public BudgetsController Actions { get { return MVC.Budgets; } }
@@ -89,7 +83,6 @@ namespace MyBudget.Web.AspNet.Controllers
             public readonly string Create = "Create";
             public readonly string Edit = "Edit";
             public readonly string Delete = "Delete";
-            public readonly string SubmitCheckPoint = "SubmitCheckPoint";
         }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -100,7 +93,6 @@ namespace MyBudget.Web.AspNet.Controllers
             public const string Create = "Create";
             public const string Edit = "Edit";
             public const string Delete = "Delete";
-            public const string SubmitCheckPoint = "SubmitCheckPoint";
         }
 
 
@@ -137,14 +129,6 @@ namespace MyBudget.Web.AspNet.Controllers
         {
             public readonly string id = "id";
             public readonly string collection = "collection";
-        }
-        static readonly ActionParamsClass_SubmitCheckPoint s_params_SubmitCheckPoint = new ActionParamsClass_SubmitCheckPoint();
-        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public ActionParamsClass_SubmitCheckPoint SubmitCheckPointParams { get { return s_params_SubmitCheckPoint; } }
-        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-        public class ActionParamsClass_SubmitCheckPoint
-        {
-            public readonly string model = "model";
         }
         static readonly ViewsClass s_views = new ViewsClass();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
@@ -248,16 +232,6 @@ namespace MyBudget.Web.AspNet.Controllers
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "id", id);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "collection", collection);
             DeleteOverride(callInfo, id, collection);
-            return callInfo;
-        }
-
-        partial void SubmitCheckPointOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, MyBudget.Web.AspNet.Models.SubmitCheckPoint model);
-
-        public override System.Web.Mvc.ActionResult SubmitCheckPoint(MyBudget.Web.AspNet.Models.SubmitCheckPoint model)
-        {
-            var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.SubmitCheckPoint);
-            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
-            SubmitCheckPointOverride(callInfo, model);
             return callInfo;
         }
 

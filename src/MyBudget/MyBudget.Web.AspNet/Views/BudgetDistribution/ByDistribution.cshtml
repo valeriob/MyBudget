@@ -1,0 +1,119 @@
+﻿@model MyBudget.Web.AspNet.Controllers.DistributionTimeViewModel
+@{
+    ViewBag.Title = "ByCategory";
+}
+
+<h2>ByCategory</h2>
+
+
+<div>
+    @using (Html.BeginForm(MVC.BudgetDistribution.ByDistribution(), FormMethod.Get))
+    {
+        @Html.HiddenFor(b => b.BudgetId);
+
+        <input type="submit" value="Refresh" class="btn btn-default" />
+    }
+
+    @Html.Partial("SubmitCheckPoint", Model.SubmitCheckPoint)
+
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th> Checkpoint </th>
+            <th> Key </th>
+
+            @if (Model.EnableCategories)
+            {
+                foreach (var category in Model.Categories)
+                {
+                    <th> @category.Name</th>
+                }
+            }
+            <th> Total </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                01/04/2014
+            </td>
+            <td>
+                Valerio
+            </td>
+
+            <td>
+                350
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                01/04/2014
+            </td>
+            <td>
+                Laura
+            </td>
+
+            <td>
+                300
+            </td>
+        </tr>
+
+        @foreach (var slice in Model.CheckPointsSlices)
+        {
+            foreach (var group in slice.Groups)
+            {
+                <tr>
+                    <td style="white-space:pre;padding:10px"> @slice.Date.ToString("d")  </td>
+
+                    <td style="white-space:pre;padding:10px"> @group.Name </td>
+                    @if (Model.EnableCategories)
+                    {
+                        foreach (var category in Model.Categories)
+                        {
+                            <td style="white-space:pre;padding:10px"> @group.OfCategory(category.Id) </td>
+                        }
+                    }
+                    <td style="white-space:pre;padding:10px"> @group.TotalAmount </td>
+                </tr>
+            }
+
+            <tr>
+                <td style="white-space:pre;padding:10px"> @slice.Date.ToString("d")  </td>
+                <td> Total </td>
+                @if (Model.EnableCategories)
+                {
+                    foreach (var category in Model.Categories)
+                    {
+                        <td>  </td>
+                    }
+                }
+                <td style="white-space:pre;padding:10px"> @slice.TotalAmount </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script type="text/javascript">
+        ////$('#From').datepicker();
+        //$('#From').datepicker({
+        //    format: "dd/mm/yyyy",
+        //    //language: "it"
+        //});
+        ////$('#To').datepicker();
+        //$('#To').datepicker({
+        //    format: "dd/mm/yyyy",
+        //    // language: "it"
+        //});
+
+        $('#datepicker').datepicker({
+            format: "dd/mm/yyyy",
+            // language: "it",
+            autoclose: true,
+            todayHighlight: true
+        });
+    </script>
+}

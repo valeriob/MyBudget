@@ -47,15 +47,6 @@ namespace MyBudget.Web.AspNet.Models
  
     }
 
-    public class SubmitCheckPoint
-    {
-        public string BudgetId { get; set; }
-        public string CheckPointId { get; set; }
-        public DateTime Date { get; set; }
-        public List<KeyAmount> Amounts { get; set; }
-
-    }
-
     public class KeyAmount
     {
         public string DistributionKey { get; set; }
