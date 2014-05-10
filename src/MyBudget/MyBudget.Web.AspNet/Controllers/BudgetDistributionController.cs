@@ -1,4 +1,5 @@
-﻿using MyBudget.Domain.Lines;
+﻿using MyBudget.Commands;
+using MyBudget.Domain.Lines;
 using MyBudget.Domain.ValueObjects;
 using MyBudget.Infrastructure;
 using MyBudget.Projections;
@@ -16,16 +17,11 @@ namespace MyBudget.Web.AspNet.Controllers
     {
         public virtual ActionResult ByDistribution(string budgetId)
         {
-            var budget = ProjectionManager.GetBudgetsList().GetBudgetById(new MyBudget.Domain.Budgets.BudgetId(budgetId));
-            var linesPrj = ProjectionManager.GetBudgetLinesProjection(budgetId);
-            var lines = linesPrj.GetAllLines();
-
-            var checkPoints = Enumerable.Empty<CheckPoint>();
-
-            var cp = new SubmitCheckPoint();
+            var budget = ProjectionManager.GetBudgetProjection(budgetId);
 
             var categories = ProjectionManager.GetCategories().GetBudgetsCategories(budgetId);
-            var model = new DistributionTimeViewModel(categories, lines, checkPoints, budgetId, "NA");
+
+            var model = new DistributionTimeViewModel(budgetId, budget, categories);
 
             return View(model);
         }
@@ -33,14 +29,23 @@ namespace MyBudget.Web.AspNet.Controllers
         [HttpPost]
         public virtual ActionResult SubmitCheckPoint(SubmitCheckPoint model)
         {
+            model.Date = DateTime.Now; // TODO 
+            try
+            {
+                var handler = CommandManager.Create<SubmitDistributionCheckPoint>();
+                handler(model.ToCommand(GetCurrentUserId().ToString()));
+            }
+            catch 
+            { 
+            }
             return RedirectToAction(ByDistribution(model.BudgetId));
         }
     }
 
     public class DistributionTimeViewModel
     {
-        public string BudgetId { get; set; }
-        public string BudgetName { get; set; }
+        public string BudgetId { get; private set; }
+        public string BudgetName { get; private set; }
 
         public IEnumerable<CheckPointSlice> CheckPointsSlices { get; private set; }
         public IEnumerable<Category> Categories { get; private set; }
@@ -48,28 +53,32 @@ namespace MyBudget.Web.AspNet.Controllers
 
         public SubmitCheckPoint SubmitCheckPoint { get; private set; }
         public bool EnableCategories { get; set; }
+        
 
-        public DistributionTimeViewModel(IEnumerable<Category> categories, IEnumerable<BudgetLine> lines, IEnumerable<CheckPoint> checkPoints,
-            string budgetId, string budgetName)
+        public DistributionTimeViewModel(string budgetId, IBudgetProjection budget, IEnumerable<Category> categories)
         {
             BudgetId = budgetId;
-            BudgetName = budgetName;
+            BudgetName = budget.Name;
             Categories = categories;
-            _checkPoints = checkPoints;
+            _checkPoints = budget.GetCheckPoints();
 
+            var lines = budget.GetAllLines();
             CheckPointsSlices = Group(lines);
 
-            var lastLine = lines.Select(s=> s.Date).DefaultIfEmpty(DateTime.MinValue).Max();
+            var lastLine = lines.Select(s => s.Date).DefaultIfEmpty(DateTime.MinValue).Max();
             var currentSlide = CheckPointsSlices.First();
 
             var sharingGroups = currentSlide.Groups.Where(g => g.Name != null);
 
-            var totalForEach = sharingGroups.Select(r => r.TotalAmount).Sum() / sharingGroups.Count();
+            decimal totalForEach = 0;
+            if(sharingGroups.Any())
+                totalForEach = sharingGroups.Select(r => r.TotalAmount).Sum() / sharingGroups.Count();
 
-            SubmitCheckPoint = new SubmitCheckPoint 
+            SubmitCheckPoint = new SubmitCheckPoint
             {
                 BudgetId = budgetId,
-                CheckPointId = Guid.NewGuid() + "",
+                CurrencyISOCode = budget.CurrencyISOCode,
+                CheckPointId = "BudgetDistributionCheckPoints-" + Guid.NewGuid(),
                 Date = lastLine,
                 Amounts = sharingGroups.Select(s => new MyBudget.Web.AspNet.Models.KeyAmount
                 {
@@ -83,7 +92,7 @@ namespace MyBudget.Web.AspNet.Controllers
         IEnumerable<CheckPointSlice> Group(IEnumerable<Projections.BudgetLine> lines)
         {
             var sch = _checkPoints.OrderBy(d => d.Date)
-                .Select(s => new CheckPointLines { Id = s.Id, Date = s.Date, Name = s.Name })
+                .Select(s => new CheckPointLines { Id = s.Id, Date = s.Date, Name = "non c'è !" })
                 .Concat(new[] { new CheckPointLines { Date = DateTime.MaxValue } })
                 .ToArray();
 
@@ -92,6 +101,12 @@ namespace MyBudget.Web.AspNet.Controllers
 
             foreach (var l in lines.OrderBy(d => d.Date))
             {
+                //if (l.Date >= current.Date)
+                //{
+                //    index++;
+                //    current = sch[index];
+                //}
+                //current.Lines.Add(l);
                 if (l.Date < current.Date)
                 {
                     current.Lines.Add(l);
@@ -100,6 +115,7 @@ namespace MyBudget.Web.AspNet.Controllers
                 {
                     index++;
                     current = sch[index];
+                    current.Lines.Add(l);
                 }
             }
 
@@ -135,14 +151,6 @@ namespace MyBudget.Web.AspNet.Controllers
 
     }
 
-    public class CheckPoint
-    {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public DateTime Date { get; set; }
-    }
-   
-
     public class CheckPointSlice
     {
         public string Id { get; set; }
@@ -156,8 +164,6 @@ namespace MyBudget.Web.AspNet.Controllers
         {
             Groups = new List<DistributionGroups>();
         }
-
-        
     }
 
 
@@ -191,9 +197,26 @@ namespace MyBudget.Web.AspNet.Controllers
     public class SubmitCheckPoint
     {
         public string BudgetId { get; set; }
+        public string CurrencyISOCode { get; set; }
         public string CheckPointId { get; set; }
         public DateTime Date { get; set; }
         public List<KeyAmount> Amounts { get; set; }
 
+
+        internal SubmitDistributionCheckPoint ToCommand(string userId)
+        {
+            return new SubmitDistributionCheckPoint
+            {
+                UserId = userId,
+                Date = Date,
+                BudgetId = BudgetId,
+                CheckPointId = CheckPointId,
+                Amounts = Amounts.Select(s => new MyBudget.Domain.Budgets.DistributionKeyAmount 
+                {
+                      DistributionKey = s.DistributionKey,
+                      Amount = new Amount(Currencies.Parse(CurrencyISOCode), s.Amount)
+                }).ToArray()
+            };
+        }
     }
 }

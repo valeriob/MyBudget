@@ -1,0 +1,13 @@
+fromStreams(['categoria_Lines', 'categoria_BudgetDistributionCheckPoints', 'categoria_Category'])
+   .whenAny(function (s, e) {
+       var budget = "unknown";
+       
+        if(e.body.BudgetId._id){
+            budget = e.body.BudgetId._id;
+        }else {
+            budget = e.body.BudgetId;
+        }
+       
+       linkTo('stuff_of_' + budget, e);
+       return null;
+   });

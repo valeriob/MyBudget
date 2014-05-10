@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\LinesHandlers.cs" />
+    <Compile Include="Domain\Budgets\DistributionCheckPoint.cs" />
     <Compile Include="Domain\Budgets\DistributionKey.cs" />
     <Compile Include="Domain\Budgets\Category.cs" />
     <Compile Include="Domain\Users\User.cs" />
@@ -68,10 +69,14 @@
     <Compile Include="Infrastructure\EventAdapter.cs" />
     <Compile Include="Infrastructure\EventHelper.cs" />
     <Compile Include="Infrastructure\AzureTableStorageRepository.cs" />
+    <Compile Include="Infrastructure\GetEventStoreRepositoryAdapter.cs" />
     <Compile Include="Infrastructure\GetEventStoreRepository.cs" />
+    <Compile Include="Infrastructure\EventStore.cs" />
+    <Compile Include="Infrastructure\IEventStore.cs" />
     <Compile Include="Infrastructure\InMemoryRepository.cs" />
     <Compile Include="Infrastructure\ISerialize.cs" />
     <Compile Include="Messages.cs" />
+    <Compile Include="Projections\BudgetProjection.cs" />
     <Compile Include="Projections\BudgetLinesProjection.cs" />
     <Compile Include="Projections\DistributionKeysProjection.cs" />
     <Compile Include="Projections\CategoriesProjection.cs" />

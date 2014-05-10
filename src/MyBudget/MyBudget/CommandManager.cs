@@ -25,12 +25,6 @@ namespace MyBudget
             _connection = connection;
         }
 
-        //public Handle<T> Create<T>()
-        //{
-        //    var handler = BuildHandler(typeof(T));
-        //    return handler as Handle<T>;
-        //}
-
         public Action<T> Create<T>()
         {
             var handler = BuildHandler(typeof(T));
@@ -62,25 +56,31 @@ namespace MyBudget
             var handlerType = _cache[type];
 
             //throw new NotImplementedException();
-            return Activator.CreateInstance(handlerType, Get_EventStoreRepository());
+            //return Activator.CreateInstance(handlerType, Get_EventStoreRepository());
+            return CreateInstance(handlerType);
         }
 
         IRepository Get_EventStoreRepository()
         {
-            return new GetEventStoreRepository(_connection, new IPEndPoint(IPAddress.Loopback, 1113));
-            //if (_repository == null)
-            //{
-            //    var conflictDetector = new CommonDomain.Core.ConflictDetector();
-            //    var factory = new Gac.Domain.Aggregate_Factory();
-            //    return new CommonDomain.Persistence.EventStore.EventStoreRepository(_eventStore, factory, conflictDetector);
+            var endpoint = new IPEndPoint(IPAddress.Loopback, 1113);
+            var credentials = new  EventStore.ClientAPI.SystemData.UserCredentials("admin", "changeit");
+            var adapter = new MyBudget.Infrastructure.EventStoreAdapter(endpoint, credentials);
 
-            //    //if (_connection == null)
-            //    //    _connection = EventStore.ClientAPI.EventStoreConnection.Create();
-            //    //return _repository = new CommonDomain.Persistence.GetEventStore.GetEventStoreRepository(_connection, endpoint);
-            //}
-            //return _repository;
+            return new GetEventStoreRepositoryAdapter(_connection, endpoint, adapter );
         }
 
+        object CreateInstance(Type handlerType)
+        { 
+            var endpoint = new IPEndPoint(IPAddress.Loopback, 1113);
+            var credentials = new  EventStore.ClientAPI.SystemData.UserCredentials("admin", "changeit");
+           
+            var adapter = new MyBudget.Infrastructure.EventStoreAdapter(endpoint, credentials);
+
+            var es = new MyBudget.Infrastructure.EventStore(endpoint,credentials, adapter);
+            var repository = new GetEventStoreRepositoryAdapter(_connection, endpoint, adapter );
+            
+            return Activator.CreateInstance(handlerType, Get_EventStoreRepository(), es);
+        }
 
     }
 

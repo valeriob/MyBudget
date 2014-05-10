@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +16,9 @@ namespace MyBudget.Infrastructure
     {
         IEnumerable<dynamic> GetStreamEvents(string stream);
         dynamic TryGetDomainEvent(ResolvedEvent evnt);
+
+        IEnumerable<EventData> PrepareEvents(IEnumerable<object> events, IDictionary<string, object> commitHeaders);
+        object DeserializeEvent(RecordedEvent recordedEvent);
     }
 
     public class EventStoreAdapter : IAdaptEvents
@@ -82,6 +86,43 @@ namespace MyBudget.Infrastructure
             return _credentials;
         }
 
+
+        public IEnumerable<EventData> PrepareEvents(IEnumerable<object> events, IDictionary<string, object> commitHeaders)
+        {
+            foreach (var evnt in events)
+            {
+                var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(evnt, SerializerSettings));
+                var metadata = AddEventClrTypeHeaderAndSerializeMetadata(evnt, commitHeaders);
+                yield return new EventData(Guid.NewGuid(), evnt.GetType().FullName, true, data, metadata);
+            }
+        }
+        static readonly JsonSerializerSettings SerializerSettings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.None,
+            ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver
+            {
+                DefaultMembersSearchFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
+            },
+        };
+
+        static byte[] AddEventClrTypeHeaderAndSerializeMetadata(object evnt, IDictionary<string, object> headers)
+        {
+            var eventHeaders = new Dictionary<string, object>(headers)
+            {
+                {EventClrTypeHeader, evnt.GetType().AssemblyQualifiedName}
+            };
+
+            return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(eventHeaders, SerializerSettings));
+        }
+
+
+        public object DeserializeEvent(RecordedEvent recordedEvent)
+        {
+            var metadata = recordedEvent.Metadata;
+            var data = recordedEvent.Data;
+            var eventClrTypeName = JObject.Parse(Encoding.UTF8.GetString(metadata)).Property(EventClrTypeHeader).Value;
+            return JsonConvert.DeserializeObject(Encoding.UTF8.GetString(data), Type.GetType((string)eventClrTypeName));
+        }
     }
 
 }

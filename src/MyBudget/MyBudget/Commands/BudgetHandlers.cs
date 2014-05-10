@@ -1,6 +1,7 @@
 ﻿using CommonDomain.Persistence;
 using MyBudget.Domain.Budgets;
 using MyBudget.Domain.Users;
+using MyBudget.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,14 +49,26 @@ namespace MyBudget.Commands
         public string Name { get; set; }
     }
 
+    public class SubmitDistributionCheckPoint : Command
+    {
+        public string CheckPointId { get; set; }
+        public string UserId { get; set; }
+        public string BudgetId { get; set; }
+        public DateTime Date { get; set; }
+        public DistributionKeyAmount[] Amounts { get; set; }
+    }
+
+
     class BudgetHandlers : Handle<CreateBudget>, Handle<AllowBudgetAccess>, Handle<CreateCategory>,
-        Handle<UpdateCategory>, Handle<AddBudgetDistributionKey>
+        Handle<UpdateCategory>, Handle<AddBudgetDistributionKey>, Handle<SubmitDistributionCheckPoint>
     {
         IRepository _repository;
+        IEventStore _eventStore;
 
-        public BudgetHandlers(IRepository repository)
+        public BudgetHandlers(IRepository repository, IEventStore eventStore)
         {
             _repository = repository;
+            _eventStore = eventStore;
         }
 
 
@@ -95,6 +108,22 @@ namespace MyBudget.Commands
             budget.AddDistributionKey(cmd.Name);
             _repository.Save(budget, Guid.NewGuid(), cmd);
         }
+
+        public void Handle(SubmitDistributionCheckPoint cmd)
+        {
+            var evnt = new CheckPointsubmitted
+            {
+                CheckPointId = cmd.CheckPointId,
+                UserId = cmd.UserId,
+                BudgetId = cmd.BudgetId,
+                Amounts = cmd.Amounts,
+                Date = cmd.Date
+            };
+
+            _eventStore.Save(cmd.CheckPointId, evnt);
+        }
     }
+
+
 
 }

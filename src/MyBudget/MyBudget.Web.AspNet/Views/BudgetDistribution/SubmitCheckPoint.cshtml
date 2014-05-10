@@ -24,7 +24,10 @@
                 </td>
             </tr>
         }*@
-
+    @Html.HiddenFor(r => r.BudgetId)
+    @Html.HiddenFor(r => r.CheckPointId)
+    @Html.HiddenFor(r => r.CurrencyISOCode)
+    
     @Html.EditorFor(r => r.Amounts)
     <input type="submit" value="CheckPoint" class="btn btn-default" />
 }

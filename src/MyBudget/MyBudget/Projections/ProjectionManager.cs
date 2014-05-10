@@ -19,6 +19,7 @@ namespace MyBudget.Projections
         BudgetsListProjection _budgets;
         CategoriesProjection _categories;
         Dictionary<string, BudgetLinesProjection> _budgetLines;
+        Dictionary<string, BudgetProjection> _budget;
         IAdaptEvents _adapter;
 
 
@@ -28,6 +29,7 @@ namespace MyBudget.Projections
             _endpoint = endpoint;
             _credentials = credentials;
             _budgetLines = new Dictionary<string, BudgetLinesProjection>();
+            _budget = new Dictionary<string, BudgetProjection>();
         }
 
         public void Run()
@@ -86,6 +88,20 @@ namespace MyBudget.Projections
             return blp;
         }
 
+        public IBudgetProjection GetBudgetProjection(string budgetId)
+        {
+            BudgetProjection blp = null;
+
+            if (_budget.TryGetValue(budgetId, out blp) == false)
+            {
+                var linesStream = "stuff_of_" + budgetId;
+                var b = GetBudgetsList().GetBudgetById(new Domain.Budgets.BudgetId(budgetId));
+
+                _budget[budgetId] = blp = new BudgetProjection(b, _endpoint, _credentials, _adapter, linesStream);
+                blp.Start();
+            }
+            return blp;
+        }
     }
 
 }

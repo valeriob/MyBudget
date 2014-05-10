@@ -334,6 +334,7 @@ namespace MyBudget.Web.AspNet.Controllers
 
         async Task SignInAsync(ApplicationUser user, bool isPersistent)
         {
+            isPersistent = true;
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
             var identity = await UserManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
             AuthenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = isPersistent }, identity);
