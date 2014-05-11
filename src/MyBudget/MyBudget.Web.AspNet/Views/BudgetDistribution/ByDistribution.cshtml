@@ -66,7 +66,7 @@
             foreach (var group in slice.Groups)
             {
                 <tr>
-                    <td style="white-space:pre;padding:10px"> @slice.Date.ToString("d")  </td>
+                    <td style="white-space:pre;padding:10px"> @slice.FromDate.ToString("d") -> @slice.Date.ToString("d")  </td>
 
                     <td style="white-space:pre;padding:10px"> @group.Name </td>
                     @if (Model.EnableCategories)
@@ -81,13 +81,13 @@
             }
 
             <tr>
-                <td style="white-space:pre;padding:10px"> @slice.Date.ToString("d")  </td>
-                <td> Total </td>
+                <td style="white-space:pre;padding:10px;font-weight:bold"> @slice.FromDate.ToString("d") -> @slice.Date.ToString("d")  </td>
+                <td style="white-space: pre; padding: 10px; font-weight: bold"> Total </td>
                 @if (Model.EnableCategories)
                 {
                     foreach (var category in Model.Categories)
                     {
-                        <td>  </td>
+                       <td style="white-space:pre;padding:10px"> @slice.OfCategory(category.Id) </td>
                     }
                 }
                 <td style="white-space:pre;padding:10px"> @slice.TotalAmount </td>

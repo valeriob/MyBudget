@@ -63,23 +63,47 @@ namespace MyBudget
         IRepository Get_EventStoreRepository()
         {
             var endpoint = new IPEndPoint(IPAddress.Loopback, 1113);
-            var credentials = new  EventStore.ClientAPI.SystemData.UserCredentials("admin", "changeit");
+            var credentials = new EventStore.ClientAPI.SystemData.UserCredentials("admin", "changeit");
             var adapter = new MyBudget.Infrastructure.EventStoreAdapter(endpoint, credentials);
 
-            return new GetEventStoreRepositoryAdapter(_connection, endpoint, adapter );
+            return new GetEventStoreRepositoryAdapter(_connection, endpoint, adapter);
         }
+
+        static Dictionary<Type, Func<object>> _factories;
 
         object CreateInstance(Type handlerType)
         { 
-            var endpoint = new IPEndPoint(IPAddress.Loopback, 1113);
-            var credentials = new  EventStore.ClientAPI.SystemData.UserCredentials("admin", "changeit");
+            if(_factories == null)
+            {
+                var endpoint = new IPEndPoint(IPAddress.Loopback, 1113);
+                var credentials = new  EventStore.ClientAPI.SystemData.UserCredentials("admin", "changeit");
            
-            var adapter = new MyBudget.Infrastructure.EventStoreAdapter(endpoint, credentials);
+                var adapter = new MyBudget.Infrastructure.EventStoreAdapter(endpoint, credentials);
 
-            var es = new MyBudget.Infrastructure.EventStore(endpoint,credentials, adapter);
-            var repository = new GetEventStoreRepositoryAdapter(_connection, endpoint, adapter );
-            
-            return Activator.CreateInstance(handlerType, Get_EventStoreRepository(), es);
+                var es = new MyBudget.Infrastructure.EventStore(endpoint,credentials, adapter);
+                var repository = new GetEventStoreRepositoryAdapter(_connection, endpoint, adapter );
+
+                _factories = new Dictionary<Type, Func<object>>();
+                _factories[typeof(MyBudget.Commands.BudgetHandlers)] = () => 
+                    new MyBudget.Commands.BudgetHandlers(repository,es);
+
+                _factories[typeof(MyBudget.Commands.LinesHandlers)] = () =>
+                    new MyBudget.Commands.LinesHandlers(repository);
+
+                _factories[typeof(MyBudget.Commands.UserHandlers)] = () =>
+                   new MyBudget.Commands.UserHandlers(repository);
+                
+            }
+            //var endpoint = new IPEndPoint(IPAddress.Loopback, 1113);
+            //var credentials = new  EventStore.ClientAPI.SystemData.UserCredentials("admin", "changeit");
+           
+            //var adapter = new MyBudget.Infrastructure.EventStoreAdapter(endpoint, credentials);
+
+            //var es = new MyBudget.Infrastructure.EventStore(endpoint,credentials, adapter);
+            //var repository = new GetEventStoreRepositoryAdapter(_connection, endpoint, adapter );
+
+            return _factories[handlerType]();
+            //return Activator.CreateInstance(handlerType, Get_EventStoreRepository(), es);
         }
 
     }

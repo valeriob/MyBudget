@@ -35,8 +35,8 @@ namespace MyBudget.Web.AspNet.Controllers
                 var handler = CommandManager.Create<SubmitDistributionCheckPoint>();
                 handler(model.ToCommand(GetCurrentUserId().ToString()));
             }
-            catch 
-            { 
+            catch
+            {
             }
             return RedirectToAction(ByDistribution(model.BudgetId));
         }
@@ -53,7 +53,7 @@ namespace MyBudget.Web.AspNet.Controllers
 
         public SubmitCheckPoint SubmitCheckPoint { get; private set; }
         public bool EnableCategories { get; set; }
-        
+
 
         public DistributionTimeViewModel(string budgetId, IBudgetProjection budget, IEnumerable<Category> categories)
         {
@@ -65,27 +65,70 @@ namespace MyBudget.Web.AspNet.Controllers
             var lines = budget.GetAllLines();
             CheckPointsSlices = Group(lines);
 
-            var lastLine = lines.Select(s => s.Date).DefaultIfEmpty(DateTime.MinValue).Max();
-            var currentSlide = CheckPointsSlices.First();
+            // No giving back
+            //var total = lines.Where(r => r.DistributionKey != null).GroupBy(g => g.DistributionKey)
+            //    .Select(s => new KeyAmount
+            //    {
+            //        DistributionKey = s.Key,
+            //        Amount = s.Select(r => r.Amount).Sum(),
+            //    });
 
-            var sharingGroups = currentSlide.Groups.Where(g => g.Name != null);
+            var total = lines.Where(r => r.DistributionKey != null)
+              .Select(s => new KeyAmount
+              {
+                  DistributionKey = s.DistributionKey,
+                  Amount = s.Amount,
+              })
+              .Concat(_checkPoints.SelectMany(s => s.Amounts).Select(p => new KeyAmount
+              {
+                  DistributionKey = p.DistributionKey,
+                  Amount = p.Amount
+              }))
+              .GroupBy(g => g.DistributionKey)
+              .Select(r => new KeyAmount
+              {
+                  DistributionKey = r.Key,
+                  Amount = r.Select(p => p.Amount).Sum()
+              }).ToList();
 
-            decimal totalForEach = 0;
-            if(sharingGroups.Any())
-                totalForEach = sharingGroups.Select(r => r.TotalAmount).Sum() / sharingGroups.Count();
+
+            var max = total.OrderByDescending(d => d.Amount).Select(s => s.Amount).FirstOrDefault();
 
             SubmitCheckPoint = new SubmitCheckPoint
             {
                 BudgetId = budgetId,
                 CurrencyISOCode = budget.CurrencyISOCode,
                 CheckPointId = "BudgetDistributionCheckPoints-" + Guid.NewGuid(),
-                Date = lastLine,
-                Amounts = sharingGroups.Select(s => new MyBudget.Web.AspNet.Models.KeyAmount
+                Date = DateTime.Now,
+                Amounts = total.Select(s => new MyBudget.Web.AspNet.Models.KeyAmount
                 {
-                    DistributionKey = s.Name,
-                    Amount = totalForEach - s.TotalAmount,
+                    DistributionKey = s.DistributionKey,
+                    Amount = max - s.Amount,
                 }).ToList(),
             };
+            // With giving back
+
+            //var lastLine = lines.Select(s => s.Date).DefaultIfEmpty(DateTime.MinValue).Max();
+            // var currentSlide = CheckPointsSlices.First();
+
+            //var sharingGroups = currentSlide.Groups.Where(g => g.Name != null);
+
+            //decimal totalForEach = 0;
+            //if(sharingGroups.Any())
+            //    totalForEach = sharingGroups.Select(r => r.TotalAmount).Sum() / sharingGroups.Count();
+
+            //SubmitCheckPoint = new SubmitCheckPoint
+            //{
+            //    BudgetId = budgetId,
+            //    CurrencyISOCode = budget.CurrencyISOCode,
+            //    CheckPointId = "BudgetDistributionCheckPoints-" + Guid.NewGuid(),
+            //    Date = lastLine,
+            //    Amounts = sharingGroups.Select(s => new MyBudget.Web.AspNet.Models.KeyAmount
+            //    {
+            //        DistributionKey = s.Name,
+            //        Amount = totalForEach - s.TotalAmount,
+            //    }).ToList(),
+            //};
         }
 
 
@@ -101,12 +144,6 @@ namespace MyBudget.Web.AspNet.Controllers
 
             foreach (var l in lines.OrderBy(d => d.Date))
             {
-                //if (l.Date >= current.Date)
-                //{
-                //    index++;
-                //    current = sch[index];
-                //}
-                //current.Lines.Add(l);
                 if (l.Date < current.Date)
                 {
                     current.Lines.Add(l);
@@ -119,20 +156,44 @@ namespace MyBudget.Web.AspNet.Controllers
                 }
             }
 
-            var grps = sch.Select(s => new CheckPointSlice
+            var result = new List<CheckPointSlice>();
+            for (int i = 0; i < sch.Length; i++)
             {
-                Id = s.Id,
-                Date = s.Date,
-                Name = s.Name,
-                Groups = s.Lines.GroupBy(d => d.DistributionKey)
-                    .Select(c => new DistributionGroups(c.Key,
-                                    c.GroupBy(r => r.Category).Select(u => new IdNameAmount { Id = u.Key, Name = u.Key, Amount = u.Select(o => o.Amount).Sum() })))
-                                    .OrderByDescending(d=> d.Name)
-                                    .ToList(),
-                TotalAmount = s.Lines.Select(r=> r.Amount).Sum(),
-            });
+                var s = sch[i];
+                var fromDate = DateTime.MinValue;
+                if (i != 0)
+                    fromDate = sch[i - 1].Date;
 
-            return grps.OrderByDescending(d=> d.Date).ToList();
+                var slice = new CheckPointSlice
+                {
+                    Id = s.Id,
+                    Date = s.Date,
+                    FromDate = fromDate,
+                    Name = s.Name,
+                    Groups = s.Lines.GroupBy(d => d.DistributionKey)
+                        .Select(c => new DistributionGroups(c.Key,
+                                        c.GroupBy(r => r.Category).Select(u => new IdNameAmount { Id = u.Key, Name = u.Key, Amount = u.Select(o => o.Amount).Sum() })))
+                                        .OrderByDescending(d => d.Name)
+                                        .ToList(),
+                    TotalAmount = s.Lines.Select(r => r.Amount).Sum(),
+                };
+                result.Add(slice);
+            }
+            return result.OrderByDescending(r => r.Date).ToArray();
+            //var grps = sch.Select(s => new CheckPointSlice
+            //{
+            //    Id = s.Id,
+            //    Date = s.Date,
+            //    Name = s.Name,
+            //    Groups = s.Lines.GroupBy(d => d.DistributionKey)
+            //        .Select(c => new DistributionGroups(c.Key,
+            //                        c.GroupBy(r => r.Category).Select(u => new IdNameAmount { Id = u.Key, Name = u.Key, Amount = u.Select(o => o.Amount).Sum() })))
+            //                        .OrderByDescending(d => d.Name)
+            //                        .ToList(),
+            //    TotalAmount = s.Lines.Select(r => r.Amount).Sum(),
+            //});
+
+            //return grps.OrderByDescending(d => d.Date).ToList();
         }
 
 
@@ -156,6 +217,7 @@ namespace MyBudget.Web.AspNet.Controllers
         public string Id { get; set; }
         public string Name { get; set; }
         public DateTime Date { get; set; }
+        public DateTime FromDate { get; set; }
         public Amount TotalAmount { get; set; }
 
         public IEnumerable<DistributionGroups> Groups { get; set; }
@@ -163,6 +225,11 @@ namespace MyBudget.Web.AspNet.Controllers
         public CheckPointSlice()
         {
             Groups = new List<DistributionGroups>();
+        }
+
+        public Amount OfCategory(string category)
+        {
+            return Groups.Select(s => s.OfCategory(category)).Sum();
         }
     }
 
@@ -211,10 +278,10 @@ namespace MyBudget.Web.AspNet.Controllers
                 Date = Date,
                 BudgetId = BudgetId,
                 CheckPointId = CheckPointId,
-                Amounts = Amounts.Select(s => new MyBudget.Domain.Budgets.DistributionKeyAmount 
+                Amounts = Amounts.Select(s => new MyBudget.Domain.Budgets.DistributionKeyAmount
                 {
-                      DistributionKey = s.DistributionKey,
-                      Amount = new Amount(Currencies.Parse(CurrencyISOCode), s.Amount)
+                    DistributionKey = s.DistributionKey,
+                    Amount = new Amount(Currencies.Parse(CurrencyISOCode), s.Amount)
                 }).ToArray()
             };
         }
