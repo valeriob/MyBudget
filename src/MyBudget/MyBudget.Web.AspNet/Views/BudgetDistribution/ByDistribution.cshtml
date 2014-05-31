@@ -80,9 +80,9 @@
                 </tr>
             }
 
-            <tr>
-                <td style="white-space:pre;padding:10px;font-weight:bold"> @slice.FromDate.ToString("d") -> @slice.Date.ToString("d")  </td>
-                <td style="white-space: pre; padding: 10px; font-weight: bold"> Total </td>
+            <tr style="font-weight:bold">
+                <td style="white-space:pre;padding:10px"> @slice.FromDate.ToString("d") -> @slice.Date.ToString("d")  </td>
+                <td style="white-space: pre; padding: 10px"> Total </td>
                 @if (Model.EnableCategories)
                 {
                     foreach (var category in Model.Categories)

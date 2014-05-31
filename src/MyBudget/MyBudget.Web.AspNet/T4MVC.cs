@@ -13,6 +13,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
@@ -22,7 +23,7 @@ using System.Web.Routing;
 using T4MVC;
 
 [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
-public static class MVC
+public static partial class MVC
 {
     public static MyBudget.Web.AspNet.Controllers.AccountController Account = new MyBudget.Web.AspNet.Controllers.T4MVC_AccountController();
     public static MyBudget.Web.AspNet.Controllers.BudgetDistributionController BudgetDistribution = new MyBudget.Web.AspNet.Controllers.T4MVC_BudgetDistributionController();
@@ -144,6 +145,7 @@ namespace Links
         }
     
         public static readonly string modernizr_2_6_2_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/modernizr-2.6.2.min.js") ? Url("modernizr-2.6.2.min.js") : Url("modernizr-2.6.2.js");
+        public static readonly string modernizr_2_7_2_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/modernizr-2.7.2.min.js") ? Url("modernizr-2.7.2.min.js") : Url("modernizr-2.7.2.js");
         public static readonly string Projections_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/Projections.min.js") ? Url("Projections.min.js") : Url("Projections.js");
         public static readonly string respond_js = T4MVCHelpers.IsProduction() && T4Extensions.FileExists(URLPATH + "/respond.min.js") ? Url("respond.min.js") : Url("respond.js");
         public static readonly string respond_min_js = Url("respond.min.js");

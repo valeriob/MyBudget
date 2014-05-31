@@ -13,6 +13,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
@@ -38,10 +39,22 @@ namespace MyBudget.Web.AspNet.Controllers
         }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        protected RedirectToRouteResult RedirectToAction(Task<ActionResult> taskResult)
+        {
+            return RedirectToAction(taskResult.Result);
+        }
+
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         protected RedirectToRouteResult RedirectToActionPermanent(ActionResult result)
         {
             var callInfo = result.GetT4MVCResult();
             return RedirectToRoutePermanent(callInfo.RouteValueDictionary);
+        }
+
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        protected RedirectToRouteResult RedirectToActionPermanent(Task<ActionResult> taskResult)
+        {
+            return RedirectToActionPermanent(taskResult.Result);
         }
 
         [NonAction]
@@ -123,8 +136,10 @@ namespace MyBudget.Web.AspNet.Controllers
     {
         public T4MVC_BudgetDistributionController() : base(Dummy.Instance) { }
 
+        [NonAction]
         partial void ByDistributionOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string budgetId);
 
+        [NonAction]
         public override System.Web.Mvc.ActionResult ByDistribution(string budgetId)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.ByDistribution);
@@ -133,8 +148,10 @@ namespace MyBudget.Web.AspNet.Controllers
             return callInfo;
         }
 
+        [NonAction]
         partial void SubmitCheckPointOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, MyBudget.Web.AspNet.Controllers.SubmitCheckPoint model);
 
+        [NonAction]
         public override System.Web.Mvc.ActionResult SubmitCheckPoint(MyBudget.Web.AspNet.Controllers.SubmitCheckPoint model)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.SubmitCheckPoint);

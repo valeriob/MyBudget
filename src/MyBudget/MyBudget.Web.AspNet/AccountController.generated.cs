@@ -13,6 +13,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
@@ -35,10 +36,22 @@ namespace MyBudget.Web.AspNet.Controllers
         }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        protected RedirectToRouteResult RedirectToAction(Task<ActionResult> taskResult)
+        {
+            return RedirectToAction(taskResult.Result);
+        }
+
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         protected RedirectToRouteResult RedirectToActionPermanent(ActionResult result)
         {
             var callInfo = result.GetT4MVCResult();
             return RedirectToRoutePermanent(callInfo.RouteValueDictionary);
+        }
+
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        protected RedirectToRouteResult RedirectToActionPermanent(Task<ActionResult> taskResult)
+        {
+            return RedirectToActionPermanent(taskResult.Result);
         }
 
         [NonAction]
@@ -240,8 +253,10 @@ namespace MyBudget.Web.AspNet.Controllers
     {
         public T4MVC_AccountController() : base(Dummy.Instance) { }
 
+        [NonAction]
         partial void LoginOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string returnUrl);
 
+        [NonAction]
         public override System.Web.Mvc.ActionResult Login(string returnUrl)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Login);
@@ -250,8 +265,10 @@ namespace MyBudget.Web.AspNet.Controllers
             return callInfo;
         }
 
+        [NonAction]
         partial void LoginOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, MyBudget.Web.AspNet.Models.LoginViewModel model, string returnUrl);
 
+        [NonAction]
         public override System.Threading.Tasks.Task<System.Web.Mvc.ActionResult> Login(MyBudget.Web.AspNet.Models.LoginViewModel model, string returnUrl)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Login);
@@ -261,8 +278,10 @@ namespace MyBudget.Web.AspNet.Controllers
             return System.Threading.Tasks.Task.FromResult(callInfo as ActionResult);
         }
 
+        [NonAction]
         partial void RegisterOverride(T4MVC_System_Web_Mvc_ActionResult callInfo);
 
+        [NonAction]
         public override System.Web.Mvc.ActionResult Register()
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Register);
@@ -270,8 +289,10 @@ namespace MyBudget.Web.AspNet.Controllers
             return callInfo;
         }
 
+        [NonAction]
         partial void RegisterOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, MyBudget.Web.AspNet.Models.RegisterViewModel model);
 
+        [NonAction]
         public override System.Threading.Tasks.Task<System.Web.Mvc.ActionResult> Register(MyBudget.Web.AspNet.Models.RegisterViewModel model)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Register);
@@ -280,8 +301,10 @@ namespace MyBudget.Web.AspNet.Controllers
             return System.Threading.Tasks.Task.FromResult(callInfo as ActionResult);
         }
 
+        [NonAction]
         partial void DisassociateOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string loginProvider, string providerKey);
 
+        [NonAction]
         public override System.Threading.Tasks.Task<System.Web.Mvc.ActionResult> Disassociate(string loginProvider, string providerKey)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Disassociate);
@@ -291,8 +314,10 @@ namespace MyBudget.Web.AspNet.Controllers
             return System.Threading.Tasks.Task.FromResult(callInfo as ActionResult);
         }
 
+        [NonAction]
         partial void ManageOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, MyBudget.Web.AspNet.Controllers.AccountController.ManageMessageId? message);
 
+        [NonAction]
         public override System.Web.Mvc.ActionResult Manage(MyBudget.Web.AspNet.Controllers.AccountController.ManageMessageId? message)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Manage);
@@ -301,8 +326,10 @@ namespace MyBudget.Web.AspNet.Controllers
             return callInfo;
         }
 
+        [NonAction]
         partial void ManageOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, MyBudget.Web.AspNet.Models.ManageUserViewModel model);
 
+        [NonAction]
         public override System.Threading.Tasks.Task<System.Web.Mvc.ActionResult> Manage(MyBudget.Web.AspNet.Models.ManageUserViewModel model)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Manage);
@@ -311,8 +338,10 @@ namespace MyBudget.Web.AspNet.Controllers
             return System.Threading.Tasks.Task.FromResult(callInfo as ActionResult);
         }
 
+        [NonAction]
         partial void ExternalLoginOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string provider, string returnUrl);
 
+        [NonAction]
         public override System.Web.Mvc.ActionResult ExternalLogin(string provider, string returnUrl)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.ExternalLogin);
@@ -322,8 +351,10 @@ namespace MyBudget.Web.AspNet.Controllers
             return callInfo;
         }
 
+        [NonAction]
         partial void ExternalLoginCallbackOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string returnUrl);
 
+        [NonAction]
         public override System.Threading.Tasks.Task<System.Web.Mvc.ActionResult> ExternalLoginCallback(string returnUrl)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.ExternalLoginCallback);
@@ -332,8 +363,10 @@ namespace MyBudget.Web.AspNet.Controllers
             return System.Threading.Tasks.Task.FromResult(callInfo as ActionResult);
         }
 
+        [NonAction]
         partial void LinkLoginOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string provider);
 
+        [NonAction]
         public override System.Web.Mvc.ActionResult LinkLogin(string provider)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.LinkLogin);
@@ -342,8 +375,10 @@ namespace MyBudget.Web.AspNet.Controllers
             return callInfo;
         }
 
+        [NonAction]
         partial void LinkLoginCallbackOverride(T4MVC_System_Web_Mvc_ActionResult callInfo);
 
+        [NonAction]
         public override System.Threading.Tasks.Task<System.Web.Mvc.ActionResult> LinkLoginCallback()
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.LinkLoginCallback);
@@ -351,8 +386,10 @@ namespace MyBudget.Web.AspNet.Controllers
             return System.Threading.Tasks.Task.FromResult(callInfo as ActionResult);
         }
 
+        [NonAction]
         partial void ExternalLoginConfirmationOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, MyBudget.Web.AspNet.Models.ExternalLoginConfirmationViewModel model, string returnUrl);
 
+        [NonAction]
         public override System.Threading.Tasks.Task<System.Web.Mvc.ActionResult> ExternalLoginConfirmation(MyBudget.Web.AspNet.Models.ExternalLoginConfirmationViewModel model, string returnUrl)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.ExternalLoginConfirmation);
@@ -362,8 +399,10 @@ namespace MyBudget.Web.AspNet.Controllers
             return System.Threading.Tasks.Task.FromResult(callInfo as ActionResult);
         }
 
+        [NonAction]
         partial void LogOffOverride(T4MVC_System_Web_Mvc_ActionResult callInfo);
 
+        [NonAction]
         public override System.Web.Mvc.ActionResult LogOff()
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.LogOff);
@@ -371,8 +410,10 @@ namespace MyBudget.Web.AspNet.Controllers
             return callInfo;
         }
 
+        [NonAction]
         partial void ExternalLoginFailureOverride(T4MVC_System_Web_Mvc_ActionResult callInfo);
 
+        [NonAction]
         public override System.Web.Mvc.ActionResult ExternalLoginFailure()
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.ExternalLoginFailure);
@@ -380,8 +421,10 @@ namespace MyBudget.Web.AspNet.Controllers
             return callInfo;
         }
 
+        [NonAction]
         partial void RemoveAccountListOverride(T4MVC_System_Web_Mvc_ActionResult callInfo);
 
+        [NonAction]
         public override System.Web.Mvc.ActionResult RemoveAccountList()
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.RemoveAccountList);

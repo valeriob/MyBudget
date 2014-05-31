@@ -13,6 +13,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
@@ -38,10 +39,22 @@ namespace MyBudget.Web.AspNet.Controllers
         }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        protected RedirectToRouteResult RedirectToAction(Task<ActionResult> taskResult)
+        {
+            return RedirectToAction(taskResult.Result);
+        }
+
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         protected RedirectToRouteResult RedirectToActionPermanent(ActionResult result)
         {
             var callInfo = result.GetT4MVCResult();
             return RedirectToRoutePermanent(callInfo.RouteValueDictionary);
+        }
+
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        protected RedirectToRouteResult RedirectToActionPermanent(Task<ActionResult> taskResult)
+        {
+            return RedirectToActionPermanent(taskResult.Result);
         }
 
         [NonAction]
@@ -177,8 +190,10 @@ namespace MyBudget.Web.AspNet.Controllers
     {
         public T4MVC_CategoryController() : base(Dummy.Instance) { }
 
+        [NonAction]
         partial void IndexOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string id);
 
+        [NonAction]
         public override System.Web.Mvc.ActionResult Index(string id)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Index);
@@ -187,8 +202,10 @@ namespace MyBudget.Web.AspNet.Controllers
             return callInfo;
         }
 
+        [NonAction]
         partial void DetailsOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string id);
 
+        [NonAction]
         public override System.Web.Mvc.ActionResult Details(string id)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Details);
@@ -197,8 +214,10 @@ namespace MyBudget.Web.AspNet.Controllers
             return callInfo;
         }
 
+        [NonAction]
         partial void CreateOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string budgetId);
 
+        [NonAction]
         public override System.Web.Mvc.ActionResult Create(string budgetId)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Create);
@@ -207,8 +226,10 @@ namespace MyBudget.Web.AspNet.Controllers
             return callInfo;
         }
 
+        [NonAction]
         partial void CreateOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, MyBudget.Web.AspNet.Models.CategoryViewModel model);
 
+        [NonAction]
         public override System.Web.Mvc.ActionResult Create(MyBudget.Web.AspNet.Models.CategoryViewModel model)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Create);
@@ -217,8 +238,10 @@ namespace MyBudget.Web.AspNet.Controllers
             return callInfo;
         }
 
+        [NonAction]
         partial void EditOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string budgetId, string categoryId);
 
+        [NonAction]
         public override System.Web.Mvc.ActionResult Edit(string budgetId, string categoryId)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Edit);
@@ -228,8 +251,10 @@ namespace MyBudget.Web.AspNet.Controllers
             return callInfo;
         }
 
+        [NonAction]
         partial void EditOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, MyBudget.Web.AspNet.Models.CategoryViewModel model);
 
+        [NonAction]
         public override System.Web.Mvc.ActionResult Edit(MyBudget.Web.AspNet.Models.CategoryViewModel model)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Edit);
@@ -238,8 +263,10 @@ namespace MyBudget.Web.AspNet.Controllers
             return callInfo;
         }
 
+        [NonAction]
         partial void DeleteOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, int id);
 
+        [NonAction]
         public override System.Web.Mvc.ActionResult Delete(int id)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Delete);
@@ -248,8 +275,10 @@ namespace MyBudget.Web.AspNet.Controllers
             return callInfo;
         }
 
+        [NonAction]
         partial void DeleteOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, int id, System.Web.Mvc.FormCollection collection);
 
+        [NonAction]
         public override System.Web.Mvc.ActionResult Delete(int id, System.Web.Mvc.FormCollection collection)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Delete);

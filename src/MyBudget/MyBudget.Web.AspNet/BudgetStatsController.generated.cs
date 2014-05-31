@@ -13,6 +13,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
 using System.Web.Mvc;
@@ -38,10 +39,22 @@ namespace MyBudget.Web.AspNet.Controllers
         }
 
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        protected RedirectToRouteResult RedirectToAction(Task<ActionResult> taskResult)
+        {
+            return RedirectToAction(taskResult.Result);
+        }
+
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         protected RedirectToRouteResult RedirectToActionPermanent(ActionResult result)
         {
             var callInfo = result.GetT4MVCResult();
             return RedirectToRoutePermanent(callInfo.RouteValueDictionary);
+        }
+
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        protected RedirectToRouteResult RedirectToActionPermanent(Task<ActionResult> taskResult)
+        {
+            return RedirectToActionPermanent(taskResult.Result);
         }
 
         [NonAction]
@@ -146,8 +159,10 @@ namespace MyBudget.Web.AspNet.Controllers
     {
         public T4MVC_BudgetStatsController() : base(Dummy.Instance) { }
 
+        [NonAction]
         partial void IndexOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string id);
 
+        [NonAction]
         public override System.Web.Mvc.ActionResult Index(string id)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.Index);
@@ -156,8 +171,10 @@ namespace MyBudget.Web.AspNet.Controllers
             return callInfo;
         }
 
+        [NonAction]
         partial void ByCategoryOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string budgetId, string From, string To);
 
+        [NonAction]
         public override System.Web.Mvc.ActionResult ByCategory(string budgetId, string From, string To)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.ByCategory);
@@ -168,8 +185,10 @@ namespace MyBudget.Web.AspNet.Controllers
             return callInfo;
         }
 
+        [NonAction]
         partial void ByCategoryInTimeOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, string budgetId, string From, string To, string GroupBy);
 
+        [NonAction]
         public override System.Web.Mvc.ActionResult ByCategoryInTime(string budgetId, string From, string To, string GroupBy)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.ByCategoryInTime);
