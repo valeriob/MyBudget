@@ -6,6 +6,7 @@ using MyBudget.Domain.Budgets;
 using MyBudget.Projections;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,14 +35,26 @@ namespace ExcelImporter
             }
             movements = movements.OrderBy(d => d.Data).ToList();
 
+            Console.WriteLine("Read {0} movements from {1}", movements.Count, file);
+
             var importer = new ImportManager(_cm, _pm);
             importer.ImportCategoriesByName(movements.Select(s => s.Categoria), budgetId, userId);
 
             var categories = _pm.GetCategories().GetBudgetsCategories(budgetId);
 
             var createLine = _cm.Create<CreateLine>();
+            DateTime last = DateTime.MinValue;
             foreach (var m in movements)
+            {
+                last = DateTime.Now;
                 createLine(m.ToCreateLine(new BudgetId(budgetId), userId, categories));
+            }
+            var bp = _pm.GetBudgetLinesProjection(budgetId);
+            var galt = bp.GetAllLines(last);
+            galt.Wait();
+            var lines = galt.Result;
+
+            Console.WriteLine("Loaded {0} movements into {1}", lines.Count(), budgetId);
         }
     }
 }

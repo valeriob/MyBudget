@@ -16,7 +16,7 @@ namespace ExcelImporter
     {
         ProjectionManager _pm;
         CommandManager _cm;
-
+        
         public ImportDistribution(ProjectionManager pm, CommandManager cm)
         {
             _cm = cm;
@@ -33,17 +33,17 @@ namespace ExcelImporter
                 //movements.AddRange(excel.Worksheet<Movement>(anno + "")
                 //    .Where(r => r.Data != DateTime.MinValue));
 
-                var laura = excel.WorksheetRange<Movimento>("B4", "E10000", anno + "")
+                var laura = excel.WorksheetRange<Movimento>("B6", "E10000", anno + "")
                      .Where(r => r.Data != DateTime.MinValue)
                      .ToList();
                 laura.ForEach(m => m.DistributionKey = "Laura");
 
-                var valerio = excel.WorksheetRange<Movimento>("G4", "J10000", anno + "")
+                var valerio = excel.WorksheetRange<Movimento>("G6", "J10000", anno + "")
                      .Where(r => r.Data != DateTime.MinValue)
                      .ToList();
                 valerio.ForEach(m => m.DistributionKey = "Valerio");
 
-                var comune = excel.WorksheetRange<Movimento>("L4", "O10000", anno + "")
+                var comune = excel.WorksheetRange<Movimento>("L6", "O10000", anno + "")
                      .Where(r => r.Data != DateTime.MinValue)
                      .ToList();
 
@@ -62,7 +62,7 @@ namespace ExcelImporter
             var categories = _pm.GetCategories().GetBudgetsCategories(budgetId);
 
             var createLine = _cm.Create<CreateLine>();
-            foreach (var m in movements)
+            foreach (var m in movements.Where(r=> r.Categoria != "Arancio"))
                 createLine(m.ToCreateLine(new BudgetId(budgetId), userId, categories));
         }
     }

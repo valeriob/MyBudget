@@ -29,16 +29,16 @@ namespace MyBudget.Projections
         public bool HasLoaded { get; private set; }
         public DateTime LastUpdate { get; private set; }
 
-        public InMemoryProjection(UserCredentials credentials, IAdaptEvents adapter)
+        public InMemoryProjection(IPEndPoint endpoint, UserCredentials credentials, IAdaptEvents adapter)
         {
+            _endpoint = endpoint;
             _credentials = credentials;
             _adapter = adapter;
         }
 
         public InMemoryProjection(IPEndPoint endpoint, UserCredentials credentials, IAdaptEvents adapter, string streamName)
-            :this(credentials, adapter)
+            : this(endpoint, credentials, adapter)
         {
-            _endpoint = endpoint;
             _streamName = streamName;
         }
 
@@ -90,7 +90,8 @@ namespace MyBudget.Projections
                     _succeded++;
                     _checkPoint = evnt.OriginalPosition.GetValueOrDefault();
                     _lastEventNumber = evnt.OriginalEventNumber;
-                    LastUpdate = ev.Timestamp;
+                    if(ev.Timestamp > LastUpdate)
+                        LastUpdate = ev.Timestamp;
                 }
             }
             catch (Exception)

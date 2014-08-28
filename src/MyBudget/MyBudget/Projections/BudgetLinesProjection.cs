@@ -15,9 +15,13 @@ namespace MyBudget.Projections
     public interface IBudgetLinesProjection
     {
         IEnumerable<BudgetLine> GetAllLines();
+        Task<IEnumerable<BudgetLine>> GetAllLines(DateTime last);
+
         BudgetLine GetLine(string id);
         IEnumerable<BudgetLine> GetAllLinesBetween(DateTime? from, DateTime? to);
         PagedResult<BudgetLine> GetAllLinesPaged(int page, DateTime? from, DateTime? to, string category);
+
+      
     }
 
 
@@ -28,6 +32,13 @@ namespace MyBudget.Projections
         List<BudgetLine> _lines = new List<BudgetLine>();
         public string BudgetId { get { return _budget; } }
 
+
+
+        public BudgetLinesProjection(string budget, IPEndPoint endpoint, UserCredentials credentials, IAdaptEvents adapter)
+            : base(endpoint, credentials, adapter)
+        {
+            _budget = budget;
+        }
 
         public BudgetLinesProjection(string budget, IPEndPoint endpoint, UserCredentials credentials, IAdaptEvents adapter, string stream)
             : base(endpoint, credentials, adapter, stream)
@@ -67,6 +78,14 @@ namespace MyBudget.Projections
 
         public IEnumerable<BudgetLine> GetAllLines()
         {
+            return _lines.OrderBy(d => d.Date);
+        }
+
+        public async Task<IEnumerable<BudgetLine>> GetAllLines(DateTime until)
+        {
+            while (LastUpdate < until)
+                await Task.Delay(100);
+
             return _lines.OrderBy(d => d.Date);
         }
 

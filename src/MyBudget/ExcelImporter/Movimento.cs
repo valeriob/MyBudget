@@ -23,7 +23,7 @@ namespace ExcelImporter
         {
             var category = Categoria.Trim().Replace((char)160, ' ');
             var categoryId = categories.FirstOrDefault(d => string.Compare(d.Name, category, true) == 0).Id;
-            var expense = new Expense(new Amount(Currencies.Euro(), Convert.ToDecimal(Spesa)), Data, categoryId, Descrizione, DistributionKey);
+            var expense = new Expense(new Amount(Currencies.Euro(), Spesa), Data, categoryId, Descrizione, DistributionKey);
 
             return new CreateLine
             {
@@ -33,7 +33,7 @@ namespace ExcelImporter
                 LineId = LineId.Create(budgetId).ToString(),
                 UserId = userId,
                 Expense = expense,
-                
+                 
             };
         }
 

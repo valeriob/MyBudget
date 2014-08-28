@@ -17,7 +17,7 @@ namespace ExcelImporter
         }
 
 
-        public BudgetChooserResult ChooseBudget()
+        public BudgetChooserResult ChooseBudget(string reason = "")
         {
             var tu = _pm.GetUsersList().AllUsers();
             tu.Wait();
@@ -26,7 +26,7 @@ namespace ExcelImporter
 
             var budgets = _pm.GetBudgetsList().GetBudgetsUserCanView(new MyBudget.Domain.Users.UserId(userId));
 
-            var budgetId = ChooseBudgetId(budgets);
+            var budgetId = ChooseBudgetId(budgets, reason);
 
             return new BudgetChooserResult 
             {
@@ -51,10 +51,12 @@ namespace ExcelImporter
             return array[index].Id;
         }
 
-        string ChooseBudgetId(IEnumerable<Budget> budgets)
+        string ChooseBudgetId(IEnumerable<Budget> budgets, string reason)
         {
             if (budgets.Count() == 1)
                 return budgets.Select(s => s.Id).Single();
+
+            Console.WriteLine("Choose budget for : " + reason);
 
             var array = budgets.ToArray();
             for (int i = 0; i < array.Length; i++)

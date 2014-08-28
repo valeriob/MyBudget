@@ -34,7 +34,7 @@ namespace MyBudget.Tests
     {
         public MyEvnt EventAppened;
 
-        public MyProjection() : base(null, null)
+        public MyProjection() : base(null, null, null)
         {
 
         }

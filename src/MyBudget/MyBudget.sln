@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBudget", "MyBudget\MyBudget.csproj", "{396EFE94-1A08-4646-B72A-179218D9D00D}"
 EndProject
@@ -32,6 +32,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		ReadMe_MVC.txt = ReadMe_MVC.txt
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugProjections", "DebugProjections\DebugProjections.csproj", "{99B183F1-E390-43EA-BEA3-DD82404EDFCA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +77,10 @@ Global
 		{166188E1-4FF8-47EE-A50E-6A50B5DDE93F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{166188E1-4FF8-47EE-A50E-6A50B5DDE93F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{166188E1-4FF8-47EE-A50E-6A50B5DDE93F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99B183F1-E390-43EA-BEA3-DD82404EDFCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99B183F1-E390-43EA-BEA3-DD82404EDFCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99B183F1-E390-43EA-BEA3-DD82404EDFCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99B183F1-E390-43EA-BEA3-DD82404EDFCA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,5 +89,6 @@ Global
 		{30672CD0-EB40-4603-9877-2D710C4BEF41} = {49EF662D-9DEA-4D0E-9249-8221110D8B92}
 		{56BDB0AF-ED36-410F-B721-EE9B21A4251F} = {49EF662D-9DEA-4D0E-9249-8221110D8B92}
 		{8380AA62-98C2-4CCD-9A7E-0B16F02E61C9} = {49EF662D-9DEA-4D0E-9249-8221110D8B92}
+		{99B183F1-E390-43EA-BEA3-DD82404EDFCA} = {49EF662D-9DEA-4D0E-9249-8221110D8B92}
 	EndGlobalSection
 EndGlobal

@@ -19,7 +19,15 @@ namespace MyBudget.Infrastructure
 
         IEnumerable<EventData> PrepareEvents(IEnumerable<object> events, IDictionary<string, object> commitHeaders);
         object DeserializeEvent(RecordedEvent recordedEvent);
+
+       // void DispatchEventsTo(ICanDispatchEvents projection);
     }
+
+    public interface ICanDispatchEvents
+    {
+        void Dispatch(dynamic evnt);
+    }
+
 
     public class EventStoreAdapter : IAdaptEvents
     {
@@ -34,6 +42,10 @@ namespace MyBudget.Infrastructure
             _credentials = credentials;
         }
 
+        //public void DispatchEventsTo(ICanDispatchEvents projection)
+        //{
+        //    GetConnection().SubscribeToAll(true,)
+        //}
 
         public IEnumerable<dynamic> GetStreamEvents(string stream)
         {

@@ -82,7 +82,8 @@ namespace MyBudget.Projections
             if (_budgetLines.TryGetValue(budgetId, out blp) == false)
             {
                 var linesStream = "lines_of_" + budgetId;
-                _budgetLines[budgetId] = blp = new BudgetLinesProjection(budgetId, _endpoint, _credentials, _adapter, linesStream);
+                //_budgetLines[budgetId] = blp = new BudgetLinesProjection(budgetId, _endpoint, _credentials, _adapter, linesStream);
+                _budgetLines[budgetId] = blp = new BudgetLinesProjection(budgetId, _endpoint, _credentials, _adapter);
                 blp.Start();
             }
             return blp;

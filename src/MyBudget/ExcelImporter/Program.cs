@@ -20,7 +20,6 @@ namespace ExcelImporter
     {
         static void Main(string[] args)
         {
-            string file = @"c:\Users\vborioni.ONIT\Downloads\spese.xlsx";
 
             var endpoint = new IPEndPoint(IPAddress.Loopback, 1113);
             var esCon = EventStoreConnection.Create(endpoint);
@@ -32,12 +31,13 @@ namespace ExcelImporter
             var pm = new MyBudget.Projections.ProjectionManager(endpoint, credentials, new EventStoreAdapter(endpoint, credentials));
             pm.Run();
 
-            var context = new BudgetChooser(pm).ChooseBudget();
+            //var comuni = @"C:\Users\Valerio\Downloads\Spese Laura e Valerio.xlsx";
+            //var context = new BudgetChooser(pm).ChooseBudget(comuni);
+            //new ImportDistribution(pm, cm).Run(context.BudgetId, context.UserId, comuni);
 
-            file = @"C:\Users\Valerio\Downloads\Spese Laura e Valerio.xlsx";
-            new ImportDistribution(pm, cm).Run(context.BudgetId, context.UserId, file); 
-
-            new ImportStandard(pm, cm).Run(context.BudgetId, context.UserId, file);
+            var singole = @"c:\Users\Valerio\Downloads\spese.xlsx";
+            var c2 = new BudgetChooser(pm).ChooseBudget(singole);
+            new ImportStandard(pm, cm).Run(c2.BudgetId, c2.UserId, singole);
         }
 
 

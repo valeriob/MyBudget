@@ -20,9 +20,10 @@ namespace MyBudget.Domain.ValueObjects
             Amount = amount;
             Date = date;
             Category = category;
+            Description = description;
             DistributionKey = distributionKey;
             Tags = tags;
-            Description = description;
+           
         }
     }
 }

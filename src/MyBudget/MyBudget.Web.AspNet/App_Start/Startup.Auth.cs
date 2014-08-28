@@ -37,6 +37,8 @@ namespace MyBudget.Web.AspNet
             //   appSecret: "");
 
             app.UseGoogleAuthentication();
+
+    
         }
     }
 }
