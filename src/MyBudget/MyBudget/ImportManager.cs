@@ -25,7 +25,7 @@ namespace MyBudget
             var cp = _projectionManager.GetCategories();
             var createCategory = _commandManager.Create<CreateCategory>();
 
-            DateTime lastUpdate = DateTime.MinValue;
+            DateTime lastUpdate = cp.LastUpdate;
             var cleaned = categoryNames.Select(s => s.Trim().Replace((char)160, ' ')).Distinct(StringComparer.CurrentCultureIgnoreCase)
                 .OrderBy(d=> d)
                 .ToList();

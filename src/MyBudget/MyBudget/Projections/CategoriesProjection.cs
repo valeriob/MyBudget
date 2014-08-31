@@ -15,6 +15,7 @@ namespace MyBudget.Projections
 {
     public interface ICategoriesProjection
     {
+        DateTime LastUpdate { get; }
         IEnumerable<Category> GetBudgetsCategories(BudgetId budgetId);
         IEnumerable<Category> GetBudgetsCategories(string budgetId);
         Task<IEnumerable<Category>> GetBudgetsCategories(string budgetId, DateTime updated);
@@ -27,6 +28,10 @@ namespace MyBudget.Projections
 
         public CategoriesProjection(IPEndPoint endpoint, UserCredentials credentials, IAdaptEvents adapter, string streamName)
             : base(endpoint, credentials, adapter, streamName)
+        {
+        }
+        public CategoriesProjection(IPEndPoint endpoint, UserCredentials credentials, IAdaptEvents adapter)
+            : base(endpoint, credentials, adapter)
         {
         }
 

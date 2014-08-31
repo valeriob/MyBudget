@@ -31,9 +31,9 @@ namespace ExcelImporter
             var pm = new MyBudget.Projections.ProjectionManager(endpoint, credentials, new EventStoreAdapter(endpoint, credentials));
             pm.Run();
 
-            //var comuni = @"C:\Users\Valerio\Downloads\Spese Laura e Valerio.xlsx";
-            //var context = new BudgetChooser(pm).ChooseBudget(comuni);
-            //new ImportDistribution(pm, cm).Run(context.BudgetId, context.UserId, comuni);
+            var comuni = @"C:\Users\Valerio\Downloads\Spese Laura e Valerio.xlsx";
+            var context = new BudgetChooser(pm).ChooseBudget(comuni);
+            new ImportDistribution(pm, cm).Run(context.BudgetId, context.UserId, comuni);
 
             var singole = @"c:\Users\Valerio\Downloads\spese.xlsx";
             var c2 = new BudgetChooser(pm).ChooseBudget(singole);

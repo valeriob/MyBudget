@@ -38,7 +38,9 @@ namespace ExcelImporter
             Console.WriteLine("Read {0} movements from {1}", movements.Count, file);
 
             var importer = new ImportManager(_cm, _pm);
-            importer.ImportCategoriesByName(movements.Select(s => s.Categoria), budgetId, userId);
+            var categorie = movements.Select(s => s.Categoria).Where(r => r != "Arancio").ToArray();
+
+            importer.ImportCategoriesByName(categorie, budgetId, userId);
 
             var categories = _pm.GetCategories().GetBudgetsCategories(budgetId);
 
