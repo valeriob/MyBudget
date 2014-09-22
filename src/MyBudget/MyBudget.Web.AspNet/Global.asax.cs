@@ -25,7 +25,7 @@ namespace MyBudget.Web.AspNet
 
             var endpoint = new IPEndPoint(IPAddress.Loopback, 1113);
             var con = EventStoreConnection.Create(endpoint);
-            con.Connect();
+            con.ConnectAsync();
 
             var credentials = new EventStore.ClientAPI.SystemData.UserCredentials("admin", "changeit");
 

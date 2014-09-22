@@ -47,7 +47,8 @@ namespace MyBudget.Projections
         {
             HasLoaded = false;
             _connection = EventStore.ClientAPI.EventStoreConnection.Create(_endpoint);
-            _connection.Connect();
+            var ct = _connection.ConnectAsync();
+            ct.Wait();
 
             if (string.IsNullOrEmpty(_streamName))
                 _subscription = _connection.SubscribeToAllFrom(_checkPoint, true, EventAppeared, Live, SubscriptionDropped, _credentials);
