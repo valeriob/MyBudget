@@ -35,16 +35,20 @@ namespace MyBudget
                 var task = cp.GetBudgetsCategories(budgetId, lastUpdate);
                 task.Wait();
                 if (task.Result.Any(r => string.Compare(r.Name, categoryName, true) == 0) == false)
+                {
+                    lastUpdate = DateTime.Now;
+                    System.Diagnostics.Debug.Assert(lastUpdate > cp.LastUpdate);
                     createCategory(new CreateCategory
                     {
                         Id = Guid.NewGuid(),
-                        Timestamp = lastUpdate = DateTime.Now,
+                        Timestamp = lastUpdate,
                         BudgetId = budgetId,
                         CategoryId = "Category-" + Guid.NewGuid(),
                         UserId = userId,
                         CategoryDescription = "",
                         CategoryName = categoryName
                     });
+                }
             }
 
             //cp.GetBudgetsCategories(budgetId, lastUpdate).Wait();

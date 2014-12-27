@@ -53,6 +53,9 @@ namespace ExcelImporter
                 movements.AddRange(comune);
             }
 
+            var tasse = movements.GroupBy(g => g.Categoria).ToList();
+
+            Console.WriteLine("Read {0} movements from {1}", movements.Count, file);
             movements = movements.OrderBy(d => d.Data).ToList();
 
             
@@ -63,8 +66,23 @@ namespace ExcelImporter
             var categories = _pm.GetCategories().GetBudgetsCategories(budgetId);
 
             var createLine = _cm.Create<CreateLine>();
-            foreach (var m in movements.Where(r=> r.Categoria != "Arancio"))
-                createLine(m.ToCreateLine(new BudgetId(budgetId), userId, categories));
+            //foreach (var m in movements.Where(r=> r.Categoria != "Arancio"))
+            //    createLine(m.ToCreateLine(new BudgetId(budgetId), userId, categories));
+
+            DateTime last = DateTime.MinValue;
+            foreach (var m in movements.Where(r => r.Categoria != "Arancio"))
+            {
+                last = DateTime.Now;
+                createLine(m.ToCreateLine(last, new BudgetId(budgetId), userId, categories));
+            }
+
+
+            var bp = _pm.GetBudgetLinesProjection(budgetId);
+            var galt = bp.GetAllLines(last);
+            galt.Wait();
+            var lines = galt.Result;
+
+            Console.WriteLine("Loaded {0} movements into {1}", lines.Count(), budgetId);
         }
     }
 }

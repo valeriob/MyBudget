@@ -62,7 +62,10 @@ namespace MyBudget.Projections
                 return;
 
             if (_lines.Any(l => l.Id == evnt.LineId.ToString()))
+            {
                 return;
+                System.Diagnostics.Debugger.Break();
+            }
             _lines.Add(new BudgetLine(evnt));
         }
 

@@ -19,7 +19,7 @@ namespace ExcelImporter
 
         public string DistributionKey { get; set; }
 
-        public CreateLine ToCreateLine(BudgetId budgetId, string userId, IEnumerable<MyBudget.Projections.Category> categories)
+        public CreateLine ToCreateLine(DateTime timestamp, BudgetId budgetId, string userId, IEnumerable<MyBudget.Projections.Category> categories)
         {
             var category = Categoria.Trim().Replace((char)160, ' ');
             var categoryId = categories.FirstOrDefault(d => string.Compare(d.Name, category, true) == 0).Id;
@@ -28,7 +28,7 @@ namespace ExcelImporter
             return new CreateLine
             {
                 Id = Guid.NewGuid(),
-                Timestamp = DateTime.Now,
+                Timestamp = timestamp,
                 BudgetId = budgetId.ToString(),
                 LineId = LineId.Create(budgetId).ToString(),
                 UserId = userId,

@@ -49,7 +49,7 @@ namespace ExcelImporter
             foreach (var m in movements)
             {
                 last = DateTime.Now;
-                createLine(m.ToCreateLine(new BudgetId(budgetId), userId, categories));
+                createLine(m.ToCreateLine(last, new BudgetId(budgetId), userId, categories));
             }
             var bp = _pm.GetBudgetLinesProjection(budgetId);
             var galt = bp.GetAllLines(last);
