@@ -3,8 +3,11 @@
     ViewBag.Title = "ByCategory";
 }
 
-<h2>ByCategory</h2>
+<h2>
+    ByCategory
 
+</h2>
+<h4>@Model.TotalLinesCount</h4>
 
 <div>
     @using (Html.BeginForm(MVC.BudgetStats.ByCategoryInTime(), FormMethod.Get))

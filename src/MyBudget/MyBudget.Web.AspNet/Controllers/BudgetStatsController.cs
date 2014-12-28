@@ -86,7 +86,7 @@ namespace MyBudget.Web.AspNet.Controllers
         public IEnumerable<TimeGroup> TimeSerie { get; private set; }
         public IEnumerable<Category> Categories { get; private set; }
         public GroupBy Grouping { get; private set; }
-
+        public int TotalLinesCount { get; set; }
 
         public BudgetStatsByCategoryInTimeViewModel(IEnumerable<Category> categories, IEnumerable<BudgetLine> lines,
             string budgetId, string budgetName, DateTime? from, DateTime? to, GroupBy grouping)
@@ -98,6 +98,7 @@ namespace MyBudget.Web.AspNet.Controllers
             Categories = categories;// lines.Select(s => s.Category).Distinct().ToArray();
             Grouping = grouping;
             TimeSerie = Group(lines, grouping);
+            TotalLinesCount = lines.Count();
         }
 
 

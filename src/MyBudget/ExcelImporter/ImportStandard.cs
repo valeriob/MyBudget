@@ -29,11 +29,27 @@ namespace ExcelImporter
             var excel = new ExcelQueryFactory(file);
             var anni = new[] { 2011, 2012, 2013, 2014 };
             var movements = new List<Movimento>();
+
+            DateTime ld;
+            int count = 0;
+            //"B3","F22",
+            //foreach (var asd in excel.WorksheetRange<Movimento>("B3", "F300", 2020 + ""))
+            //foreach (var asd in excel.Worksheet<Movimento>(2020 + ""))
+            //{
+            //    count++;
+            //    if (asd.Data != DateTime.MinValue)
+            //        ld = asd.Data;
+            //}
+
             foreach (var anno in anni)
             {
+                //movements.AddRange(excel.WorksheetRange<Movimento>("B3", "E300", anno + "").Where(r => r.Data != DateTime.MinValue));
                 movements.AddRange(excel.Worksheet<Movimento>(anno + "").Where(r => r.Data != DateTime.MinValue));
             }
             movements = movements.OrderBy(d => d.Data).ToList();
+
+            var stats = movements.GroupBy(g => g.Data.Year).ToList();
+            var zero = movements.Where(m => m.Spesa == decimal.Zero).ToList();
 
             Console.WriteLine("Read {0} movements from {1}", movements.Count, file);
 

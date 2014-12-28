@@ -53,14 +53,14 @@ namespace ExcelImporter
                 movements.AddRange(comune);
             }
 
-            var tasse = movements.GroupBy(g => g.Categoria).ToList();
+            //var tasse = movements.GroupBy(g => g.Categoria).ToList();
 
             Console.WriteLine("Read {0} movements from {1}", movements.Count, file);
-            movements = movements.OrderBy(d => d.Data).ToList();
+            movements = movements.Where(r => r.Categoria != "Arancio").OrderBy(d => d.Data).ToList();
 
             
             var importer = new ImportManager(_cm, _pm);
-            var categorie = movements.Select(s => s.Categoria).Where(r=> r != "Arancio").ToArray();
+            var categorie = movements.Select(s => s.Categoria).ToArray();
             importer.ImportCategoriesByName(categorie, budgetId, userId);
 
             var categories = _pm.GetCategories().GetBudgetsCategories(budgetId);
@@ -70,7 +70,7 @@ namespace ExcelImporter
             //    createLine(m.ToCreateLine(new BudgetId(budgetId), userId, categories));
 
             DateTime last = DateTime.MinValue;
-            foreach (var m in movements.Where(r => r.Categoria != "Arancio"))
+            foreach (var m in movements)
             {
                 last = DateTime.Now;
                 createLine(m.ToCreateLine(last, new BudgetId(budgetId), userId, categories));
