@@ -1,0 +1,8 @@
+fromAll().whenAny(function (s, e) {
+           var category = e.streamId.substring(0, 5);
+           if (category == 'Lines') {
+               var streamId = 'linesOfBudget2_' + e.body.BudgetId._id;
+                linkTo(streamId, e);
+           }
+           return null;
+       });
