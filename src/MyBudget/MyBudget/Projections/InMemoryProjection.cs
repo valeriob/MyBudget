@@ -49,11 +49,12 @@ namespace MyBudget.Projections
             _connection = EventStore.ClientAPI.EventStoreConnection.Create(_endpoint);
             var ct = _connection.ConnectAsync();
             ct.Wait();
-
+            _checkPoint = Position.Start;
             if (string.IsNullOrEmpty(_streamName))
-                _subscription = _connection.SubscribeToAllFrom(_checkPoint, true, EventAppeared, Live, SubscriptionDropped, _credentials);
+                _subscription = _connection.SubscribeToAllFrom(_checkPoint, false, EventAppeared, Live, SubscriptionDropped, _credentials);
             else
                 _subscription = _connection.SubscribeToStreamFrom(_streamName, _lastEventNumber, true, EventAppeared, Live, SubscriptionDropped, _credentials);
+
         }
 
         public void Stop()

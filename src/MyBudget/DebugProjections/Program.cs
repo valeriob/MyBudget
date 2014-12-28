@@ -25,19 +25,24 @@ namespace DebugProjections
 
             var adapter = new EventStoreAdapter(endpoint, credentials);
 
-            var cm = new CommandManager(esCon);
-            var pm = new ProjectionManager(endpoint, credentials, adapter);
-            pm.Run();
+            //var cm = new CommandManager(esCon);
+            //var pm = new ProjectionManager(endpoint, credentials, adapter);
+            //pm.Run();
 
 
-            var cp = new MyDiagProjection(endpoint, credentials, adapter, "Budgets-d46879f5_8130_4afb_b947_ecc0021e50be");
-            cp.Start();
-            while (cp.HasLoaded == false)
-                System.Threading.Thread.Sleep(100);
+            //var cp = new MyDiagProjection(endpoint, credentials, adapter, "Budgets-1722f4ea_a9a5_4d97_8c39_c9d450a1331a");
+            //cp.Start();
+            //while (cp.HasLoaded == false)
+            //    System.Threading.Thread.Sleep(100);
 
+            //Console.WriteLine("done from all");
+            //Console.ReadLine();
 
-            var cp2 = new MyDiagProjection(endpoint, credentials, adapter, "Budgets-d46879f5_8130_4afb_b947_ecc0021e50be", "lines_of_Budgets-d46879f5_8130_4afb_b947_ecc0021e50be");
+            var cp2 = new BudgetLinesProjection("Budgets-1722f4ea_a9a5_4d97_8c39_c9d450a1331a", endpoint, credentials, adapter, "lines_of_Budgets-1722f4ea_a9a5_4d97_8c39_c9d450a1331a" );
             cp2.Start();
+
+            //var cp2 = new MyDiagProjection(endpoint, credentials, adapter, "Budgets-1722f4ea_a9a5_4d97_8c39_c9d450a1331a", "lines_of_Budgets-1722f4ea_a9a5_4d97_8c39_c9d450a1331a");
+            //cp2.Start();
             while (cp2.HasLoaded == false)
                 System.Threading.Thread.Sleep(100);
             
