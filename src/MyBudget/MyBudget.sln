@@ -37,6 +37,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugProjections", "DebugPr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsolidaSpese", "ConsolidaExcel\ConsolidaSpese.csproj", "{A351A5B3-1540-4A01-B8FA-69DF6B5298B3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsolidaSpeseComuni", "ConsolidaSpeseComuni\ConsolidaSpeseComuni.csproj", "{815E8854-3C90-4B14-A9F5-971633FB254A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{A351A5B3-1540-4A01-B8FA-69DF6B5298B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A351A5B3-1540-4A01-B8FA-69DF6B5298B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A351A5B3-1540-4A01-B8FA-69DF6B5298B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{815E8854-3C90-4B14-A9F5-971633FB254A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{815E8854-3C90-4B14-A9F5-971633FB254A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{815E8854-3C90-4B14-A9F5-971633FB254A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{815E8854-3C90-4B14-A9F5-971633FB254A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,5 +103,6 @@ Global
 		{8380AA62-98C2-4CCD-9A7E-0B16F02E61C9} = {49EF662D-9DEA-4D0E-9249-8221110D8B92}
 		{99B183F1-E390-43EA-BEA3-DD82404EDFCA} = {49EF662D-9DEA-4D0E-9249-8221110D8B92}
 		{A351A5B3-1540-4A01-B8FA-69DF6B5298B3} = {49EF662D-9DEA-4D0E-9249-8221110D8B92}
+		{815E8854-3C90-4B14-A9F5-971633FB254A} = {49EF662D-9DEA-4D0E-9249-8221110D8B92}
 	EndGlobalSection
 EndGlobal
