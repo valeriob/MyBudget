@@ -17,7 +17,7 @@ namespace ConsolidaExcel
             //var file = @"spese.xlsx";
             //var excel = new ExcelQueryFactory(file);
             var numeroDiAnniFinoAdOggi = DateTime.Today.Year - 2011;
-            var anni = Enumerable.Range(2011, numeroDiAnniFinoAdOggi);
+            var anni = Enumerable.Range(2011, numeroDiAnniFinoAdOggi + 1);
 
             using (var analisiWb = new XLWorkbook())
             {

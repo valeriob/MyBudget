@@ -16,7 +16,7 @@ namespace ConsolidaSpeseComuni
             var fileAnalisi = args[1];
            
             var numeroDiAnniFinoAdOggi = DateTime.Today.Year - 2013;
-            var anni = Enumerable.Range(2013, numeroDiAnniFinoAdOggi);
+            var anni = Enumerable.Range(2013, numeroDiAnniFinoAdOggi + 1);
 
             using (var analisiWb = new XLWorkbook())
             {
