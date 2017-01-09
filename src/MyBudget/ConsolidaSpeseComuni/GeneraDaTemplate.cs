@@ -2,35 +2,26 @@
 using LinqToExcel;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ConsolidaSpeseComuni
 {
-    class Program
+    class GeneraDaTemplate
     {
-        static void Main(string[] args)
-        {
-            var fileSpese = args[0];
-            var fileAnalisi = args[1];
-            var template = args[2];
-
-            new GeneraDaTemplate().Run(fileSpese, fileAnalisi, template);
-            return;
-
+        public void Run(string fileSpese, string fileAnalisi, string template)
+        {           
             var numeroDiAnniFinoAdOggi = DateTime.Today.Year - 2013;
             var anni = Enumerable.Range(2013, numeroDiAnniFinoAdOggi + 1);
 
-            using (var analisiWb = new XLWorkbook())
+            File.Copy(template, fileAnalisi, true);
+
+            using (var analisiWb = new XLWorkbook(fileAnalisi))
             {
-                var dati = analisiWb.Worksheets.Add("Dati");
-                int riga = 1;
-                dati.Cell(riga, "A").Value = "Data";
-                dati.Cell(riga, "B").Value = "Categoria";
-                dati.Cell(riga, "C").Value = "Descrizione";
-                dati.Cell(riga, "D").Value = "Spesa";
-                riga++;
+                var dati = analisiWb.Worksheet("Dati");
+                int riga = 2;
 
                 using (var spese = new XLWorkbook(fileSpese))
                 {

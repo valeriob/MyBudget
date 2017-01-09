@@ -14,6 +14,11 @@ namespace ConsolidaExcel
         {
             var fileSpese = args[0];
             var fileAnalisi = args[1];
+            var template = args[2];
+
+            new GeneraDaTemplate().Run(fileSpese, fileAnalisi, template);
+            return;
+
             //var file = @"spese.xlsx";
             //var excel = new ExcelQueryFactory(file);
             var numeroDiAnniFinoAdOggi = DateTime.Today.Year - 2011;
@@ -55,11 +60,11 @@ namespace ConsolidaExcel
                     //range = worksheet.RangeUsed();
 
                     var pivotSh = analisiWb.Worksheets.Add("Pivot");
-                    var pivot = pivotSh.CreatePivotTable(pivotSh.Cell("F2"));
-                    pivot.SourceRange = range;
-        
+                   // var pivot = pivotSh.CreatePivotTable(pivotSh.Cell("F2"));
+                   // pivot.SourceRange = range;
+                   
                     ////var pivot = worksheet.PivotTables.AddNew("PivotTable", worksheet.Cell("F2"), range);
-                    pivot.RowLabels.Add("Categoria");
+                   // pivot.RowLabels.Add("Categoria");
                    // pivot.RowLabels.Add("Descrizione");
                    // pivot.ColumnLabels.Add("Data");
                    // pivot.Values.Add("Spesa");

@@ -6,21 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsolidaSpeseComuni
+namespace ConsolidaExcel
 {
-    class Program
+    class Genera
     {
-        static void Main(string[] args)
+        public void Run(string fileSpese, string fileAnalisi)
         {
-            var fileSpese = args[0];
-            var fileAnalisi = args[1];
-            var template = args[2];
-
-            new GeneraDaTemplate().Run(fileSpese, fileAnalisi, template);
-            return;
-
-            var numeroDiAnniFinoAdOggi = DateTime.Today.Year - 2013;
-            var anni = Enumerable.Range(2013, numeroDiAnniFinoAdOggi + 1);
+            var numeroDiAnniFinoAdOggi = DateTime.Today.Year - 2011;
+            var anni = Enumerable.Range(2011, numeroDiAnniFinoAdOggi + 1);
 
             using (var analisiWb = new XLWorkbook())
             {
@@ -37,13 +30,7 @@ namespace ConsolidaSpeseComuni
                     foreach (var anno in anni)
                     {
                         var wsAnno = spese.Worksheet(anno + "");
-                        var lastRowNumber = wsAnno.LastRowUsed().FirstCell().Address.RowNumber;
-
-                        var laura = wsAnno.Range("B1", "E"+ lastRowNumber).Rows().Select(Movimento.TryParse);
-                        var valerio = wsAnno.Range("G1", "J" + lastRowNumber).Rows().Select(Movimento.TryParse);
-                        var comune = wsAnno.Range("L1", "O" + lastRowNumber).Rows().Select(Movimento.TryParse);
-
-                        var movimenti = laura.Concat(valerio).Concat(comune).Where(r => r != null).ToArray();
+                        var movimenti = wsAnno.Rows().Select(Movimento.TryParse).Where(r => r != null).ToArray();
 
                         foreach (var movimento in movimenti)
                         {
@@ -57,11 +44,19 @@ namespace ConsolidaSpeseComuni
                     }
 
                     var dataAsTable = dati.RangeUsed().AsTable();
-                    dati.Tables.Add(dataAsTable);                
-                }
-                analisiWb.SaveAs(fileAnalisi);
-            }
+                    dati.Tables.Add(dataAsTable);
+                  
 
+                    var range = dati.Range("B1", "B30");
+                    //range = worksheet.RangeUsed();
+
+                    var pivotSh = analisiWb.Worksheets.Add("Pivot");
+                }
+
+
+                analisiWb.SaveAs(fileAnalisi);
+
+            }
         }
     }
 }
