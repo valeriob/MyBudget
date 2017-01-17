@@ -39,9 +39,9 @@ namespace ConsolidaSpeseComuni
                         var wsAnno = spese.Worksheet(anno + "");
                         var lastRowNumber = wsAnno.LastRowUsed().FirstCell().Address.RowNumber;
 
-                        var laura = wsAnno.Range("B1", "E"+ lastRowNumber).Rows().Select(Movimento.TryParse);
-                        var valerio = wsAnno.Range("G1", "J" + lastRowNumber).Rows().Select(Movimento.TryParse);
-                        var comune = wsAnno.Range("L1", "O" + lastRowNumber).Rows().Select(Movimento.TryParse);
+                        var laura = wsAnno.Range("B1", "E"+ lastRowNumber).Rows().Select(Movimento.TryParse2017);
+                        var valerio = wsAnno.Range("G1", "J" + lastRowNumber).Rows().Select(Movimento.TryParse2017);
+                        var comune = wsAnno.Range("L1", "O" + lastRowNumber).Rows().Select(Movimento.TryParse2017);
 
                         var movimenti = laura.Concat(valerio).Concat(comune).Where(r => r != null).ToArray();
 
