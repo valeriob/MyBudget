@@ -71,8 +71,8 @@ namespace ConsolidaSpeseComuni
         int Estrai_Template_2017(IXLWorksheet wsAnno, int lastRowNumber, IXLWorksheet dati, int riga)
         {
             var laura = wsAnno.Range("B1", "F" + lastRowNumber).Rows().Select(Movimento.TryParse2017);
-            var valerio = wsAnno.Range("G1", "L" + lastRowNumber).Rows().Select(Movimento.TryParse2017);
-            var comune = wsAnno.Range("L1", "R" + lastRowNumber).Rows().Select(Movimento.TryParse2017);
+            var valerio = wsAnno.Range("H1", "L" + lastRowNumber).Rows().Select(Movimento.TryParse2017);
+            var comune = wsAnno.Range("N1", "R" + lastRowNumber).Rows().Select(Movimento.TryParse2017);
 
             var movimenti = laura.Concat(valerio).Concat(comune).Where(r => r != null).ToArray();
 
