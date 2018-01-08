@@ -12,10 +12,14 @@ namespace ConsolidaExcel
     {
         static void Main(string[] args)
         {
+            //var culture = System.Globalization.CultureInfo.CurrentCulture;
+            //Console.WriteLine("Current culture is " + culture.DisplayName);
+            //Console.ReadLine();
+
             var fileSpese = args[0];
             var fileAnalisi = args[1];
             var template = args[2];
-
+            
             new GeneraDaTemplate().Run(fileSpese, fileAnalisi, template);
             return;
 

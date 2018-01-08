@@ -1,6 +1,6 @@
 ﻿using ClosedXML.Excel;
 using System;
-
+using System.Linq;
 
 namespace ConsolidaSpeseComuni
 {
@@ -27,11 +27,11 @@ namespace ConsolidaSpeseComuni
 
                 return new Movimento
                 {
-                   Data = data,
-                   Categoria = categoria,
-                   Per = per,
-                   Descrizione = descrizione,
-                   Spesa = spesa,
+                    Data = data,
+                    Categoria = categoria,
+                    Per = per,
+                    Descrizione = descrizione,
+                    Spesa = spesa,
                 };
             }
             catch
@@ -44,10 +44,25 @@ namespace ConsolidaSpeseComuni
         {
             try
             {
-                var data = (DateTime)row.Cell(1).Value;
-                var categoria = (string)row.Cell(2).Value;
-                var descrizione = (string)row.Cell(3).Value;
-                var spesa = Convert.ToDecimal(row.Cell(4).Value);
+                var dataValue = row.Cell(1).Value;
+                var categoriaValue = row.Cell(2).Value;
+                var descrizioneValue = row.Cell(3).Value;
+                var spesaValue = row.Cell(4).Value;
+
+                if (Vuoto(dataValue, spesaValue))
+                {
+                    return null;
+                }
+
+                DateTime data = DateTime.MinValue;
+                if (dataValue is DateTime)
+                    data = (DateTime)dataValue;
+                if (dataValue is string)
+                    data = DateTime.Parse((string)dataValue);
+
+                var categoria = (string)categoriaValue;
+                var descrizione = (string)descrizioneValue;
+                var spesa = Convert.ToDecimal(spesaValue);
 
                 return new Movimento
                 {
@@ -59,8 +74,16 @@ namespace ConsolidaSpeseComuni
             }
             catch
             {
-                return null;
+                throw;
             }
+        }
+
+        static string[] skipDataValues = new[] { "Data", "Laura", "Valerio", "Comune" };
+        static bool Vuoto(object dataValue, object spesaValue)
+        {
+            var dataVuota = dataValue == null || (dataValue is string && (string.IsNullOrEmpty(dataValue as string) || skipDataValues.Contains(dataValue as string)));
+            var spesaVuota = spesaValue == null || (spesaValue is string && (string.IsNullOrEmpty(spesaValue as string)));
+            return dataVuota || spesaVuota;
         }
 
         public override string ToString()
@@ -69,5 +92,5 @@ namespace ConsolidaSpeseComuni
         }
     }
 
- 
+
 }

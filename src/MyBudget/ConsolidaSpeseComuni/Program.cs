@@ -12,6 +12,11 @@ namespace ConsolidaSpeseComuni
     {
         static void Main(string[] args)
         {
+            var culture = System.Globalization.CultureInfo.CurrentCulture;
+            Console.WriteLine("Current culture is " + culture.Name);
+            //System.Globalization.CultureInfo.DefaultThreadCurrentCulture = new System.Globalization.CultureInfo("en-US");
+            //Console.ReadLine();
+
             var fileSpese = args[0];
             var fileAnalisi = args[1];
             var template = args[2];

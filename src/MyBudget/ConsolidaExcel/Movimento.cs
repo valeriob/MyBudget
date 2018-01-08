@@ -27,7 +27,6 @@ namespace ConsolidaExcel
         //        LineId = LineId.Create(budgetId).ToString(),
         //        UserId = userId,
         //        Expense = expense,
-
         //    };
         //}
 
@@ -35,23 +34,46 @@ namespace ConsolidaExcel
         {
             try
             {
-                var data = (DateTime)row.Cell("A").Value;
-                var categoria = (string)row.Cell("B").Value;
-                var descrizione = (string)row.Cell("C").Value;
-                var spesa = Convert.ToDecimal(row.Cell("D").Value);
+                var dataValue = row.Cell("A").Value;
+                var categoriaValue = row.Cell("B").Value;
+                var descrizioneValue = row.Cell("C").Value;
+                var spesaValue = row.Cell("D").Value;
+
+                if (Vuoto(dataValue, spesaValue))
+                {
+                    return null;
+                }
+
+                DateTime data = DateTime.MinValue;
+                if (dataValue is DateTime)
+                    data = (DateTime)dataValue;
+                if (dataValue is string)
+                    data = DateTime.Parse((string)dataValue);
+
+                var categoria = (string)categoriaValue;
+                var descrizione = (string)descrizioneValue;
+                var spesa = Convert.ToDecimal(spesaValue);
 
                 return new Movimento
                 {
-                   Data = data,
-                   Categoria = categoria,
-                   Descrizione = descrizione,
-                   Spesa = spesa,
+                    Data = data,
+                    Categoria = categoria,
+                    Descrizione = descrizione,
+                    Spesa = spesa,
                 };
             }
             catch
             {
-                return null;
+                throw;
+                //return null;
             }
+        }
+
+        static bool Vuoto(object dataValue, object spesaValue)
+        {
+            var dataVuota = dataValue == null || (dataValue is string && (string.IsNullOrEmpty(dataValue as string) || (dataValue as string).Equals("Data")));
+            var spesaVuota = spesaValue == null || (spesaValue is string && (string.IsNullOrEmpty(spesaValue as string)));
+            return dataVuota || spesaVuota;
         }
 
         public override string ToString()
