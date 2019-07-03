@@ -1,6 +1,7 @@
 ﻿using ClosedXML.Excel;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -15,11 +16,19 @@ namespace DividendiBinck
 
         static async Task Main(string[] args)
         {
+            //Debugger.Launch();
+
             var httpClient = new HttpClient();
 
-            var folder = @"C:\Users\Valerio\Downloads\binck\";
+            //var folder = @"C:\Users\Valerio\Downloads\binck\";
+            //var folder = @"E:\Skydrive\Documents\Finanze\Investimenti\Dividendi Bink\";
+            var folder = "";
+            if (args.Length > 0)
+            {
+                folder = args[0];
+            }
 
-            folder = @"E:\Skydrive\Documents\Finanze\Investimenti\Dividendi Bink\";
+
             var tuttiImporti = new HashSet<BinckRow>();
             var titoli = CaricaTitoli(folder);
 
@@ -53,7 +62,7 @@ namespace DividendiBinck
 
             var dividendi = tuttiImporti.Where(r => r.Tipologia == "Pagamento dividendi").ToArray();
 
-            await CSRakowski.Parallel.ParallelAsync.ForEachAsync(tuttiImporti.GroupBy(r => r.Data), async importi =>
+            await CSRakowski.Parallel.ParallelAsync.ForEachAsync(dividendi.GroupBy(r => r.Data), async importi =>
             {
                 var rates = await GetCambioEUR_USDInData(httpClient, importi.Key);
 
@@ -66,7 +75,7 @@ namespace DividendiBinck
 
             using (var sourceFile = new XLWorkbook())
             {
-                foreach (var importiAnno in tuttiImporti.GroupBy(r => r.Data.Year))
+                foreach (var importiAnno in dividendi.GroupBy(r => r.Data.Year))
                 {
                     var sheetAnno = sourceFile.AddWorksheet(importiAnno.Key.ToString());
 
@@ -84,7 +93,7 @@ namespace DividendiBinck
                 AddHeaderToSheet(sheetTotale);
 
                 var rowIndex = 2;
-                foreach (var importo in tuttiImporti.OrderBy(r => r.Data))
+                foreach (var importo in dividendi.OrderBy(r => r.Data))
                 {
                     AppendRowToSheet(sheetTotale, rowIndex, importo);
                     rowIndex++;
@@ -103,6 +112,8 @@ namespace DividendiBinck
             row.Cell("B").Value = "";
             row.Cell("C").Value = importo.Data;
             row.Cell("D").Value = Math.Round(importo.ImportoEuro, 2);
+            row.Cell("E").Value = Math.Round(importo.Importo, 2);
+            row.Cell("F").Value = Math.Round(importo.Cambio_EUR_Valuta, 2);
         }
 
         static void AddHeaderToSheet(IXLWorksheet wb)
@@ -112,6 +123,8 @@ namespace DividendiBinck
             header.Cell("B").Value = "Descrizione";
             header.Cell("C").Value = "Data";
             header.Cell("D").Value = "Importo";
+            header.Cell("E").Value = "Importo $";
+            header.Cell("F").Value = "Cambio EUR/USD";
         }
 
         public static async Task<Rates> GetCambioEUR_USDInData(HttpClient client, DateTime data)
