@@ -79,24 +79,35 @@ namespace DividendiBinck
                 {
                     var sheetAnno = sourceFile.AddWorksheet(importiAnno.Key.ToString());
 
-                    AddHeaderToSheet(sheetAnno);
+                    AddHeaderDividendiToSheet(sheetAnno);
 
                     var rowIndexAnno = 2;
                     foreach (var importo in importiAnno)
                     {
-                        AppendRowToSheet(sheetAnno, rowIndexAnno, importo);
+                        AppendRowDividendiToSheet(sheetAnno, rowIndexAnno, importo);
                         rowIndexAnno++;
                     }
                 }
 
-                var sheetTotale = sourceFile.AddWorksheet("Totale");
-                AddHeaderToSheet(sheetTotale);
+                var sheetTotaleDividendi = sourceFile.AddWorksheet("Totale Dividendi");
+                AddHeaderDividendiToSheet(sheetTotaleDividendi);
 
-                var rowIndex = 2;
+                var rowIndexDividendi = 2;
                 foreach (var importo in dividendi.OrderBy(r => r.Data))
                 {
-                    AppendRowToSheet(sheetTotale, rowIndex, importo);
-                    rowIndex++;
+                    AppendRowDividendiToSheet(sheetTotaleDividendi, rowIndexDividendi, importo);
+                    rowIndexDividendi++;
+                }
+
+
+                var sheetTutto = sourceFile.AddWorksheet("Tutto");
+                AddHeaderTotaleToSheet(sheetTutto);
+
+                var rowIndexTotale = 2;
+                foreach (var importo in tuttiImporti.OrderBy(r => r.Data))
+                {
+                    AppendRowTotaleToSheet(sheetTutto, rowIndexTotale, importo);
+                    rowIndexTotale++;
                 }
 
                 sourceFile.SaveAs(Path.Combine(folder, AggregatoFileName));
@@ -105,7 +116,18 @@ namespace DividendiBinck
 
         }
 
-        static void AppendRowToSheet(IXLWorksheet sheet, int rowIndex, BinckRow importo)
+        static void AddHeaderDividendiToSheet(IXLWorksheet wb)
+        {
+            var header = wb.Row(1);
+            header.Cell("A").Value = "Simbolo";
+            header.Cell("B").Value = "Descrizione";
+            header.Cell("C").Value = "Data";
+            header.Cell("D").Value = "Importo";
+            header.Cell("E").Value = "Importo $";
+            header.Cell("F").Value = "Cambio EUR/USD";
+        }
+
+        static void AppendRowDividendiToSheet(IXLWorksheet sheet, int rowIndex, BinckRow importo)
         {
             var row = sheet.Row(rowIndex);
             row.Cell("A").Value = importo.Simbolo;
@@ -116,16 +138,43 @@ namespace DividendiBinck
             row.Cell("F").Value = Math.Round(importo.Cambio_EUR_Valuta, 2);
         }
 
-        static void AddHeaderToSheet(IXLWorksheet wb)
+        static void AddHeaderTotaleToSheet(IXLWorksheet wb)
         {
             var header = wb.Row(1);
-            header.Cell("A").Value = "Simbolo";
-            header.Cell("B").Value = "Descrizione";
-            header.Cell("C").Value = "Data";
-            header.Cell("D").Value = "Importo";
-            header.Cell("E").Value = "Importo $";
-            header.Cell("F").Value = "Cambio EUR/USD";
+            header.Cell("A").Value = "Numero";
+            header.Cell("B").Value = "Tipologia";
+
+            header.Cell("C").Value = "Simbolo";
+            header.Cell("D").Value = "Descrizione";
+            header.Cell("E").Value = "Data";
+            header.Cell("F").Value = "Importo";
+            header.Cell("G").Value = "Importo $";
+            header.Cell("H").Value = "Cambio EUR/USD";
+
+            header.Cell("I").Value = "Saldo Attuale";
+
         }
+
+
+        static void AppendRowTotaleToSheet(IXLWorksheet sheet, int rowIndex, BinckRow importo)
+        {
+            var row = sheet.Row(rowIndex);
+
+            row.Cell("A").Value = importo.Numero;
+            row.Cell("B").Value = importo.Tipologia;
+
+            row.Cell("C").Value = importo.Simbolo;
+            row.Cell("D").Value = importo.Descrizione;
+            row.Cell("E").Value = importo.Data;
+            row.Cell("F").Value = Math.Round(importo.ImportoEuro, 2);
+            row.Cell("G").Value = Math.Round(importo.Importo, 2);
+            row.Cell("H").Value = Math.Round(importo.Cambio_EUR_Valuta, 2);
+
+            row.Cell("I").Value = Math.Round(importo.SaldoAttuale, 2);
+        }
+
+
+
 
         public static async Task<Rates> GetCambioEUR_USDInData(HttpClient client, DateTime data)
         {
@@ -172,12 +221,14 @@ namespace DividendiBinck
 
     public class BinckRow : IEquatable<BinckRow>
     {
+        public int Numero { get; set; }
         public DateTime Data { get; set; }
         public DateTime DataValuta { get; set; }
         public string Tipologia { get; set; }
         public string Descrizione { get; set; }
         public decimal Importo { get; set; }
         public string ImportoValuta { get; set; }
+        public decimal SaldoAttuale { get; set; }
 
         public decimal Cambio_EUR_Valuta { get; set; }
         public decimal ImportoEuro { get; set; }
@@ -218,6 +269,7 @@ namespace DividendiBinck
 
         public static BinckRow TryParse(IXLRow row)
         {
+            var numeroValue = row.Cell("A").Value;
             var dataValue = row.Cell("B").Value;
             var dataValutaValue = row.Cell("C").Value;
             var tipologia = row.Cell("D").Value;
@@ -226,6 +278,7 @@ namespace DividendiBinck
             var cellF = row.Cell("F");
             var importoValue = cellF.Value;
 
+            var saldoAttualeValue = row.Cell("G").Value;
 
             var data = ParseData(dataValue);
             var dataValuta = ParseData(dataValutaValue);
@@ -244,14 +297,20 @@ namespace DividendiBinck
                 importo = Convert.ToDecimal(importoValue.ToString());
             }
 
+            var saldoAttuale = Convert.ToDecimal(saldoAttualeValue.ToString());
+
             return new BinckRow
             {
+                Numero = int.Parse(numeroValue.ToString()),
+
                 Data = data,
                 DataValuta = dataValuta,
                 Tipologia = tipologia.ToString(),
                 Descrizione = descrizione.ToString(),
                 Importo = importo,
                 ImportoValuta = valuta,
+
+                SaldoAttuale = saldoAttuale
             };
         }
 
