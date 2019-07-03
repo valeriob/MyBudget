@@ -36,6 +36,7 @@ namespace ConsolidaExcel
                             dati.Cell(riga, "B").Value = movimento.Categoria;
                             dati.Cell(riga, "C").Value = movimento.Descrizione;
                             dati.Cell(riga, "D").Value = movimento.Spesa;
+                            dati.Cell(riga, "E").Value = movimento.Tag;
                             riga++;
                         }
 

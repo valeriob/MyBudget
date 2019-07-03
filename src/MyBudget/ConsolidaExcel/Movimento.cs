@@ -10,6 +10,7 @@ namespace ConsolidaExcel
         public string Categoria { get; set; }
         public string Descrizione { get; set; }
         public decimal Spesa { get; set; }
+        public string Tag { get; set; }
 
         public string DistributionKey { get; set; }
 
@@ -38,6 +39,7 @@ namespace ConsolidaExcel
                 var categoriaValue = row.Cell("B").Value;
                 var descrizioneValue = row.Cell("C").Value;
                 var spesaValue = row.Cell("D").Value;
+                var tagValue = row.Cell("E").Value;
 
                 if (Vuoto(dataValue, spesaValue))
                 {
@@ -53,6 +55,7 @@ namespace ConsolidaExcel
                 var categoria = (string)categoriaValue;
                 var descrizione = (string)descrizioneValue;
                 var spesa = Convert.ToDecimal(spesaValue);
+                var tag = (string)tagValue;
 
                 return new Movimento
                 {
@@ -60,6 +63,7 @@ namespace ConsolidaExcel
                     Categoria = categoria,
                     Descrizione = descrizione,
                     Spesa = spesa,
+                    Tag = tag,
                 };
             }
             catch
