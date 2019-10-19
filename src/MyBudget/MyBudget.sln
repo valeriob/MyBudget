@@ -43,6 +43,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DividendiBinck", "Dividendi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DividendiFineco", "DividendiFineco\DividendiFineco.csproj", "{19A99EF7-88F0-4CBE-B613-99E03156FD6B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DividendiAggregati", "DividendiAggretati\DividendiAggregati.csproj", "{D06B3ABB-0ECF-4539-8353-3F564CE7FFE6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +107,10 @@ Global
 		{19A99EF7-88F0-4CBE-B613-99E03156FD6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19A99EF7-88F0-4CBE-B613-99E03156FD6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19A99EF7-88F0-4CBE-B613-99E03156FD6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D06B3ABB-0ECF-4539-8353-3F564CE7FFE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D06B3ABB-0ECF-4539-8353-3F564CE7FFE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D06B3ABB-0ECF-4539-8353-3F564CE7FFE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D06B3ABB-0ECF-4539-8353-3F564CE7FFE6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -118,6 +124,7 @@ Global
 		{815E8854-3C90-4B14-A9F5-971633FB254A} = {49EF662D-9DEA-4D0E-9249-8221110D8B92}
 		{B0390751-1957-4B6F-B939-3EDBA161F362} = {49EF662D-9DEA-4D0E-9249-8221110D8B92}
 		{19A99EF7-88F0-4CBE-B613-99E03156FD6B} = {49EF662D-9DEA-4D0E-9249-8221110D8B92}
+		{D06B3ABB-0ECF-4539-8353-3F564CE7FFE6} = {49EF662D-9DEA-4D0E-9249-8221110D8B92}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3555C292-C57A-4E12-B03F-559261590C7E}
