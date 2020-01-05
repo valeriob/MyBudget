@@ -17,6 +17,7 @@ namespace DividendiBinck
 
         public async Task<string> ElaboraDividendi(string folder)
         {
+            //folder = @"E:\Skydrive\Documents\Finanze\Investimenti\Dividendi Bink\";
             string outputFile = Path.Combine(folder, AggregatoFileName);
 
             var tuttiImporti = new HashSet<BinckRow>();
@@ -121,7 +122,7 @@ namespace DividendiBinck
         {
             var row = sheet.Row(rowIndex);
             row.Cell("A").Value = importo.Simbolo;
-            row.Cell("B").Value = "";
+            row.Cell("B").Value = importo.Descrizione;
             row.Cell("C").Value = importo.Data;
             row.Cell("D").Value = Math.Round(importo.ImportoEuro, 2);
             row.Cell("E").Value = Math.Round(importo.Importo, 2);
